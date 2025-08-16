@@ -17,7 +17,7 @@ TARGETS_CONFIG_FILE = '/var/www/html/anus/targets.json'
 NET_STATS_CACHE = '/var/tmp/anus_net_stats.json'
 
 try:
-    output = subprocess.check_output("ip route | grep default | awk '{print $5}' | head -n 1", shell=True).strip().decode('utf-8')
+    output = subprocess.check_output("ip route | grep default | awk '{print $5}' | head -n 1", shell=True, text=True).strip()
     NETWORK_INTERFACE = output.splitlines()[0]
 except Exception:
     NETWORK_INTERFACE = 'eth0'
@@ -31,7 +31,7 @@ DEFAULT_TARGETS = [
     {"name": "Google.com", "url": "google.com"},
     {"name": "Cloudflare.com", "url": "cloudflare.com"}
 ]
-MAX_WORKERS = 20 # Increased for more concurrent pings
+MAX_WORKERS = 30 # Increased for more concurrent pings + diagnostics
 stop_event = threading.Event()
 
 # --- Database Functions ---
@@ -72,6 +72,17 @@ def log_metric(metric):
         ))
         conn.commit()
 
+def update_diagnostics(name, dns_info, traceroute_info):
+    """Updates the most recent metric record with new diagnostic info."""
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE metrics
+            SET dns_info = ?, traceroute_info = ?
+            WHERE id = (SELECT id FROM metrics WHERE name = ? ORDER BY timestamp DESC LIMIT 1)
+        """, (json.dumps(dns_info), json.dumps(traceroute_info), name))
+        conn.commit()
+
 def log_resource_usage(usage_data):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
@@ -91,7 +102,7 @@ def get_resource_usage():
             load_avg = os.getloadavg()[0]
             cpu_count = os.cpu_count()
             cpu_usage = (load_avg / cpu_count) * 100 if cpu_count else 0
-            mem_info = subprocess.check_output("free -m", shell=True).decode().splitlines()[1].split()
+            mem_info = subprocess.check_output("free -m", shell=True, text=True).splitlines()[1].split()
             mem_total, mem_used = int(mem_info[1]), int(mem_info[2])
             mem_usage = (mem_used / mem_total) * 100 if mem_total else 0
             
@@ -115,13 +126,41 @@ def get_resource_usage():
             })
         except Exception as e:
             print(f"Error in get_resource_usage: {e}")
-        time.sleep(5) # Log resources every 5 seconds
+        time.sleep(5)
 
 def get_server_gateway_ip():
     try:
-        output = subprocess.check_output("ip route | grep default | awk '{print $3}' | head -n 1", shell=True).strip().decode('utf-8')
+        output = subprocess.check_output("ip route | grep default | awk '{print $3}' | head -n 1", shell=True, text=True).strip()
         return output.splitlines()[0]
     except Exception: return None
+
+def get_diagnostics(target, server_gateway_ip):
+    """Periodically runs traceroute and DNS lookups for a target."""
+    is_gateway = target.get('url') == 'DETECT_GATEWAY'
+    host_url = server_gateway_ip if is_gateway else target['url']
+    clean_host = host_url.replace("https://", "").replace("http://", "").split('/')[0] if host_url else None
+    if not clean_host: return
+
+    while not stop_event.is_set():
+        try:
+            dns_info, traceroute_info = [], []
+            try:
+                dig_output = subprocess.check_output(f"dig +short {clean_host}", shell=True, timeout=10, text=True)
+                dns_info = [line for line in dig_output.strip().split('\n') if line]
+            except Exception as e:
+                dns_info = [f"DNS lookup failed."]
+            
+            try:
+                traceroute_output = subprocess.check_output(f"traceroute -q 1 -w 1 -m 15 {clean_host}", shell=True, timeout=30, text=True)
+                traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
+            except Exception as e:
+                traceroute_info = [f"Traceroute failed."]
+            
+            update_diagnostics(target['name'], dns_info, traceroute_info)
+        except Exception as e:
+            print(f"Error in get_diagnostics for {target['name']}: {e}")
+        
+        stop_event.wait(900) # Wait 15 minutes
 
 def continuous_ping_target(target, server_gateway_ip):
     is_gateway = target.get('url') == 'DETECT_GATEWAY'
@@ -129,7 +168,7 @@ def continuous_ping_target(target, server_gateway_ip):
     clean_host = host_url.replace("https://", "").replace("http://", "").split('/')[0] if host_url else None
     if not clean_host: return
 
-    command = f"ping -i 0.2 -W 0.8 {clean_host}" # Reduced timeout to fit 1s interval
+    command = f"ping -i 0.2 -W 0.8 {clean_host}"
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, preexec_fn=os.setsid)
     
     latencies = []
@@ -147,19 +186,14 @@ def continuous_ping_target(target, server_gateway_ip):
             packets_sent += 1
             packets_lost += 1
         
-        if time.time() - last_log_time >= 1: # MODIFICATION: Log every 1 second
+        if time.time() - last_log_time >= 1:
             if latencies:
                 avg_ping = sum(latencies) / len(latencies)
                 jitter = (sum((x - avg_ping) ** 2 for x in latencies) / (len(latencies) - 1)) ** 0.5 if len(latencies) > 1 else 0
                 packet_loss = (packets_lost / packets_sent) * 100 if packets_sent > 0 else 0
-                log_metric({
-                    "name": target["name"], "ping": avg_ping, "jitter": jitter, 
-                    "status": "UP", "packet_loss": packet_loss
-                })
+                log_metric({"name": target["name"], "ping": avg_ping, "jitter": jitter, "status": "UP", "packet_loss": packet_loss})
             else:
-                log_metric({
-                    "name": target["name"], "ping": None, "jitter": None, "status": "DOWN", "packet_loss": 100.0
-                })
+                log_metric({"name": target["name"], "status": "DOWN", "packet_loss": 100.0})
             
             latencies, packets_sent, packets_lost = [], 0, 0
             last_log_time = time.time()
@@ -183,16 +217,15 @@ if __name__ == "__main__":
     print(f"Detected Server Gateway: {server_gateway_ip} on interface {NETWORK_INTERFACE}")
     
     targets = DEFAULT_TARGETS
-    if not os.path.exists(TARGETS_CONFIG_FILE):
-        with open(TARGETS_CONFIG_FILE, 'w') as f: json.dump(DEFAULT_TARGETS, f, indent=4)
-    else:
+    if os.path.exists(TARGETS_CONFIG_FILE):
         try:
             with open(TARGETS_CONFIG_FILE, 'r') as f: targets = json.load(f)
         except (json.JSONDecodeError): pass
     
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    with ThreadPoolExecutor(max_workers=len(targets) * 2 + 1) as executor:
         executor.submit(get_resource_usage)
         for target in targets:
             executor.submit(continuous_ping_target, target, server_gateway_ip)
+            executor.submit(get_diagnostics, target, server_gateway_ip)
     
     print("A.N.U.S. Service has shut down.")

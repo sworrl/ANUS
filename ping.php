@@ -2,6 +2,10 @@
 // Set headers for CORS and JSON response
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
+// MODIFICATION: Add cache-control headers to prevent caching
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
 set_time_limit(60);
 
 // --- Configuration ---

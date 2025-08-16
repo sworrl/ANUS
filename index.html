@@ -320,6 +320,7 @@
         let serverChartCPU, serverChartMem, serverChartNet;
         let calendarDate = new Date();
         const uptimeChartInstances = {};
+        let modalUpdateIntervalId = null; 
 
         const DOMElements = {
             loadingOverlay: document.getElementById('loading-overlay'),
@@ -497,7 +498,7 @@
             renderServerHealth(data.server_status);
             updateClientInfo();
             updateServerInfo(data.server_status);
-            updateGatewayInfo(data.server_status); // Update new gateway card
+            updateGatewayInfo(data.server_status); 
             renderInternetNodeCards(data.pings);
             drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status);
             if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline();
@@ -569,41 +570,31 @@
             });
         }
         
-        // MODIFICATION: Reworked layout and placeholder creation
         function renderDiagnostics() {
             const container = DOMElements.diagnosticsContainer;
             if (!document.getElementById('diag-layout')) {
                 container.innerHTML = `
                     <div id="diag-layout" class="relative w-full max-w-5xl mx-auto">
                         <svg id="diagnostics-svg-container"></svg>
-                        
-                        <!-- Top Row: Client & Server -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-8 relative">
                             <div id="diag-client" class="text-center flex-shrink-0 bg-muted card-emboss p-4 rounded-lg node-glow min-h-[160px]"></div>
                             <div id="diag-server" class="text-center flex-shrink-0 bg-muted card-emboss card-emboss-hover p-4 rounded-lg node-glow cursor-pointer min-h-[160px]"></div>
                             <div id="diag-ping-cs" class="absolute text-center text-xs p-1 rounded bg-bg-primary/80 backdrop-blur-sm"></div>
                         </div>
-
-                        <!-- Middle Row: Gateway -->
-                        <div class="mb-8 text-center" id="diag-gateway-wrapper">
-                             <div id="diag-gateway" class="bg-bg-primary card-emboss p-3 rounded-lg border-2 transition-all w-full max-w-xl mx-auto">
-                                <!-- Content will be filled by updateGatewayInfo -->
-                             </div>
+                        <div class="mb-8" id="diag-gateway-wrapper">
+                            <div id="diag-gateway" class="bg-bg-primary card-emboss p-4 rounded-lg border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
+                            </div>
                         </div>
-
-                        <!-- Bottom section: Internet Nodes -->
                         <div>
                             <div id="diag-internet" class="internet-nodes-container bg-muted card-emboss p-4 rounded-lg node-glow">
                                 <p class="font-semibold text-primary text-center mb-4">Internet Nodes</p>
                                 <div id="internet-nodes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
                             </div>
-                        </div>
-                    </div>`;
+                        </div>`;
             }
             document.getElementById('diag-server').addEventListener('click', showServerDetailsModal);
         }
 
-        // MODIFICATION: Reworked drawing logic for new layout
         function drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, pings, serverStatus) {
             const svg = document.getElementById('diagnostics-svg-container');
             if (!svg) return;
@@ -652,7 +643,6 @@
             }
         }
 
-        // NEW FUNCTION: Populates the detailed gateway card
         function updateGatewayInfo(serverStatus) {
             const gatewayCard = document.getElementById('diag-gateway');
             const gatewayPingData = allPingsData.find(p => p.name === 'Gateway');
@@ -678,7 +668,6 @@
             `;
             gatewayCard.style.borderColor = `${gatewayPingData.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
             
-            // Re-add event listener since innerHTML is replaced
             const newCard = gatewayCard.cloneNode(true);
             gatewayCard.parentNode.replaceChild(newCard, gatewayCard);
             newCard.addEventListener('click', () => {
@@ -690,6 +679,7 @@
             DOMElements.modalTitle.textContent = `Details for ${data.name}`;
             const dnsList = (data.dns_info && Array.isArray(data.dns_info) && data.dns_info.length > 0) ? data.dns_info.map(ip => `<li>${ip}</li>`).join('') : '<li>No DNS data available</li>';
             const traceList = (data.traceroute_info && Array.isArray(data.traceroute_info) && data.traceroute_info.length > 0) ? data.traceroute_info.map(hop => `<li>${hop}</li>`).join('') : '<li>No traceroute data available</li>';
+            
             DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                     <div><p class="text-muted text-xs">Status</p><p class="font-semibold" style="color:${data.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${data.status}</p></div>
                     <div><p class="text-muted text-xs">Ping</p><p class="font-semibold">${data.ping ? Math.round(data.ping) + ' ms' : 'N/A'}</p></div>
@@ -698,13 +688,26 @@
                     <div><p class="text-muted text-xs">Packet Loss (15m)</p><p class="font-semibold">${data.packet_loss_15m !== null ? data.packet_loss_15m + '%' : 'N/A'}</p></div>
                     <div><p class="text-muted text-xs">Min/Max Ping (15m)</p><p class="font-semibold">${data.min_ping_15m !== null && data.max_ping_15m !== null ? data.min_ping_15m+'ms / '+data.max_ping_15m+'ms' : 'N/A'}</p></div>
                 </div>
-                <div class="mb-4"><p class="text-muted text-xs">Last Checked</p><p class="font-semibold">${formatTimestamp(data.timestamp * 1000)} (${timeAgo(data.timestamp)})</p></div>
+                <div class="mb-4"><p class="text-muted text-xs">Last Checked</p><p class="font-semibold" id="modal-last-checked-time"></p></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><p class="text-primary font-semibold mb-1">DNS Info</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${dnsList}</ul></div>
                     <div><p class="text-primary font-semibold mb-1">Traceroute</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${traceList}</ul></div>
                 </div>`;
+            
             DOMElements.nodeDetailsModal.classList.remove('hidden');
+
+            if (modalUpdateIntervalId) clearInterval(modalUpdateIntervalId);
+            const updateModalTime = () => {
+                const lastCheckedEl = document.getElementById('modal-last-checked-time');
+                const latestNodeData = allPingsData.find(p => p.name === data.name);
+                if (lastCheckedEl && latestNodeData) {
+                    lastCheckedEl.textContent = `${formatTimestamp(latestNodeData.timestamp * 1000)} (${timeAgo(latestNodeData.timestamp)})`;
+                }
+            };
+            updateModalTime();
+            modalUpdateIntervalId = setInterval(updateModalTime, 1000);
         }
+
         async function initializeTrendsChart() {
             if (isTrendsDataLoaded) return;
             const historicalData = await apiCall('get_historical_data');
@@ -778,8 +781,17 @@
                 soundEnabled = DOMElements.soundToggle.checked;
                 localStorage.setItem('soundEnabled', soundEnabled);
             });
-            DOMElements.modalCloseBtn.addEventListener('click', () => DOMElements.nodeDetailsModal.classList.add('hidden'));
-            DOMElements.serverModalCloseBtn.addEventListener('click', () => DOMElements.serverDetailsModal.classList.add('hidden'));
+            
+            const closeModal = (modal) => {
+                modal.classList.add('hidden');
+                if (modalUpdateIntervalId) clearInterval(modalUpdateIntervalId);
+                modalUpdateIntervalId = null;
+            };
+
+            DOMElements.modalCloseBtn.addEventListener('click', () => closeModal(DOMElements.nodeDetailsModal));
+            DOMElements.serverModalCloseBtn.addEventListener('click', () => closeModal(DOMElements.serverDetailsModal));
+            DOMElements.licenseCloseBtn.addEventListener('click', () => closeModal(DOMElements.licenseModal));
+
             DOMElements.logoContainer.addEventListener('click', () => playSound(bruhPlayer, true));
             DOMElements.logViewToggle.addEventListener('click', (e) => {
                 if (e.target.tagName === 'BUTTON') {
@@ -799,7 +811,6 @@
             DOMElements.calPrevMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(calendarDate); });
             DOMElements.calNextMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(calendarDate); });
             DOMElements.licenseLink.addEventListener('click', (e) => { e.preventDefault(); DOMElements.licenseModal.classList.remove('hidden'); });
-            DOMElements.licenseCloseBtn.addEventListener('click', () => {DOMElements.licenseModal.classList.add('hidden'); });
         }
 
         function applySettings() {
@@ -1178,11 +1189,15 @@
         
         function handleError(error) {
             console.error("Caught error:", error);
-            DOMElements.loadingOverlay.classList.add('loading-error');
-            DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
-            DOMElements.loadingErrorContainer.classList.remove('hidden');
-            if (pollingIntervalId) {
-                clearInterval(pollingIntervalId);
+            // MODIFICATION: Only show the fatal error overlay on initial load.
+            // For subsequent errors, just log to console and allow polling to continue.
+            if (document.getElementById('app-container').classList.contains('hidden-on-load')) {
+                DOMElements.loadingOverlay.classList.add('loading-error');
+                DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
+                DOMElements.loadingErrorContainer.classList.remove('hidden');
+                if (pollingIntervalId) {
+                    clearInterval(pollingIntervalId);
+                }
             }
         }
 
