@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.N.U.S. v1.0 - Automated Network Utility System</title>
+    <script src="./assets/tailwindcss.js"></script>
+    <script src="./assets/tone.js"></script>
+    <script src="./assets/chart.js"></script>
+    <script src="./assets/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="./assets/hammer.min.js"></script>
+    <script src="./assets/chartjs-plugin-zoom.min.js"></script>
+    <link href="./assets/inter.css" rel="stylesheet">
+    <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:%23f59e0b;stroke-width:4;stroke-miterlimit:10;}.st1{fill:%23f59e0b;stroke:%23f59e0b;stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:%23f59e0b;stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3M26.9 73.1l5.3-5.3'/></svg>" />
+    <style>
+        :root {
+            --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
+            --border-primary: #334155; --text-primary: #e2e8f0; --text-secondary: #94a3b8;
+            --accent-primary: #f59e0b; --accent-secondary: #fbbf24;
+            --color-status-up: #22c55e; --color-status-warn: #eab308; --color-status-down: #ef4444;
+            --shadow-light: rgba(255, 255, 255, 0.05); --shadow-dark: rgba(0, 0, 0, 0.5);
+            --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-primary), color-mix(in srgb, var(--bg-primary) 80%, black));
+            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cpath d='M0 1v50h50V1H0zm1 1h48v48H1V2z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 85%, black));
+            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 85%, black));
+        }
+        html.theme-gwot { 
+            --bg-primary: #6a6a5a; --bg-secondary: #8c8c73; --border-primary: #4b4b3d; 
+            --text-primary: #e0dccf; --text-secondary: #bdb3a0; --accent-primary: #c7b39a; 
+            --accent-secondary: #a8927d; --color-status-up: #6b7f3a; --color-status-warn: #c4a251; 
+            --color-status-down: #a6584c; --shadow-light: rgba(255, 255, 240, 0.1); --shadow-dark: rgba(40, 40, 30, 0.6);
+            --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3Cpattern id='dcu' patternUnits='userSpaceOnUse' width='200' height='200'%3E%3Cg fill-opacity='0.6'%3E%3Cpath fill='%23a18f78' d='M54.5 167.5Q42 153 35.5 133 29 113 42 100q13-13 28.5-4.5T99 100q14.5 4.5 18.5 19.5t-11 23q-15 8-28.5 1.5T54.5 167.5z'/%3E%3Cpath fill='%23695e4e' d='M140 100q-12.5-12.5-12.5-27.5t15.5-1.5q18 11 12.5 30T140 100zM40.5 5.5Q28-9 16.5 11 5 31 20.5 40q15.5 9 28-3.5T40.5 5.5z'/%3E%3Cpath fill='%23d1c5b4' d='M100 200q-15-15-15-32.5t11-12.5q16 12 11.5 31.5T100 200zM194.5 147.5q-12.5-12.5-12.5-27.5t15.5-1.5q18 11 12.5 30T194.5 147.5z'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%238c8c73'/%3E%3Crect width='100%25' height='100%25' fill='url(%23dcu)'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-primary), #3c3c32);
+            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%234b4b3d' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.99-7.5L26 15v18.5L13 41 0 33.5V15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), radial-gradient(circle, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 70%, black));
+            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"), linear-gradient(to top left, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 80%, black));
+        }
+        html.theme-dankpods { 
+            --bg-primary: #121212; --bg-secondary: #1e1e1e; --border-primary: #404040; --text-primary: #e0e0e0; 
+            --accent-primary: #ff4b4b; --accent-secondary: #ff8a8a; --color-status-up: #76ff03; --color-status-warn: #fdd835; 
+            --color-status-down: #ff4b4b; --shadow-light: rgba(255, 255, 255, 0.07); --shadow-dark: rgba(0, 0, 0, 0.6);
+            --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ff4b4b' fill-opacity='0.1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(45deg, var(--bg-primary), #000);
+            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), radial-gradient(ellipse at bottom, var(--bg-secondary), #111);
+            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0v1h1V0H0zm2 0v1h1V0H2zm2 0v1h1V0H4zm2 0v1h1V0H6zM1 1v1h1V1H1zm2 0v1h1V1H3zm2 0v1h1V1H5zm2 0v1h1V1H7zM0 2v1h1V2H0zm2 0v1h1V2H2zm2 0v1h1V2H4zm2 0v1h1V2H6zM1 3v1h1V3H1zm2 0v1h1V3H3zm2 0v1h1V3H5zm2 0v1h1V3H7zM0 4v1h1V4H0zm2 0v1h1V4H2zm2 0v1h1V4H4zm2 0v1h1V4H6zM1 5v1h1V5H1zm2 0v1h1V5H3zm2 0v1h1V5H5zm2 0v1h1V5H7zM0 6v1h1V6H0zm2 0v1h1V6H2zm2 0v1h1V6H4zm2 0v1h1V6H6zM1 7v1h1V7H1zm2 0v1h1V7H3zm2 0v1h1V7H5zm2 0v1h1V7H7z' fill='%23ff4b4b' fill-opacity='0.1'/%3E%3C/svg%3E"), linear-gradient(to right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 90%, black));
+        }
+        html.theme-matrix { 
+            --bg-primary: #000000; --bg-secondary: #0d0d0d; --border-primary: #002b00; 
+            --text-primary: #00ff00; --text-secondary: #008f00; --accent-primary: #39ff14; 
+            --accent-secondary: #bfffab; --color-status-up: #39ff14; --color-status-warn: #bfffab; 
+            --color-status-down: #ff3333; --shadow-light: rgba(0, 255, 0, 0.1); --shadow-dark: rgba(0, 0, 0, 0.7);
+            --body-bg-image: linear-gradient(0deg, rgba(0,20,0,0.8), rgba(0,20,0,0.8)), url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"); /* Placeholder, real animation in JS */
+            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-secondary) 50%, #001100);
+            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Cpath d='M0 3h1v1H0V3zm2 0h1v1H2V3zm2 0h1v1H4V3zm2 0h1v1H6V3zM1 4h1v1H1V4zm2 0h1v1H3V4zm2 0h1v1H5V4zM0 5h1v1H0V5zm2 5h1v1H2V5zm2 5h1v1H4V5zm2 5h1v1H6V5z' fill='%2339ff14' fill-opacity='0.2'/%3E%3C/svg%3E"), linear-gradient(var(--bg-tertiary), #000);
+        }
+        /* Add other theme definitions here */
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); transition: background-color 0.3s; background-image: var(--body-bg-image); }
+        .bg-main { background-color: var(--bg-secondary); border-color: var(--border-primary); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); background-image: var(--main-bg-image); }
+        .border-main { border-color: var(--border-primary); }
+        .text-accent { color: var(--accent-primary); }
+        .text-accent-secondary { color: var(--accent-secondary); }
+        .bg-accent { background-color: var(--accent-primary); }
+        .border-accent { border-color: var(--accent-primary); }
+        .text-muted { color: var(--text-secondary); }
+        .bg-muted { background-color: var(--bg-tertiary); background-image: var(--muted-bg-image); }
+
+        .card-emboss { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transition: box-shadow 0.3s ease-in-out; }
+        .card-emboss-hover:hover { box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); }
+        canvas { filter: drop-shadow(0 0 8px var(--accent-primary-trans-2)); transition: filter 0.3s ease; }
+
+        .status-up { --status-color: var(--color-status-up); }
+        .status-down { --status-color: var(--color-status-down); }
+        .status-checking { --status-color: var(--color-status-warn); }
+        .text-status-up { color: var(--color-status-up); }
+        .text-status-warn { color: var(--color-status-warn); }
+        .text-status-down { color: var(--color-status-down); }
+        .bg-status-down { background-color: var(--color-status-down); }
+        .hover\\:bg-status-down-hover:hover { filter: brightness(0.85); }
+        
+        .blinking-dot { animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .tab-active { border-color: var(--accent-primary); color: var(--accent-primary); font-weight: 600; }
+        .toggle-checkbox:checked { right: 0; border-color: var(--accent-primary); }
+        .toggle-checkbox:checked + .toggle-label { background-color: var(--accent-primary); }
+
+        @keyframes pulse-outer { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.05); opacity: 1; } }
+        @keyframes pulse-inner { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(0.85); filter: brightness(1.5); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes color-shift { 0%, 100% { color: var(--accent-primary); } 50% { color: var(--accent-secondary); } }
+        #logo-container { animation: color-shift 6s infinite ease-in-out; cursor: pointer; }
+        #logo-svg .outer-ring { animation: pulse-outer 4s infinite ease-in-out; }
+        #logo-svg .inner-ring { animation: pulse-inner 2.5s infinite ease-in-out; transform-origin: center; }
+        #logo-svg .spokes { animation: spin 20s linear infinite; transform-origin: center; }
+
+        .node-glow { animation: pulse-glow 2.5s infinite ease-in-out; }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px 2px var(--accent-primary-trans-1), inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+            50% { box-shadow: 0 0 18px 6px var(--accent-primary-trans-2), inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+        }
+
+        #diagnostics-svg-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .flow-path { fill: none; stroke-width: 4px; stroke: var(--bg-tertiary); }
+        .flow-dot { r: 4px; }
+        .flow-dot.up { fill: var(--color-status-up); filter: drop-shadow(0 0 4px var(--color-status-up)); }
+        .flow-dot.down { fill: var(--color-status-down); filter: drop-shadow(0 0 4px var(--color-status-down)); }
+
+        .legend-item-hidden { text-decoration: line-through; color: #64748b !important; }
+
+        /* Timeline & Calendar Styles */
+        .timeline { position: relative; padding-left: 2rem; }
+        .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 4px; background-color: var(--border-primary); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 1.5rem; }
+        .timeline-dot { position: absolute; left: -1px; top: 4px; height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 4px solid var(--border-primary); }
+        .timeline-dot.up { background-color: var(--color-status-up); }
+        .timeline-dot.down { background-color: var(--color-status-down); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; }
+        .calendar-day { background-color: var(--bg-tertiary); padding: 8px; min-height: 120px; display: flex; flex-direction: column; }
+        .calendar-day.other-month { background-color: var(--bg-primary); opacity: 0.5; }
+        .event-bar { height: 8px; margin-top: 4px; border-radius: 4px; }
+        .event-bar-up { background-color: var(--color-status-up); }
+        .event-bar-down { background-color: var(--color-status-down); }
+        .day-name { font-size: 0.75rem; text-align: center; padding: 0.5rem 0; font-weight: 600; color: var(--text-secondary); }
+
+        /* Loading Overlay Styles */
+        #loading-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            transition: opacity 0.8s ease-in-out;
+        }
+        #loading-logo-container svg {
+            width: 200px; height: 200px;
+            animation: pulse-loader 2s infinite ease-in-out;
+            transition: filter 0.5s ease;
+        }
+        @keyframes pulse-loader {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        #loading-overlay.loading-success #loading-logo-container {
+            animation: zoom-through 0.8s forwards ease-in;
+        }
+        @keyframes zoom-through {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(20); opacity: 0; }
+        }
+        #loading-overlay.loading-error #loading-logo-container svg {
+            filter: blur(5px);
+            animation: none;
+        }
+        #loading-error-container {
+            margin-top: 2rem;
+            max-width: 80%;
+        }
+        #app-container.hidden-on-load {
+            display: none;
+        }
+        #app-container.visible {
+            display: block;
+            animation: fade-in 0.5s forwards;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .uptime-chart-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0.5rem auto 0;
+        }
+        .uptime-chart-container svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+        .uptime-chart-container circle {
+            transition: stroke-dashoffset 0.5s ease-out;
+        }
+        .disconnect-count {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-primary text-primary flex items-center justify-center min-h-screen p-4">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div id="loading-logo-container" class="text-accent">
+             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs><filter id="glow-loader" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>
+                <g style="transform-origin: center center; animation: spin 40s linear infinite;"><circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/></g>
+                <g style="transform-origin: center center; animation: spin 25s linear infinite reverse;"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
+                <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow-loader)"/>
+                <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
+                <g class="spokes"><path d="M50 22.5V15 M50 85v-7.5 M77.5 50H85 M15 50h7.5 M32.2 32.2l-5.3-5.3 M73.1 73.1l-5.3-5.3 M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/></g>
+            </svg>
+        </div>
+        <div id="loading-error-container" class="hidden p-4 bg-red-900/50 border border-red-500 rounded-lg text-center">
+            <h2 class="text-lg font-bold text-red-300">Initialization Failed</h2>
+            <p id="loading-error-message" class="mt-2 text-red-200 font-mono text-sm"></p>
+        </div>
+    </div>
+
+    <div id="app-container" class="w-full max-w-7xl mx-auto bg-main border border-main rounded-2xl shadow-lg p-6 md:p-8 hidden-on-load">
+        <header class="flex flex-col items-center mb-6 border-b border-main pb-6">
+             <div id="logo-container" class="flex flex-col items-center gap-2">
+                <svg id="logo-svg" class="w-24 h-24 text-accent" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"></feMergeNode>
+                                <feMergeNode in="SourceGraphic"></feMergeNode>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <g style="transform-origin: center center; animation: spin 40s linear infinite;">
+                        <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/>
+                    </g>
+                    <g style="transform-origin: center center; animation: spin 25s linear infinite reverse;">
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+                        <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
+                        <path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
+                    </g>
+                    <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow)"/>
+                    <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
+                    <g class="spokes">
+                        <path d="M50 22.5V15 M50 85v-7.5 M77.5 50H85 M15 50h7.5 M32.2 32.2l-5.3-5.3 M73.1 73.1l-5.3-5.3 M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                    </g>
+                </svg>
+                <div>
+                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.0</h1>
+                    <p class="text-muted text-center">Automated Network Utility System</p>
+                </div>
+            </div>
+            <div id="current-status-card" class="bg-muted card-emboss status-checking mt-4 rounded-lg p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto">
+                <div class="flex items-center justify-center gap-3">
+                    <div id="status-indicator" class="w-4 h-4 rounded-full bg-[var(--status-color)] blinking-dot"></div>
+                    <span id="status-text" class="font-semibold text-lg text-accent-secondary">Checking...</span>
+                </div>
+                <p id="status-timer" class="text-sm text-muted mt-1">Initializing...</p>
+            </div>
+        </header>
+
+        <main>
+            <div class="border-b border-main mb-6"><nav class="-mb-px flex space-x-6 justify-center" aria-label="Tabs"><button id="tab-dashboard" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-accent tab-active">Dashboard</button><button id="tab-trends" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Trends</button><button id="tab-log" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Event Log</button><button id="tab-settings" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Settings</button></nav></div>
+
+            <div id="view-dashboard">
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Uptime Statistics</h2><div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></div>
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="bg-muted card-emboss p-6 rounded-lg text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div></div>
+                <div><h2 class="text-xl font-semibold text-accent mb-4">Advanced Diagnostics - Network Data Flow</h2><div id="diagnostics-container" class="relative text-muted p-2 min-h-[500px]"></div></div>
+            </div>
+
+            <div id="view-trends" class="hidden">
+                <div class="bg-muted card-emboss p-4 rounded-lg h-96 relative">
+                    <canvas id="trends-chart"></canvas>
+                    <button id="clear-trends-filter-btn" class="absolute top-2 right-2 bg-accent hover:bg-opacity-80 text-white text-xs font-bold py-1 px-3 rounded-md">Clear Filter</button>
+                </div>
+            </div>
+
+            <div id="view-log" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-accent">Event Log</h2>
+                    <div class="flex items-center gap-4">
+                        <div id="log-view-toggle" class="flex items-center border border-main rounded-md p-1">
+                            <button data-view="timeline" class="log-view-btn bg-accent text-white px-3 py-1 text-xs rounded">Timeline</button>
+                            <button data-view="calendar" class="log-view-btn px-3 py-1 text-xs rounded">Calendar</button>
+                        </div>
+                        <button id="clear-log-btn" class="px-4 py-2 text-sm font-medium text-white bg-status-down hover:bg-status-down-hover rounded-lg">Clear Log</button>
+                    </div>
+                </div>
+                <div id="log-timeline-container" class="bg-muted card-emboss rounded-lg max-h-[500px] overflow-y-auto border border-main p-6"></div>
+                <div id="log-calendar-container" class="hidden card-emboss p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-4 bg-muted p-2 rounded-lg">
+                        <button id="cal-prev-month" class="px-3 py-1 text-lg font-bold rounded hover:bg-border-primary">&lt;</button>
+                        <h3 id="cal-month-year" class="text-lg font-semibold text-accent-secondary"></h3>
+                        <button id="cal-next-month" class="px-3 py-1 text-lg font-bold rounded hover:bg-border-primary">&gt;</button>
+                    </div>
+                    <div id="cal-grid" class="calendar-grid bg-border-primary border border-border-primary rounded-lg overflow-hidden"></div>
+                </div>
+            </div>
+
+            <div id="view-settings" class="hidden">
+                 <div class="bg-muted card-emboss rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="lg:col-span-2"><h3 class="text-lg font-semibold text-accent-secondary mb-2">General</h3></div>
+                    <div class="flex items-center justify-between"><label for="sound-toggle" class="text-sm font-medium text-primary">Sound FX</label><div class="relative inline-block w-10 mr-2 align-middle select-none"><input type="checkbox" name="sound-toggle" id="sound-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="sound-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-border-primary cursor-pointer"></label></div></div>
+                    
+                    <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Update Rate</h3><div id="update-interval-group" class="flex flex-wrap gap-x-6 gap-y-2"></div></div>
+                    <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">"Online" Detection Method</h3><div id="online-detection-method-group" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div></div>
+                    <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Theme Selector</h3><div id="theme-selector-group" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div></div>
+                </div>
+            </div>
+        </main>
+        <footer class="text-center text-xs text-muted mt-8">
+            <p>A.N.U.S. v1.0 - Released under the <a href="#" id="license-link" class="text-accent hover:underline">GPLv3 License</a>.</p>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center"><div class="relative mx-auto p-5 border border-main w-96 shadow-lg rounded-md bg-bg-secondary"><div class="mt-3 text-center"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50"><svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><h3 class="text-lg font-medium text-primary mt-2">Clear All Metrics?</h3><p class="text-sm text-muted p-4">This will clear all historical data. This action cannot be undone.</p><div class="items-center px-4 py-3 gap-2 flex justify-center"><button id="modal-cancel-btn" class="px-4 py-2 bg-bg-tertiary rounded-md w-full">Cancel</button><button id="modal-confirm-btn" class="px-4 py-2 bg-status-down text-white hover:bg-status-down-hover rounded-md w-full">Delete</button></div></div></div></div>
+    <div id="node-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-2xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 id="modal-title" class="text-xl font-semibold text-accent">Node Details</h3><button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="modal-content" class="text-sm space-y-4"></div></div></div>
+    <div id="server-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">A.N.U.S. Server Health</h3><button id="server-modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="server-modal-content" class="text-sm space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-muted p-4 rounded-lg h-64"><canvas id="cpu-chart"></canvas></div><div class="bg-muted p-4 rounded-lg h-64"><canvas id="mem-chart"></canvas></div><div class="md:col-span-2 bg-muted p-4 rounded-lg h-64"><canvas id="net-chart"></canvas></div></div></div></div>
+    <div id="license-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">GPLv3 License</h3><button id="license-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="license-content" class="text-xs space-y-4 max-h-[70vh] overflow-y-auto pr-4"></div></div></div>
+
+    <script type="module">
+        // --- State and Configuration ---
+        let currentState = null, lastState = null, lastStateChangeTime = null, log = [], allPingsData = [], trendsChart, isTrendsDataLoaded = false, soundEnabled = false, bruhPlayer, upPlayer;
+        let FUZZY_SAYINGS = {};
+        const sessionStartTime = new Date();
+        let totalSessionDowntime = 0, clientIp = '...', serverGatewayIp = 'N/A', pollingIntervalId = null;
+        let lastSuccessfulFetch = 0;
+        let lastSayingKey = null;
+        const miniChartInstances = {};
+        let serverChartCPU, serverChartMem, serverChartNet;
+        let calendarDate = new Date();
+        const uptimeChartInstances = {};
+
+        const DOMElements = {
+            loadingOverlay: document.getElementById('loading-overlay'),
+            loadingLogoContainer: document.getElementById('loading-logo-container'),
+            loadingErrorContainer: document.getElementById('loading-error-container'),
+            loadingErrorMessage: document.getElementById('loading-error-message'),
+            appContainer: document.getElementById('app-container'),
+            statusIndicator: document.getElementById('status-indicator'), statusText: document.getElementById('status-text'), statusTimer: document.getElementById('status-timer'), currentStatusCard: document.getElementById('current-status-card'), uptimeStatsContainer: document.getElementById('uptime-stats-container'), serverHealthContainer: document.getElementById('server-health-container'),
+            diagnosticsContainer: document.getElementById('diagnostics-container'), 
+            updateIntervalGroup: document.getElementById('update-interval-group'), 
+            soundToggle: document.getElementById('sound-toggle'), 
+            logTimelineContainer: document.getElementById('log-timeline-container'), logCalendarContainer: document.getElementById('log-calendar-container'), logViewToggle: document.getElementById('log-view-toggle'), clearLogBtn: document.getElementById('clear-log-btn'), tabs: document.querySelectorAll('nav[aria-label="Tabs"] button'),
+            views: { dashboard: document.getElementById('view-dashboard'), trends: document.getElementById('view-trends'), log: document.getElementById('view-log'), settings: document.getElementById('view-settings') },
+            confirmModal: document.getElementById('confirm-modal'), modalCancelBtn: document.getElementById('modal-cancel-btn'), modalConfirmBtn: document.getElementById('modal-confirm-btn'), trendsChartCanvas: document.getElementById('trends-chart'),
+            nodeDetailsModal: document.getElementById('node-details-modal'), modalTitle: document.getElementById('modal-title'), modalContent: document.getElementById('modal-content'), modalCloseBtn: document.getElementById('modal-close-btn'),
+            serverDetailsModal: document.getElementById('server-details-modal'), serverModalCloseBtn: document.getElementById('server-modal-close-btn'),
+            logoContainer: document.getElementById('logo-container'), 
+            themeSelectorGroup: document.getElementById('theme-selector-group'), 
+            clearTrendsFilterBtn: document.getElementById('clear-trends-filter-btn'), 
+            onlineDetectionMethodGroup: document.getElementById('online-detection-method-group'),
+            qualityContainer: document.getElementById('quality-container'), qualityText: document.getElementById('quality-text'), qualityScore: document.getElementById('quality-score'),
+            calGrid: document.getElementById('cal-grid'), calMonthYear: document.getElementById('cal-month-year'), calPrevMonthBtn: document.getElementById('cal-prev-month'), calNextMonthBtn: document.getElementById('cal-next-month'),
+            licenseModal: document.getElementById('license-modal'), licenseLink: document.getElementById('license-link'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content')
+        };
+        
+        const themes = { 
+            'dark': { name: 'A.N.U.S. Default', palette: ['#f59e0b', '#38bdf8', '#4ade80', '#fb7185', '#a78bfa', '#f472b6', '#2dd4bf', '#facc15', '#a3e635'] }, 
+            'gwot': { name: 'GWOT', palette: ['#c7b39a', '#a8927d', '#8f9a6d', '#c27d65', '#6a7a8a', '#bfaea1', '#9e9e9e', '#d7b377', '#a1887f'] }, 
+            'dankpods': { name: 'DankPods', palette: ['#ff4b4b', '#ff8a8a', '#76ff03', '#fdd835', '#69f0ae', '#40c4ff', '#b388ff', '#ff80ab', '#ffff8d'] }, 
+            'matrix': { name: 'Matrix', palette: ['#39ff14', '#bfffab', '#00ff00', '#33ff33', '#66ff66', '#99ff99', '#ccffcc', '#00e600', '#00c200'] }, 
+            'vaporwave': { name: 'Vaporwave', palette: ['#ff00ff', '#00ffff', '#ffff00', '#ff6ec7', '#00f2ff', '#fdfd96', '#ffb3de', '#a7d8de', '#fffdc2'] }, 
+            'terminal': { name: 'Terminal', palette: ['#4caf50', '#8bc34a', '#aed581', '#dce775', '#fff176', '#ffb74d', '#ff8a65', '#e57373', '#f06292'] },
+            'ocean': { name: 'Ocean', palette: ['#3a86ff', '#83b9ff', '#48bfe3', '#fca311', '#e71d36', '#ffbe0b', '#fb5607', '#ff006e'] },
+            'sunset': { name: 'Sunset', palette: ['#ff6b6b', '#ffa5a5', '#4d908e', '#f9c74f', '#f94144', '#f8961e', '#577590', '#277da1'] },
+            'forest': { name: 'Forest', palette: ['#6a994e', '#a7c957', '#f2e279', '#bc4749', '#386641', '#8a817c', '#a3b18a', '#588157'] },
+            'dayman': { name: 'Dayman', palette: ['#f59e0b', '#fbbf24', '#16a34a', '#facc15', '#dc2626', '#3b82f6', '#6366f1', '#8b5cf6'] }
+        };
+
+        // --- Core Functions ---
+        const apiCall = async (action, payload = {}, timeout = 10000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+
+            const url = new URL(`./ping.php`, window.location.href);
+            url.searchParams.append('action', action);
+            url.searchParams.append('t', Date.now()); // Cache-busting parameter
+            if (payload.target) url.searchParams.append('target', payload.target);
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal,
+                    cache: 'no-cache'
+                });
+
+                clearTimeout(id);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`API Error: ${response.status} ${response.statusText} for action '${action}'. Response: ${errorText}`);
+                }
+
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+                    if (data.error) {
+                        throw new Error(`API returned an error for action '${action}': ${data.error}`);
+                    }
+                    return data;
+                } else {
+                    const responseText = await response.text();
+                    throw new Error(`Received non-JSON response from API for action '${action}'. Response: ${responseText}`);
+                }
+            } catch (error) {
+                clearTimeout(id);
+                if (error.name === 'AbortError') {
+                    throw new Error(`API request for action '${action}' timed out after ${timeout / 1000} seconds.`);
+                }
+                throw error;
+            }
+        };
+        const measureHttpLatency = async (url) => { if (!url || url.trim() === '' || url.trim() === 'N/A') return null; const testUrl = url.startsWith('http')?url:`http://${url}`; const startTime = performance.now(); try { await fetch(`${testUrl}?t=${Date.now()}`, { mode: 'no-cors', cache: 'no-store', signal: AbortSignal.timeout(1900) }); return performance.now() - startTime; } catch (e) { return null; } };
+        const measureServerLatency = async () => { const startTime = performance.now(); const result = await apiCall('pong'); return result ? performance.now() - startTime : null; };
+        const formatDuration = (ms) => { if (ms < 0) ms = 0; let s = Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60); s%=60; m%=60; const pad = n => String(n).padStart(2,'0'); return `${pad(h)}:${pad(m)}:${pad(s)}`; };
+        const formatTimestamp = (isoOrUnix) => { const date = new Date(isoOrUnix); return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); };
+        const timeAgo = (timestamp) => { const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000); let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + " years ago"; interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + " months ago"; interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " days ago"; interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " hours ago"; interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " minutes ago"; return Math.floor(seconds) + " seconds ago"; };
+        const getPingStatusClass = p => p === null ? 'text-status-down' : p < 75 ? 'text-status-up' : p < 150 ? 'text-status-warn' : 'text-status-down';
+        const getUptimeStatusClass = p => p < 95 ? 'text-status-down' : p < 99 ? 'text-status-warn' : 'text-status-up';
+        const getResourceStatusClass = (val, thresholds) => val > thresholds[1] ? 'text-status-down' : val > thresholds[0] ? 'text-status-warn' : 'text-status-up';
+        function playSound(player, force = false) { if ((soundEnabled || force) && player?.loaded) { if (Tone.context.state !== 'running') Tone.start(); player.start(); } }
+        
+        async function fetchAndUpdateData() {
+            const now = new Date();
+            const interval = parseInt(localStorage.getItem('updateInterval') || '1000', 10);
+            if (lastSuccessfulFetch > 0 && (now.getTime() - lastSuccessfulFetch) > interval * 3) {
+                const serverLog = await apiCall('get_log');
+                if (serverLog && serverLog.length > 0) { log = serverLog; currentState = log[0].status; lastStateChangeTime = new Date(log[0].startTime); }
+            }
+            const apiData = await apiCall('get_all_latest_metrics');
+            if (!apiData || !apiData.pings) {
+                throw new Error("Received invalid data structure from 'get_all_latest_metrics'");
+            };
+            lastSuccessfulFetch = now.getTime();
+            allPingsData = apiData.pings;
+            serverGatewayIp = apiData.server_status.server_gateway_ip;
+            clientIp = apiData.server_status.client_ip || 'Unavailable';
+            const [clientToGatewayPing, clientToServerPing] = await Promise.all([ measureHttpLatency(serverGatewayIp), measureServerLatency() ]);
+            
+            const detectionMethod = localStorage.getItem('onlineDetectionMethod') || 'critical_dns';
+            let newStatus = 'DOWN';
+            const targets = apiData.pings;
+            const gateway = targets.find(p => p.name === 'Gateway');
+            const dnsTargets = targets.filter(p => p.name.includes('DNS'));
+            const criticalTargets = targets.filter(p => p.critical);
+
+            switch(detectionMethod) {
+                case 'gateway':
+                    newStatus = gateway?.status === 'UP' ? 'UP' : 'DOWN';
+                    break;
+                case 'majority':
+                    const upCount = targets.filter(p => p.name !== 'Gateway' && p.status === 'UP').length;
+                    newStatus = upCount >= (targets.length - 1) / 2 ? 'UP' : 'DOWN';
+                    break;
+                case 'dns_resolvers':
+                    const dnsUpCount = dnsTargets.filter(p => p.status === 'UP').length;
+                    newStatus = dnsUpCount > 0 ? 'UP' : 'DOWN';
+                    break;
+                case 'critical_services':
+                    const criticalUpCount = criticalTargets.filter(p => p.status === 'UP').length;
+                    newStatus = criticalUpCount === criticalTargets.length ? 'UP' : 'DOWN';
+                    break;
+                case 'weighted_latency':
+                    const lowLatencyTarget = targets.filter(p => p.name !== 'Gateway' && p.ping < 50).some(p => p.status === 'UP');
+                    newStatus = lowLatencyTarget ? 'UP' : 'DOWN';
+                    break;
+                case 'weighted_reliability':
+                    const reliableTarget = targets.filter(p => p.name !== 'Gateway' && p.packet_loss < 5).some(p => p.status === 'UP');
+                    newStatus = reliableTarget ? 'UP' : 'DOWN';
+                    break;
+                case 'google': 
+                    const googlePing = targets.find(p => p.name === 'Google.com');
+                    newStatus = googlePing?.status === 'UP' ? 'UP' : 'DOWN';
+                    break;
+                case 'critical_dns': // New Default
+                default:
+                    const coreDns = ['1.1.1.1', '8.8.8.8', '208.67.222.222', 'dns.nextdns.io'];
+                    const coreDnsTargets = targets.filter(p => coreDns.includes(p.url));
+                    const coreDnsUpCount = coreDnsTargets.filter(p => p.status === 'UP').length;
+                    newStatus = coreDnsUpCount >= 2 ? 'UP' : 'DOWN'; // At least 2 of 4 must be up
+            }
+
+            if (currentState === null) {
+                currentState = newStatus;
+                lastStateChangeTime = new Date();
+                log.unshift({ status: newStatus, startTime: lastStateChangeTime.toISOString(), endTime: new Date().toISOString() });
+            } else if (newStatus !== currentState) {
+                const eventEndTime = new Date();
+                if (log.length > 0) log[0].endTime = eventEndTime.toISOString();
+                log.unshift({ status: newStatus, startTime: eventEndTime.toISOString(), endTime: new Date().toISOString() });
+                currentState = newStatus;
+                lastStateChangeTime = eventEndTime;
+            } else if (log.length > 0) {
+                log[0].endTime = new Date().toISOString();
+            }
+            localStorage.setItem('internetLog', JSON.stringify(log));
+            updateDashboard(apiData, clientToServerPing, clientToGatewayPing);
+        }
+
+        // --- UI Rendering Functions ---
+        function updateDashboard(data, clientToServerPing, clientToGatewayPing) {
+            updateStatusUI();
+            updateAllUptimeStats();
+            renderServerHealth(data.server_status);
+            updateClientInfo();
+            updateServerInfo(data.server_status);
+            updateGatewayInfo(data.server_status); // Update new gateway card
+            renderInternetNodeCards(data.pings);
+            drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status);
+            if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline();
+            updateFuzzyQualityMetric(data.pings, data.server_status.internet_quality_score);
+            updateLiveCharts(data);
+        }
+        function updateStatusUI() {
+            const { statusIndicator, statusText, statusTimer } = DOMElements;
+            DOMElements.currentStatusCard.className = `bg-muted card-emboss status-${currentState?.toLowerCase()} mt-4 rounded-lg p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto`;
+            statusIndicator.classList.toggle('blinking-dot', currentState === null);
+            statusText.textContent = currentState === 'UP' ? 'Connected' : currentState === 'DOWN' ? 'Disconnected' : 'Checking...';
+            if (lastStateChangeTime) statusTimer.textContent = `for ${formatDuration(new Date() - lastStateChangeTime)}`;
+            if (lastState !== null && lastState !== currentState) { 
+                if (currentState === 'DOWN') playSound(bruhPlayer); 
+                if (currentState === 'UP') playSound(upPlayer); 
+            }
+            lastState = currentState;
+        }
+        function renderLogTimeline() { DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatDuration(new Date(e.endTime) - new Date(e.startTime))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
+        function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatDuration(new Date() - new Date(log[0].startTime)); } }
+        function createUptimeCards() { const wins = [{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; DOMElements.uptimeStatsContainer.innerHTML = wins.map((w,i)=>`<div class="bg-muted card-emboss p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-muted">${w.l}</h3><div id="uptime-chart-${i}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1">--:--:-- downtime</p></div>`).join(''); }
+        function updateAllUptimeStats() { const wins=[{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; const cards=DOMElements.uptimeStatsContainer.children; const now = Date.now(); wins.forEach((w,i)=>{ const dur=w.d.call?w.d():w.d; let downMs=0; let disconnects=0; let lastStatus=null; log.filter(e=>new Date(e.endTime).getTime()>now-dur).forEach(e=>{if(e.status==='DOWN'){downMs+=new Date(e.endTime)-Math.max(new Date(e.startTime),now-dur);if(lastStatus!=='DOWN')disconnects++}lastStatus=e.status}); if(currentState==='DOWN'&&lastStateChangeTime){downMs+=now-Math.max(lastStateChangeTime,now-dur);if(lastStatus!=='DOWN')disconnects++} const upPerc=Math.max(0,(1-downMs/dur)*100); if(cards[i]){ cards[i].querySelector('.downtime-duration').textContent=`${formatDuration(downMs)} downtime`; createOrUpdateUptimeChart(`uptime-chart-${i}`, upPerc, disconnects); } }); }
+        function renderServerHealth(status) { const map=[{t:'Python Service',s:status.service_status},{t:'Apache',s:status.apache_status},{t:'PHP',s:status.php_fpm_status},{t:'Database',s:status.db_status}]; DOMElements.serverHealthContainer.innerHTML = map.map(s=>`<div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');}
+
+        function renderInternetNodeCards(pings) {
+            const internetNodes = pings.filter(p => p.name !== 'Gateway');
+            const grid = document.getElementById('internet-nodes-grid');
+            if (!grid) return;
+
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const palette = [...themes[currentTheme].palette].sort(() => 0.5 - Math.random());
+
+            internetNodes.forEach((n, index) => {
+                const cardId = `node-card-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                let card = document.getElementById(cardId);
+                if (!card) {
+                    card = document.createElement('div');
+                    card.id = cardId;
+                    card.className = "internet-node-card bg-bg-primary card-emboss card-emboss-hover p-3 rounded-lg border-2 transition-all cursor-pointer";
+                    card.dataset.nodeName = n.name;
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}"></p>
+                            <p class="text-xs font-bold node-ping"></p>
+                        </div>
+                        <div class="h-16 w-full my-2"><canvas id="mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}"></canvas></div>
+                        <div class="text-xs text-muted flex justify-between">
+                            <span class="node-jitter"></span>
+                            <span class="node-loss"></span>
+                        </div>`;
+                    grid.appendChild(card);
+                    card.addEventListener('click', () => showNodeDetailsModal(n));
+                }
+
+                const serverGateway = pings.find(p => p.name === 'Gateway');
+                card.style.borderColor = `${serverGateway?.status === 'UP' && n.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
+                
+                card.querySelector('.node-name').textContent = n.name;
+                const pingEl = card.querySelector('.node-ping');
+                pingEl.className = `text-xs font-bold ${getPingStatusClass(serverGateway?.status === 'UP' && n.status === 'UP' ? n.ping : null)}`;
+                pingEl.textContent = serverGateway?.status === 'UP' && n.status === 'UP' && n.ping !== null ? Math.round(n.ping) + 'ms' : '---';
+
+                card.querySelector('.node-jitter').textContent = `Jitter: ${n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A'}`;
+                card.querySelector('.node-loss').innerHTML = `Loss (15m): <span class="${getUptimeStatusClass(100 - (n.packet_loss_15m || 0))}">${n.packet_loss_15m !== null ? n.packet_loss_15m + '%' : 'N/A'}</span>`;
+
+                const canvasId = `mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                const color = palette[index % palette.length];
+                createOrUpdateMiniChart(canvasId, n.name, color);
+            });
+        }
+        
+        // MODIFICATION: Reworked layout and placeholder creation
+        function renderDiagnostics() {
+            const container = DOMElements.diagnosticsContainer;
+            if (!document.getElementById('diag-layout')) {
+                container.innerHTML = `
+                    <div id="diag-layout" class="relative w-full max-w-5xl mx-auto">
+                        <svg id="diagnostics-svg-container"></svg>
+                        
+                        <!-- Top Row: Client & Server -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-8 relative">
+                            <div id="diag-client" class="text-center flex-shrink-0 bg-muted card-emboss p-4 rounded-lg node-glow min-h-[160px]"></div>
+                            <div id="diag-server" class="text-center flex-shrink-0 bg-muted card-emboss card-emboss-hover p-4 rounded-lg node-glow cursor-pointer min-h-[160px]"></div>
+                            <div id="diag-ping-cs" class="absolute text-center text-xs p-1 rounded bg-bg-primary/80 backdrop-blur-sm"></div>
+                        </div>
+
+                        <!-- Middle Row: Gateway -->
+                        <div class="mb-8 text-center" id="diag-gateway-wrapper">
+                             <div id="diag-gateway" class="bg-bg-primary card-emboss p-3 rounded-lg border-2 transition-all w-full max-w-xl mx-auto">
+                                <!-- Content will be filled by updateGatewayInfo -->
+                             </div>
+                        </div>
+
+                        <!-- Bottom section: Internet Nodes -->
+                        <div>
+                            <div id="diag-internet" class="internet-nodes-container bg-muted card-emboss p-4 rounded-lg node-glow">
+                                <p class="font-semibold text-primary text-center mb-4">Internet Nodes</p>
+                                <div id="internet-nodes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            document.getElementById('diag-server').addEventListener('click', showServerDetailsModal);
+        }
+
+        // MODIFICATION: Reworked drawing logic for new layout
+        function drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, pings, serverStatus) {
+            const svg = document.getElementById('diagnostics-svg-container');
+            if (!svg) return;
+            const container = document.getElementById('diag-layout');
+            const client = document.getElementById('diag-client');
+            const server = document.getElementById('diag-server');
+            const gateway = document.getElementById('diag-gateway');
+            const internet = document.getElementById('diag-internet');
+            const pingCS = document.getElementById('diag-ping-cs');
+            if (!client || !server || !gateway || !internet || !pingCS) return;
+
+            const serverGateway = pings.find(p => p.name === 'Gateway');
+            const internetNodes = pings.filter(p => p.name !== 'Gateway');
+            const clientToServerStatus = clientToServerPing !== null ? 'up' : 'down';
+            const serverToGatewayStatus = serverGateway?.status === 'UP' ? 'up' : 'down';
+            const gatewayToInternetStatus = serverGateway?.status === 'UP' && internetNodes.some(n => n.status === 'UP') ? 'up' : 'down';
+
+            const containerRect = container.getBoundingClientRect();
+            const getCoords = (el) => { const rect = el.getBoundingClientRect(); return { x: rect.left - containerRect.left, y: rect.top - containerRect.top, width: rect.width, height: rect.height, cx: rect.left - containerRect.left + rect.width / 2, cy: rect.top - containerRect.top + rect.height / 2 }; };
+            
+            const clientCoords = getCoords(client);
+            const serverCoords = getCoords(server);
+            const gatewayCoords = getCoords(gateway);
+            const internetCoords = getCoords(internet);
+
+            const paths = [
+                { id: 'path-cs', d: `M ${clientCoords.cx} ${clientCoords.y} C ${clientCoords.cx} ${clientCoords.y - 60}, ${serverCoords.cx} ${serverCoords.y - 60}, ${serverCoords.cx} ${serverCoords.y}`, status: clientToServerStatus, duration: '3s' },
+                { id: 'path-sg', d: `M ${serverCoords.cx} ${serverCoords.y + serverCoords.height} L ${gatewayCoords.cx} ${gatewayCoords.y}`, status: serverToGatewayStatus, duration: '2s' },
+                { id: 'path-cg', d: `M ${clientCoords.cx} ${clientCoords.y + clientCoords.height} L ${gatewayCoords.cx} ${gatewayCoords.y}`, status: 'up', duration: '2s' },
+                { id: 'path-gi', d: `M ${gatewayCoords.cx} ${gatewayCoords.y + gatewayCoords.height} L ${internetCoords.cx} ${internetCoords.y}`, status: gatewayToInternetStatus, duration: '2.5s' }
+            ];
+
+            let svgMarkup = '';
+            paths.forEach(p => {
+                svgMarkup += `<path id="${p.id}" class="flow-path" d="${p.d}" /><circle class="flow-dot ${p.status}"><animateMotion dur="${p.duration}" repeatCount="indefinite"><mpath href="#${p.id}" /></animateMotion></circle>`;
+            });
+            svg.innerHTML = svgMarkup;
+            
+            pingCS.innerHTML = `Client ↔ Server: <span class="font-bold ${getPingStatusClass(clientToServerPing)}">${clientToServerPing ? Math.round(clientToServerPing)+'ms' : 'N/A'}</span>`;
+            
+            const csPath = document.getElementById('path-cs');
+            if(csPath) {
+                const pt = csPath.getPointAtLength(csPath.getTotalLength() / 2);
+                pingCS.style.left = `${pt.x - pingCS.offsetWidth / 2}px`;
+                pingCS.style.top = `${pt.y - pingCS.offsetHeight / 2}px`;
+            }
+        }
+
+        // NEW FUNCTION: Populates the detailed gateway card
+        function updateGatewayInfo(serverStatus) {
+            const gatewayCard = document.getElementById('diag-gateway');
+            const gatewayPingData = allPingsData.find(p => p.name === 'Gateway');
+            if (!gatewayCard || !serverStatus.gateway_details || !gatewayPingData) {
+                if(gatewayCard) gatewayCard.innerHTML = '<p class="text-muted p-4">Gateway data not available.</p>';
+                return;
+            }
+            const details = serverStatus.gateway_details;
+
+            gatewayCard.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <div class="md:col-span-1 text-center">
+                        <p class="font-semibold text-primary">Network Gateway</p>
+                        <p class="text-xs text-muted truncate" title="${details.vendor || 'Unknown Vendor'}">${details.vendor || 'Unknown Vendor'}</p>
+                    </div>
+                    <div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2">
+                        <p><span class="font-medium text-muted">IP:</span> ${details.ip}</p>
+                        <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
+                        <p><span class="font-medium text-muted">Ping:</span> <span class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
+                        <p><span class="font-medium text-muted">Jitter:</span> <span>${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
+                    </div>
+                </div>
+            `;
+            gatewayCard.style.borderColor = `${gatewayPingData.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
+            
+            // Re-add event listener since innerHTML is replaced
+            const newCard = gatewayCard.cloneNode(true);
+            gatewayCard.parentNode.replaceChild(newCard, gatewayCard);
+            newCard.addEventListener('click', () => {
+                if (gatewayPingData) showNodeDetailsModal(gatewayPingData);
+            });
+        }
+
+        function showNodeDetailsModal(data) {
+            DOMElements.modalTitle.textContent = `Details for ${data.name}`;
+            const dnsList = (data.dns_info && Array.isArray(data.dns_info) && data.dns_info.length > 0) ? data.dns_info.map(ip => `<li>${ip}</li>`).join('') : '<li>No DNS data available</li>';
+            const traceList = (data.traceroute_info && Array.isArray(data.traceroute_info) && data.traceroute_info.length > 0) ? data.traceroute_info.map(hop => `<li>${hop}</li>`).join('') : '<li>No traceroute data available</li>';
+            DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                    <div><p class="text-muted text-xs">Status</p><p class="font-semibold" style="color:${data.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${data.status}</p></div>
+                    <div><p class="text-muted text-xs">Ping</p><p class="font-semibold">${data.ping ? Math.round(data.ping) + ' ms' : 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">Jitter</p><p class="font-semibold">${data.jitter ? data.jitter.toFixed(2) + ' ms' : 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">Current Packet Loss</p><p class="font-semibold">${data.packet_loss !== null ? data.packet_loss + '%' : 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">Packet Loss (15m)</p><p class="font-semibold">${data.packet_loss_15m !== null ? data.packet_loss_15m + '%' : 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">Min/Max Ping (15m)</p><p class="font-semibold">${data.min_ping_15m !== null && data.max_ping_15m !== null ? data.min_ping_15m+'ms / '+data.max_ping_15m+'ms' : 'N/A'}</p></div>
+                </div>
+                <div class="mb-4"><p class="text-muted text-xs">Last Checked</p><p class="font-semibold">${formatTimestamp(data.timestamp * 1000)} (${timeAgo(data.timestamp)})</p></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><p class="text-primary font-semibold mb-1">DNS Info</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${dnsList}</ul></div>
+                    <div><p class="text-primary font-semibold mb-1">Traceroute</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${traceList}</ul></div>
+                </div>`;
+            DOMElements.nodeDetailsModal.classList.remove('hidden');
+        }
+        async function initializeTrendsChart() {
+            if (isTrendsDataLoaded) return;
+            const historicalData = await apiCall('get_historical_data');
+            if (!historicalData) return;
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const palette = themes[currentTheme].palette;
+            const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
+                if (!Array.isArray(historicalData[targetName])) return [];
+                const color = palette[index % palette.length];
+                return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2, };
+            });
+            let isFiltered = false;
+            trendsChart = new Chart(DOMElements.trendsChartCanvas, {
+                type: 'line', data: { datasets },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } },
+                    plugins: {
+                        legend: {
+                            labels: { color: 'var(--text-primary)' },
+                            onClick: (e, legendItem, legend) => {
+                                const index = legendItem.datasetIndex;
+                                const ci = legend.chart;
+                                const meta = ci.getDatasetMeta(index);
+                                if (!isFiltered) {
+                                    ci.data.datasets.forEach((ds, i) => { if (i !== index) ci.hide(i); });
+                                    isFiltered = true;
+                                } else {
+                                    meta.hidden = !meta.hidden;
+                                }
+                                DOMElements.clearTrendsFilterBtn.style.display = 'block';
+                                legend.legendItems.forEach((item, i) => { item.hidden = !ci.isDatasetVisible(i); });
+                                ci.update();
+                            }
+                        },
+                        zoom: { pan: { enabled: true, mode: 'x' }, zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' } }
+                    }
+                }
+            });
+            DOMElements.clearTrendsFilterBtn.addEventListener('click', () => {
+                trendsChart.data.datasets.forEach((ds, i) => trendsChart.show(i));
+                isFiltered = false;
+                DOMElements.clearTrendsFilterBtn.style.display = 'none';
+            });
+            isTrendsDataLoaded = true;
+        }
+
+        // --- Initialization and Event Listeners ---
+        function setupEventListeners() {
+            DOMElements.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    DOMElements.tabs.forEach(t => t.classList.remove('tab-active'));
+                    tab.classList.add('tab-active');
+                    Object.values(DOMElements.views).forEach(v => v.classList.add('hidden'));
+                    const view = tab.id.split('-')[1];
+                    if (DOMElements.views[view]) DOMElements.views[view].classList.remove('hidden');
+                    if (view === 'log') {
+                        apiCall('get_log').then(serverLog => {
+                            if (serverLog) {
+                                log = serverLog;
+                                renderLogTimeline();
+                                renderCalendar(calendarDate);
+                            }
+                        });
+                    }
+                    if (view === 'trends') initializeTrendsChart();
+                });
+            });
+            DOMElements.clearLogBtn.addEventListener('click', () => DOMElements.confirmModal.classList.remove('hidden'));
+            DOMElements.modalCancelBtn.addEventListener('click', () => DOMElements.confirmModal.classList.add('hidden'));
+            DOMElements.modalConfirmBtn.addEventListener('click', async () => { await apiCall('clear_log'); log = []; totalSessionDowntime = 0; renderLogTimeline(); renderCalendar(calendarDate); updateAllUptimeStats(); if (trendsChart) { trendsChart.data.datasets.forEach(ds => ds.data = []); trendsChart.update(); } DOMElements.confirmModal.classList.add('hidden'); });
+            DOMElements.soundToggle.addEventListener('change', () => {
+                soundEnabled = DOMElements.soundToggle.checked;
+                localStorage.setItem('soundEnabled', soundEnabled);
+            });
+            DOMElements.modalCloseBtn.addEventListener('click', () => DOMElements.nodeDetailsModal.classList.add('hidden'));
+            DOMElements.serverModalCloseBtn.addEventListener('click', () => DOMElements.serverDetailsModal.classList.add('hidden'));
+            DOMElements.logoContainer.addEventListener('click', () => playSound(bruhPlayer, true));
+            DOMElements.logViewToggle.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const view = e.target.dataset.view;
+                    DOMElements.logViewToggle.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-accent', 'text-white'));
+                    e.target.classList.add('bg-accent', 'text-white');
+                    if (view === 'timeline') {
+                        DOMElements.logTimelineContainer.classList.remove('hidden');
+                        DOMElements.logCalendarContainer.classList.add('hidden');
+                    } else {
+                        DOMElements.logTimelineContainer.classList.add('hidden');
+                        DOMElements.logCalendarContainer.classList.remove('hidden');
+                        renderCalendar(calendarDate);
+                    }
+                }
+            });
+            DOMElements.calPrevMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(calendarDate); });
+            DOMElements.calNextMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(calendarDate); });
+            DOMElements.licenseLink.addEventListener('click', (e) => { e.preventDefault(); DOMElements.licenseModal.classList.remove('hidden'); });
+            DOMElements.licenseCloseBtn.addEventListener('click', () => {DOMElements.licenseModal.classList.add('hidden'); });
+        }
+
+        function applySettings() {
+            soundEnabled = localStorage.getItem('soundEnabled') === 'true';
+            DOMElements.soundToggle.checked = soundEnabled;
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.className = `theme-${theme}`;
+            
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
+            document.documentElement.style.setProperty('--accent-primary-trans-1', `${accentColor}33`);
+            document.documentElement.style.setProperty('--accent-primary-trans-2', `${accentColor}55`);
+            if (trendsChart) {
+                const palette = themes[theme].palette;
+                trendsChart.data.datasets.forEach((dataset, index) => {
+                    const color = palette[index % palette.length];
+                    dataset.borderColor = color;
+                    dataset.backgroundColor = `${color}33`;
+                });
+                trendsChart.options.scales.x.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary'); trendsChart.options.scales.y.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary'); trendsChart.options.scales.x.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); trendsChart.options.scales.y.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); trendsChart.options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary'); trendsChart.update();
+            }
+        }
+
+        function loadSettings() {
+            const createRadioGroup = (container, groupName, options, savedValue, callback) => {
+                container.innerHTML = '';
+                Object.entries(options).forEach(([value, label]) => {
+                    const id = `${groupName}-${value}`;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'flex items-center';
+                    wrapper.innerHTML = `
+                        <input id="${id}" name="${groupName}" type="radio" value="${value}" class="h-4 w-4 border-gray-300 text-accent focus:ring-accent-secondary">
+                        <label for="${id}" class="ml-3 block text-sm font-medium text-primary">${label}</label>
+                    `;
+                    const radio = wrapper.querySelector('input');
+                    if (value === savedValue) {
+                        radio.checked = true;
+                    }
+                    radio.addEventListener('change', callback);
+                    container.appendChild(wrapper);
+                });
+            };
+
+            const intervalOptions = { '1000': '1s', '2000': '2s', '5000': '5s', '10000': '10s' };
+            const detectionOptions = {
+                'critical_dns': 'Critical DNS Check (Default)', 'gateway': 'Gateway Ping', 'majority': 'Majority of Nodes',
+                'dns_resolvers': 'Any DNS Resolver', 'critical_services': 'All Critical Services',
+                'weighted_latency': 'Weighted (Latency)', 'weighted_reliability': 'Weighted (Reliability)', 'google': 'Google Ping'
+            };
+            const themeOptions = Object.fromEntries(Object.entries(themes).map(([key, val]) => [key, val.name]));
+
+            createRadioGroup(DOMElements.updateIntervalGroup, 'update-interval', intervalOptions, localStorage.getItem('updateInterval') || '1000', (e) => {
+                localStorage.setItem('updateInterval', e.target.value);
+                apiCall('save_settings', { settings: { update_interval: e.target.value } });
+                startPolling(e.target.value);
+            });
+
+            createRadioGroup(DOMElements.onlineDetectionMethodGroup, 'online-detection-method', detectionOptions, localStorage.getItem('onlineDetectionMethod') || 'critical_dns', (e) => {
+                localStorage.setItem('onlineDetectionMethod', e.target.value);
+            });
+
+            createRadioGroup(DOMElements.themeSelectorGroup, 'theme-selector', themeOptions, localStorage.getItem('theme') || 'dark', (e) => {
+                localStorage.setItem('theme', e.target.value);
+                applySettings();
+            });
+            
+            applySettings();
+        }
+
+        function startPolling(interval) { if (pollingIntervalId) clearInterval(pollingIntervalId); fetchAndUpdateData().catch(handleError); pollingIntervalId = setInterval(() => fetchAndUpdateData().catch(handleError), interval); setInterval(updateActiveLogTimer, 1000); }
+
+        async function loadFuzzySayings() {
+            try {
+                const response = await fetch('./fuzzy_sayings.json');
+                if(response.ok) {
+                    FUZZY_SAYINGS = await response.json();
+                } else {
+                    console.error("Could not load fuzzy sayings: HTTP " + response.status);
+                }
+            } catch (error) {
+                console.error("Could not load fuzzy sayings:", error);
+            }
+        }
+
+        function updateFuzzyQualityMetric(pings, score) {
+            if (!FUZZY_SAYINGS || Object.keys(FUZZY_SAYINGS).length === 0) return;
+            if (currentState === 'DOWN') {
+                DOMElements.qualityText.textContent = FUZZY_SAYINGS["0"][Math.floor(Math.random() * FUZZY_SAYINGS["0"].length)];
+                DOMElements.qualityScore.textContent = "(Score: 0)";
+                DOMElements.qualityText.style.color = 'var(--color-status-down)';
+                return;
+            }
+
+            const levelKeys = Object.keys(FUZZY_SAYINGS).map(Number).sort((a, b) => a - b);
+            let sayingKey = levelKeys[0];
+            for (const key of levelKeys) {
+                if (score >= key) {
+                    sayingKey = key;
+                } else {
+                    break;
+                }
+            }
+
+            if (sayingKey.toString() !== lastSayingKey) {
+                const sayings = FUZZY_SAYINGS[sayingKey];
+                DOMElements.qualityText.textContent = sayings[Math.floor(Math.random() * sayings.length)];
+                lastSayingKey = sayingKey.toString();
+            }
+
+            DOMElements.qualityScore.textContent = `(Score: ${score})`;
+            if (score < 150) DOMElements.qualityText.style.color = 'var(--color-status-down)';
+            else if (score < 300) DOMElements.qualityText.style.color = 'var(--color-status-warn)';
+            else DOMElements.qualityText.style.color = 'var(--color-status-up)';
+        }
+
+        async function createOrUpdateMiniChart(canvasId, targetName, color) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+            
+            if (miniChartInstances[canvasId]) {
+                const recentData = await apiCall('get_recent_history', { target: targetName });
+                if (!recentData) return;
+                miniChartInstances[canvasId].data.labels = recentData.map(d => d.timestamp * 1000);
+                miniChartInstances[canvasId].data.datasets[0].data = recentData.map(d => d.ping);
+                miniChartInstances[canvasId].data.datasets[0].borderColor = color || 'var(--accent-primary)';
+                miniChartInstances[canvasId].update('none');
+            } else {
+                const recentData = await apiCall('get_recent_history', { target: targetName });
+                if (!recentData) return;
+                const data = {
+                    labels: recentData.map(d => d.timestamp * 1000),
+                    datasets: [{
+                        label: 'Ping',
+                        data: recentData.map(d => d.ping),
+                        borderColor: color || 'var(--accent-primary)',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                };
+                miniChartInstances[canvasId] = new Chart(ctx, {
+                    type: 'line', data: data,
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { display: false }, y: { display: false, beginAtZero: true } },
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        animation: { duration: 0 }
+                    }
+                });
+            }
+        }
+        
+        function createOrUpdateUptimeChart(containerId, percentage, disconnects) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const size = 100;
+            const strokeWidth = 10;
+            const radius = (size / 2) - (strokeWidth / 2);
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+            const colorClass = getUptimeStatusClass(percentage);
+            const colorVar = colorClass.replace('text-','var(--color-');
+
+            if (!uptimeChartInstances[containerId]) {
+                container.innerHTML = `
+                    <svg viewBox="0 0 ${size} ${size}">
+                        <circle class="background" stroke="var(--border-primary)" stroke-width="${strokeWidth}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}"/>
+                        <circle class="progress" stroke="${colorVar})" stroke-width="${strokeWidth}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}" style="stroke-linecap: round; transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;"/>
+                    </svg>
+                    <div class="disconnect-count">
+                        <span class="font-bold text-2xl ${colorClass}">${disconnects}</span>
+                        <p class="text-xs text-muted -mt-1">drops</p>
+                    </div>
+                `;
+                uptimeChartInstances[containerId] = {
+                    circle: container.querySelector('.progress'),
+                    disconnects: container.querySelector('.disconnect-count .font-bold')
+                };
+                // Trigger the animation on the first render
+                setTimeout(() => {
+                    uptimeChartInstances[containerId].circle.style.strokeDashoffset = offset;
+                }, 100);
+            } else {
+                const { circle, disconnects: disconnectsEl } = uptimeChartInstances[containerId];
+                circle.style.strokeDashoffset = offset;
+                circle.setAttribute('stroke', `${colorVar})`);
+                disconnectsEl.textContent = disconnects;
+                disconnectsEl.className = `font-bold text-2xl ${colorClass}`;
+            }
+        }
+
+        function updateLiveCharts(apiData) {
+            if (trendsChart && !DOMElements.views.trends.classList.contains('hidden')) {
+                apiData.pings.forEach(ping => {
+                    const dataset = trendsChart.data.datasets.find(d => d.label === ping.name);
+                    if (dataset) {
+                        dataset.data.push({ x: ping.timestamp * 1000, y: ping.ping });
+                        if (dataset.data.length > 500) {
+                            dataset.data.shift();
+                        }
+                    }
+                });
+                trendsChart.update('none');
+            }
+        }
+        
+        async function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            DOMElements.calMonthYear.textContent = `${date.toLocaleString('default', { month: 'long' })} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const eventsByDay = {};
+            const serverLog = await apiCall('get_log');
+            if (serverLog) {
+                serverLog.forEach(event => {
+                    const start = new Date(event.startTime);
+                    const end = new Date(event.endTime);
+                    let current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+                    
+                    while (current <= end) {
+                        const dateKey = current.toISOString().split('T')[0];
+                        if (!eventsByDay[dateKey]) eventsByDay[dateKey] = { UP: 0, DOWN: 0 };
+                        
+                        const dayStart = current;
+                        const dayEnd = new Date(dayStart);
+                        dayEnd.setDate(dayEnd.getDate() + 1);
+
+                        const effectiveStart = start > dayStart ? start : dayStart;
+                        const effectiveEnd = end < dayEnd ? end : dayEnd;
+                        
+                        const duration = effectiveEnd - effectiveStart;
+
+                        if (event.status === 'UP') eventsByDay[dateKey].UP += duration;
+                        else eventsByDay[dateKey].DOWN += duration;
+
+                        current.setDate(current.getDate() + 1);
+                    }
+                });
+            }
+
+            let html = '<div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div><div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>';
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="calendar-day other-month"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                html += `<div class="calendar-day"><span class="font-semibold">${day}</span>`;
+                if (eventsByDay[dateKey]) {
+                    const totalDuration = eventsByDay[dateKey].UP + eventsByDay[dateKey].DOWN;
+                    const upPercent = (eventsByDay[dateKey].UP / totalDuration) * 100;
+                    const downPercent = (eventsByDay[dateKey].DOWN / totalDuration) * 100;
+                    if (downPercent > 1) html += `<div class="event-bar event-bar-down" style="width:${downPercent}%" title="Downtime: ${formatDuration(eventsByDay[dateKey].DOWN)}"></div>`;
+                    if (upPercent > 1) html += `<div class="event-bar event-bar-up" style="width:${upPercent}%" title="Uptime: ${formatDuration(eventsByDay[dateKey].UP)}"></div>`;
+                }
+                html += '</div>';
+            }
+            DOMElements.calGrid.innerHTML = html;
+        }
+
+
+        async function showServerDetailsModal() {
+            DOMElements.serverDetailsModal.classList.remove('hidden');
+            const history = await apiCall('get_resource_history');
+            if (!history) return;
+
+            const createChart = (canvasId, label, dataKey, unit, color) => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: history.map(d => d.timestamp * 1000),
+                        datasets: [{
+                            label: label,
+                            data: history.map(d => d[dataKey]),
+                            borderColor: color,
+                            backgroundColor: `${color}33`,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.3,
+                            fill: true,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + unit } } },
+                        plugins: { legend: { display: false }, title: { display: true, text: label, color: 'var(--text-primary)' } }
+                    }
+                });
+            };
+
+            if (serverChartCPU) serverChartCPU.destroy();
+            if (serverChartMem) serverChartMem.destroy();
+            if (serverChartNet) serverChartNet.destroy();
+
+            serverChartCPU = createChart('cpu-chart', 'CPU Usage', 'cpu_usage', '%', 'var(--accent-secondary)');
+            serverChartMem = createChart('mem-chart', 'Memory Usage', 'mem_usage', '%', 'var(--color-status-up)');
+            
+            const netCtx = document.getElementById('net-chart').getContext('2d');
+            serverChartNet = new Chart(netCtx, {
+                type: 'line',
+                data: {
+                    labels: history.map(d => d.timestamp * 1000),
+                    datasets: [
+                        { label: 'Download', data: history.map(d => d.net_down_kbps), borderColor: '#38bdf8', backgroundColor: '#38bdf833', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true },
+                        { label: 'Upload', data: history.map(d => d.net_up_kbps), borderColor: '#a78bfa', backgroundColor: '#a78bfa33', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' Kbps' } } },
+                    plugins: { legend: { labels: { color: 'var(--text-primary)' } }, title: { display: true, text: 'Network Usage', color: 'var(--text-primary)' } }
+                }
+            });
+        }
+
+        async function updateClientInfo() {
+            const clientCard = document.getElementById('diag-client');
+            if (!clientCard) return;
+
+            const ua = navigator.userAgent;
+            let os = 'Unknown OS';
+            if (ua.includes('Win')) os = 'Windows';
+            if (ua.includes('Mac')) os = 'macOS';
+            if (ua.includes('Linux')) os = 'Linux';
+            if (ua.includes('Android')) os = 'Android';
+            if (ua.includes('like Mac')) os = 'iOS';
+
+            let browser = 'Unknown Browser';
+            if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('SamsungBrowser')) browser = 'Samsung Internet';
+            else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
+            else if (ua.includes('Edge')) browser = 'Edge';
+            else if (ua.includes('Chrome')) browser = 'Chrome';
+            else if (ua.includes('Safari')) browser = 'Safari';
+
+            const details = await apiCall('get_client_details');
+            const hostname = details?.hostname || 'N/A';
+            const mac = details?.mac || 'N/A';
+            
+            clientCard.innerHTML = `
+                <p class="font-semibold text-primary">Client Device</p>
+                <p class="text-xs text-muted truncate" title="${hostname}">${hostname}</p>
+                <div class="mt-2 text-xs text-left space-y-1">
+                    <p><span class="font-medium text-muted">IP:</span> ${clientIp}</p>
+                    <p><span class="font-medium text-muted">MAC:</span> ${mac}</p>
+                    <p><span class="font-medium text-muted">OS:</span> ${os}</p>
+                    <p><span class="font-medium text-muted">Browser:</span> ${browser}</p>
+                </div>
+            `;
+        }
+        
+        function updateServerInfo(serverStatus) {
+            const serverCard = document.getElementById('diag-server');
+            if (!serverCard || !serverStatus.resource_usage) return;
+            const usage = serverStatus.resource_usage;
+            serverCard.innerHTML = `
+                <p class="font-semibold text-primary">A.N.U.S. Server</p>
+                <p class="text-xs text-muted">${serverStatus.server_ip}</p>
+                <div class="mt-2 text-xs text-left space-y-1">
+                    <p><span class="font-medium text-muted">CPU:</span> <span class="${getResourceStatusClass(usage.cpu_usage, [50, 80])}">${usage.cpu_usage}%</span></p>
+                    <p><span class="font-medium text-muted">MEM:</span> <span class="${getResourceStatusClass(usage.mem_usage, [60, 85])}">${usage.mem_usage}%</span></p>
+                    <p><span class="font-medium text-muted">DOWN:</span> ${usage.net_down_kbps} Kbps</p>
+                    <p><span class="font-medium text-muted">UP:</span> ${usage.net_up_kbps} Kbps</p>
+                </div>
+            `;
+        }
+
+        function showLicense() {
+            DOMElements.licenseContent.innerHTML = `<p class="font-bold">GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</p><p>Copyright © 2007 Free Software Foundation, Inc. <a href="https://fsf.org/" class="text-accent hover:underline">https://fsf.org/</a></p><p>Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.</p><p class="font-semibold mt-4">Preamble</p><p>The GNU General Public License is a free, copyleft license for software and other kinds of works...</p><p>[... Full license text would go here ...]</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>`;
+        }
+        
+        function handleError(error) {
+            console.error("Caught error:", error);
+            DOMElements.loadingOverlay.classList.add('loading-error');
+            DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
+            DOMElements.loadingErrorContainer.classList.remove('hidden');
+            if (pollingIntervalId) {
+                clearInterval(pollingIntervalId);
+            }
+        }
+
+        async function initializeApp() {
+            try {
+                // Setup UI skeletons first
+                createUptimeCards();
+                setupEventListeners();
+                loadSettings();
+                showLicense();
+                renderDiagnostics();
+                
+                // Load assets and initial data in parallel
+                await Promise.all([
+                    new Promise(resolve => { bruhPlayer = new Tone.Player("./assets/bruh.mp3", resolve).toDestination(); }),
+                    new Promise(resolve => { upPlayer = new Tone.Player("./assets/up.mp3", resolve).toDestination(); }),
+                    loadFuzzySayings(),
+                    apiCall('get_log').then(serverLog => {
+                        if (serverLog && serverLog.length > 0) {
+                            log = serverLog;
+                            currentState = log[0].status;
+                            lastStateChangeTime = new Date(log[0].startTime);
+                        }
+                    })
+                ]);
+
+                // Trigger the success animation
+                DOMElements.loadingOverlay.classList.add('loading-success');
+                DOMElements.loadingLogoContainer.addEventListener('animationend', () => {
+                    DOMElements.loadingOverlay.style.display = 'none';
+                    DOMElements.appContainer.classList.remove('hidden-on-load');
+                    DOMElements.appContainer.classList.add('visible');
+                    
+                    // Start the main data loop only after the app is visible
+                    const updateInterval = localStorage.getItem('updateInterval') || 1000;
+                    startPolling(updateInterval);
+                }, { once: true });
+
+
+                new ResizeObserver(() => {
+                    if (!DOMElements.views.dashboard.classList.contains('hidden') && allPingsData.length > 0) {
+                        drawDiagnosticPaths(null, null, allPingsData, { server_ip: clientIp, server_gateway_ip: serverGatewayIp });
+                    }
+                }).observe(DOMElements.diagnosticsContainer);
+            } catch (e) {
+                handleError(e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

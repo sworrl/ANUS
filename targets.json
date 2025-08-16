@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Gateway",
+        "url": "DETECT_GATEWAY"
+    },
+    {
+        "name": "OpenDNS Primary",
+        "url": "208.67.222.222"
+    },
+    {
+        "name": "OpenDNS Secondary",
+        "url": "208.67.220.220"
+    },
+    {
+        "name": "Google.com",
+        "url": "google.com"
+    },
+    {
+        "name": "Cloudflare.com",
+        "url": "cloudflare.com"
+    },
+    {
+        "name": "8.8.8.8",
+        "url": "8.8.8.8"
+    },
+    {
+        "name": "1.1.1.1",
+        "url": "1.1.1.1"
+    },
+    {
+        "name": "Wikipedia.org",
+        "url": "wikipedia.org"
+    },
+    {
+        "name": "Office 365",
+        "url": "outlook.office365.com"
+    },
+    {
+        "name": "Amazon Web Services",
+        "url": "aws.amazon.com"
+    },
+    {
+        "name": "Microsoft",
+        "url": "microsoft.com"
+    },
+    {
+        "name": "Apple",
+        "url": "apple.com"
+    },
+    {
+        "name": "Reddit",
+        "url": "reddit.com"
+    },
+    {
+        "name": "Twitch",
+        "url": "twitch.tv"
+    },
+    {
+        "name": "GitHub",
+        "url": "github.com"
+    }
+]
