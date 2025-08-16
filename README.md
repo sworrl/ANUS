@@ -16,23 +16,23 @@ A.N.U.S. (Automated Network Utility System) is a comprehensive, self-hosted netw
 
 ## 🖼️ Screenshots
 
-\<p align="center"\>
-\<em\>[ YOUR SCREENSHOT OF THE MAIN DASHBOARD HERE ]\</em\>
-\<br\>
-\<strong\>Main Dashboard View\</strong\>
-\</p\>
+<p align="center">
+  <img src="./assets/dashboard-view.png" alt="Main Dashboard View Screenshot" width="700">
+  <br>
+  <strong>Main Dashboard View</strong>
+</p>
 
-\<p align="center"\>
-\<em\>[ YOUR SCREENSHOT OF THE TRENDS VIEW HERE ]\</em\>
-\<br\>
-\<strong\>Historical Trends View\</strong\>
-\</p\>
+<p align="center">
+  <img src="./assets/trends-view.png" alt="Historical Trends View Screenshot" width="700">
+  <br>
+  <strong>Historical Trends View</strong>
+</p>
 
-\<p align="center"\>
-\<em\>[ YOUR SCREENSHOT OF THE EVENT LOG CALENDAR VIEW HERE ]\</em\>
-\<br\>
-\<strong\>Event Log (Calendar View)\</strong\>
-\</p\>
+<p align="center">
+  <img src="./assets/calendar-view.png" alt="Event Log Calendar View Screenshot" width="700">
+  <br>
+  <strong>Event Log (Calendar View)</strong>
+</p>
 
 ## 🛠️ Tech Stack
 
@@ -64,6 +64,14 @@ Before you run the installer, your server **must** already have:
 * 🔒 A valid SSL certificate (e.g., from **Let's Encrypt**) properly configured for your domain.
 
 This script **does not** install or configure Apache or your SSL certificate for you. It builds *on top of* an existing, working, and secured setup.
+
+Please note that this script builds upon your existing server configuration:
+
+✅ It DOES: Create a new anus.conf file to enable the required Apache virtual host.
+
+❌ It DOES NOT: Install the Apache server itself or configure your SSL (Let's Encrypt) certificate.
+
+You must start with a working and secured Apache setup before running this script.
 
 ---
 
