@@ -4,12 +4,12 @@
         "url": "DETECT_GATEWAY"
     },
     {
-        "name": "OpenDNS Primary",
-        "url": "208.67.222.222"
+        "name": "NextDNS Primary",
+        "url": "45.90.28.20"
     },
     {
-        "name": "OpenDNS Secondary",
-        "url": "208.67.220.220"
+        "name": "NextDNS Secondary",
+        "url": "45.90.30.20"
     },
     {
         "name": "Google.com",

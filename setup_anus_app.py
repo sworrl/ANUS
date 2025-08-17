@@ -5,6 +5,8 @@ import os
 import sys
 import sqlite3
 import time
+import socket
+import xml.etree.ElementTree as ET
 
 # --- Configuration ---
 APP_DIR = "/var/www/html/anus"
@@ -16,6 +18,7 @@ CLIENT_IP_FILE = os.path.join(DB_DIR, "anus_client_ip.txt")
 SERVICE_NAME = "anus_service"
 PYTHON_SERVICE_FILE = "anus_service.py"
 SYSTEMD_SERVICE_PATH = f"/etc/systemd/system/{SERVICE_NAME}.service"
+VERSION = "v1.2.6"
 
 # --- Assets to be self-hosted ---
 ASSETS = {
@@ -76,10 +79,11 @@ def run_command(command, ignore_errors=False, show_output=True):
 def install_prerequisites():
     """Install required Apache, PHP, and Python packages."""
     print_header("Installing prerequisites")
+    # Added 'nmap' to the list of packages.
     packages = [
         "python3", "python3-pip", "apache2", 
         "php", "libapache2-mod-php", "php-sqlite3", 
-        "traceroute", "dnsutils", "iproute2", "wget", "sqlite3"
+        "traceroute", "dnsutils", "iproute2", "wget", "sqlite3", "nmap", "libcap2-bin"
     ]
     if not run_command("sudo apt-get update") or \
        not run_command(f"sudo apt-get install -y {' '.join(packages)}"):
@@ -110,6 +114,7 @@ def setup_directories_and_files():
     """Create necessary directories and files before copying."""
     print_header("Setting up directories and files")
     if not run_command(f"sudo mkdir -p {APP_DIR}"): return False
+    if not run_command(f"sudo mkdir -p {ASSETS_DIR}"): return False
     if not run_command(f"sudo mkdir -p {DB_DIR}"): return False
     if not run_command(f"sudo touch {CLIENT_IP_FILE}"): return False
     if not run_command(f"sudo touch {DB_FILE}"): return False
@@ -120,32 +125,32 @@ def copy_files():
     """Copy the application files to the web directory."""
     print_header("Copying application files")
     
-    # Files for the main application directory
-    app_files = ["index.html", "ping.php", PYTHON_SERVICE_FILE, "targets.json", "fuzzy_sayings.json"]
-    
-    # Files for the assets directory
-    asset_files = ["bruh.mp3", "up.mp3"]
-
     current_dir = os.path.dirname(os.path.realpath(__file__))
+    
+    # Files to be copied directly to the web app directory
+    app_files = ["index.html", "ping.php", PYTHON_SERVICE_FILE]
+    
+    # Files to be copied to the assets folder
+    asset_files = ["bruh.mp3", "up.mp3", "targets.json", "fuzzy_sayings.json", "themes.json", "README.md", "LICENSE", "license.md", "animated-logo.svg", "anus.conf"]
 
     # Copy main app files
     for file_name in app_files:
         source_path = os.path.join(current_dir, file_name)
         if not os.path.exists(source_path):
-            print_error(f"Required file '{file_name}' not found in the script directory.")
+            print_error(f"Required file '{file_name}' not found at {source_path}.")
             return False
         if not run_command(f"sudo cp {source_path} {APP_DIR}/"):
             return False
-
-    # Copy asset files
+            
+    # Copy asset files to assets directory
     for file_name in asset_files:
-        source_path = os.path.join(current_dir, file_name)
+        source_path = os.path.join(current_dir, "assets", file_name)
         if not os.path.exists(source_path):
-            print_warning(f"Sound file '{file_name}' not found. Skipping.")
+            print_warning(f"File '{file_name}' not found at {source_path}. Skipping.")
             continue
         if not run_command(f"sudo cp {source_path} {ASSETS_DIR}/"):
             return False
-    
+
     if not run_command(f"sudo chmod +x {APP_DIR}/{PYTHON_SERVICE_FILE}"):
         return False
     print_success("Application files copied.")
@@ -158,8 +163,8 @@ def set_permissions():
     if not run_command(f"sudo chmod -R 775 {DB_DIR}"): return False
     if not run_command(f"sudo chown -R www-data:www-data {APP_DIR}"): return False
     if not run_command(f"sudo chmod -R 755 {APP_DIR}"): return False
-    if os.path.exists(f"{APP_DIR}/targets.json"):
-        if not run_command(f"sudo chmod 664 {APP_DIR}/targets.json"): return False
+    if os.path.exists(f"{ASSETS_DIR}/targets.json"):
+        if not run_command(f"sudo chmod 664 {ASSETS_DIR}/targets.json"): return False
     print_success("File permissions set correctly.")
     return True
 
@@ -191,8 +196,9 @@ def configure_apache():
     CustomLog ${{APACHE_LOG_DIR}}/access.log combined
 </VirtualHost>
 """
-    with open("anus.conf.tmp", "w") as f: f.write(apache_conf_content)
-    if not run_command(f"sudo cp anus.conf.tmp {APACHE_CONF_PATH}"): return False
+    if not os.path.exists(APACHE_CONF_PATH):
+      with open("anus.conf.tmp", "w") as f: f.write(apache_conf_content)
+      if not run_command(f"sudo cp anus.conf.tmp {APACHE_CONF_PATH}"): return False
     if not run_command("sudo a2ensite anus.conf", ignore_errors=True): return False
     if not run_command("sudo a2enmod ssl alias", ignore_errors=True): return False
     print_success("Apache configured.")
@@ -227,16 +233,21 @@ WantedBy=multi-user.target
     return True
 
 def apply_system_tweaks():
-    """Apply necessary system-level tweaks like permissions for ping."""
+    """Apply necessary system-level tweaks like permissions for ping and nmap."""
     print_header("Applying system tweaks")
     if not run_command("sudo setcap cap_net_raw+ep /bin/ping"):
         print_warning("Failed to set capabilities on ping. The service might not be able to measure latency.")
+    # Set capabilities for nmap to allow it to run without root
+    if not run_command("sudo setcap cap_net_raw,cap_net_admin,cap_net_bind_service+ep /usr/bin/nmap"):
+        print_warning("Failed to set capabilities on nmap. The service might not be able to perform network scans.")
+    if not run_command("sudo apt-get install -y libcap2-bin"):
+        print_warning("Failed to install libcap2-bin. Permissions for ping and nmap may not be set correctly.")
     print_success("System tweaks applied.")
     return True
 
 def install_or_update():
     """Run the full installation or update process."""
-    print_header("Starting A.N.U.S. Installation/Update")
+    print_header(f"Starting A.N.U.S. {VERSION} Installation/Update")
     if not install_prerequisites() or \
        not setup_directories_and_files() or \
        not download_assets() or \
@@ -252,7 +263,7 @@ def install_or_update():
     run_command("sudo systemctl restart apache2")
     run_command(f"sudo systemctl status {SERVICE_NAME}.service")
     
-    print_success("\n--- Installation/Update complete! ---")
+    print_success(f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
     print("The Apache web server and the Python monitoring service have been configured and restarted.")
     print(f"Your application should be accessible at: https://jengus.wifi.local.falcontechnix.com/anus/")
 
@@ -301,6 +312,8 @@ def _recreate_db_tables():
             cursor = conn.cursor()
             cursor.execute("DROP TABLE IF EXISTS metrics")
             cursor.execute("DROP TABLE IF EXISTS resource_metrics")
+            cursor.execute("DROP TABLE IF EXISTS local_network_info")
+            cursor.execute("DROP TABLE IF EXISTS nmap_scan_results")
             cursor.execute("DROP TABLE IF EXISTS client_pings")
             cursor.execute("""
                 CREATE TABLE metrics (
@@ -314,6 +327,19 @@ def _recreate_db_tables():
                     id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp INTEGER NOT NULL,
                     cpu_usage REAL, mem_usage REAL, net_down_kbps REAL, net_up_kbps REAL
                 )""")
+            cursor.execute("""
+                CREATE TABLE local_network_info (
+                    id INTEGER PRIMARY KEY, gateway_ip TEXT UNIQUE, gateway_mac TEXT,
+                    gateway_vendor TEXT, last_updated INTEGER
+                )
+            """)
+            cursor.execute("""
+                CREATE TABLE nmap_scan_results (
+                    id INTEGER PRIMARY KEY, ip TEXT UNIQUE, mac_address TEXT,
+                    vendor TEXT, hostname TEXT, is_up BOOLEAN,
+                    services TEXT, os TEXT, last_scanned INTEGER
+                )
+            """)
             cursor.execute("CREATE TABLE client_pings (ip TEXT PRIMARY KEY, ping REAL, timestamp INTEGER)")
             conn.commit()
         set_permissions() # Reset permissions on the new DB file
@@ -362,13 +388,26 @@ def view_database_stats():
             metrics_count = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM resource_metrics")
             resources_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM nmap_scan_results")
+            nmap_count = cursor.fetchone()[0]
             cursor.execute("SELECT name, COUNT(*) FROM metrics GROUP BY name ORDER BY name")
             targets = cursor.fetchall()
+            cursor.execute("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info LIMIT 1")
+            gateway_info = cursor.fetchone()
 
         db_size = os.path.getsize(DB_FILE) / (1024*1024) # Size in MB
 
+        print(f"{colors.BOLD}A.N.U.S. {VERSION} Database Statistics{colors.ENDC}")
+        print(f"----------------------------------------")
+        if gateway_info:
+            print(f"{colors.BOLD}Gateway Info (Cached):{colors.ENDC}")
+            print(f"  - IP: {gateway_info[0]}")
+            print(f"  - MAC: {gateway_info[1]}")
+            print(f"  - Vendor: {gateway_info[2]}")
+            print(f"----------------------------------------")
         print(f"{colors.BOLD}Total Ping Records:{colors.ENDC} {metrics_count}")
         print(f"{colors.BOLD}Total Resource Records:{colors.ENDC} {resources_count}")
+        print(f"{colors.BOLD}Total Nmap Scan Records:{colors.ENDC} {nmap_count}")
         print(f"{colors.BOLD}Database File Size:{colors.ENDC} {db_size:.2f} MB")
         print(f"{colors.BOLD}Records per Target:{colors.ENDC}")
         for target, count in targets:
@@ -380,7 +419,7 @@ def view_database_stats():
 def show_menu():
     """Displays the interactive menu."""
     while True:
-        print_header("A.N.U.S. Setup Menu")
+        print_header(f"A.N.U.S. Setup Menu ({VERSION})")
         print(f"{colors.GREEN}1.{colors.ENDC} Install / Update")
         print(f"{colors.YELLOW}2.{colors.ENDC} View Service Status")
         print(f"{colors.YELLOW}3.{colors.ENDC} View Service Logs (Last 50)")

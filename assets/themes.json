@@ -1,0 +1,332 @@
+{
+    "dark": {
+        "name": "A.N.U.S. Default",
+        "palette": ["#f59e0b", "#38bdf8", "#4ade80", "#fb7185", "#a78bfa", "#f472b6", "#2dd4bf", "#facc15", "#a3e635"],
+        "properties": {
+            "--bg-primary": "#0f172a", "--bg-secondary": "#1e293b", "--bg-tertiary": "#334155",
+            "--border-primary": "#334155", "--text-primary": "#e2e8f0", "--text-secondary": "#94a3b8",
+            "--accent-primary": "#f59e0b", "--accent-secondary": "#fbbf24",
+            "--color-status-up": "#22c55e", "--color-status-warn": "#eab308", "--color-status-down": "#ef4444",
+            "--shadow-light": "rgba(255, 255, 255, 0.05)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\"), linear-gradient(to bottom, var(--bg-primary), color-mix(in srgb, var(--bg-primary) 80%, black))",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cpath d='M0 1v50h50V1H0zm1 1h48v48H1V2z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E\"), linear-gradient(to bottom right, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 85%, black))",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\"), linear-gradient(to bottom right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 85%, black))"
+        }
+    },
+    "gwot": {
+        "name": "GWOT",
+        "palette": ["#c7b39a", "#a8927d", "#8f9a6d", "#c27d65", "#6a7a8a", "#bfaea1", "#9e9e9e", "#d7b377", "#a1887f"],
+        "properties": {
+            "--bg-primary": "#6a6a5a", "--bg-secondary": "#8c8c73", "--bg-tertiary": "#4b4b3d",
+            "--border-primary": "#4b4b3d", "--text-primary": "#e0dccf", "--text-secondary": "#bdb3a0",
+            "--accent-primary": "#c7b39a", "--accent-secondary": "#a8927d",
+            "--color-status-up": "#6b7f3a", "--color-status-warn": "#c4a251", "--color-status-down": "#a6584c",
+            "--shadow-light": "rgba(255, 255, 240, 0.1)", "--shadow-dark": "rgba(40, 40, 30, 0.6)",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3Cpattern id='dcu' patternUnits='userSpaceOnUse' width='200' height='200'%3E%3Cg fill-opacity='0.6'%3E%3Cpath fill='%23a18f78' d='M54.5 167.5Q42 153 35.5 133 29 113 42 100q13-13 28.5-4.5T99 100q14.5 4.5 18.5 19.5t-11 23q-15 8-28.5 1.5T54.5 167.5z'/%3E%3Cpath fill='%23695e4e' d='M140 100q-12.5-12.5-12.5-27.5t15.5-1.5q18 11 12.5 30T140 100zM40.5 5.5Q28-9 16.5 11 5 31 20.5 40q15.5 9 28-3.5T40.5 5.5z'/%3E%3Cpath fill='%23d1c5b4' d='M100 200q-15-15-15-32.5t11-12.5q16 12 11.5 31.5T100 200zM194.5 147.5q-12.5-12.5-12.5-27.5t15.5-1.5q18 11 12.5 30T194.5 147.5z'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%238c8c73'/%3E%3Crect width='100%25' height='100%25' fill='url(%23dcu)'/%3E%3C/svg%3E\"), linear-gradient(to bottom, var(--bg-primary), #3c3c32)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%234b4b3d' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.99-7.5L26 15v18.5L13 41 0 33.5V15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\"), radial-gradient(circle, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 70%, black))",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E\"), linear-gradient(to top left, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 80%, black))"
+        }
+    },
+    "dankpods": {
+        "name": "DankPods",
+        "palette": ["#ff4b4b", "#ff8a8a", "#76ff03", "#fdd835", "#69f0ae", "#40c4ff", "#b388ff", "#ff80ab", "#ffff8d"],
+        "properties": {
+            "--bg-primary": "#121212", "--bg-secondary": "#1e1e1e", "--bg-tertiary": "#404040",
+            "--border-primary": "#404040", "--text-primary": "#e0e0e0", "--text-secondary": "#999",
+            "--accent-primary": "#ff4b4b", "--accent-secondary": "#ff8a8a",
+            "--color-status-up": "#76ff03", "--color-status-warn": "#fdd835", "--color-status-down": "#ff4b4b",
+            "--shadow-light": "rgba(255, 255, 255, 0.07)", "--shadow-dark": "rgba(0, 0, 0, 0.6)",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ff4b4b' fill-opacity='0.1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\"), linear-gradient(45deg, var(--bg-primary), #000)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E\"), radial-gradient(ellipse at bottom, var(--bg-secondary), #111)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0v1h1V0H0zm2 0v1h1V0H2zm2 0v1h1V0H4zm2 0v1h1V0H6zM1 1v1h1V1H1zm2 0v1h1V1H3zm2 0v1h1V1H5zm2 0v1h1V1H7zM0 2v1h1V2H0zm2 0v1h1V2H2zm2 0v1h1V2H4zm2 0v1h1V2H6zM1 3v1h1V3H1zm2 0v1h1V3H3zm2 0v1h1V3H5zm2 0v1h1V3H7zM0 4v1h1V4H0zm2 0v1h1V4H2zm2 0v1h1V4H4zm2 0v1h1V4H6zM1 5v1h1V5H1zm2 0v1h1V5H3zm2 0v1h1V5H5zm2 0v1h1V5H7zM0 6v1h1V6H0zm2 0v1h1V6H2zm2 0v1h1V6H4zm2 0v1h1V6H6zM1 7v1h1V7H1zm2 0v1h1V7H3zm2 0v1h1V7H5zm2 0v1h1V7H7z' fill='%23ff4b4b' fill-opacity='0.1'/%3E%3C/svg%3E\"), linear-gradient(to right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 90%, black))"
+        }
+    },
+    "matrix": {
+        "name": "Matrix",
+        "palette": ["#39ff14", "#bfffab", "#00ff00", "#33ff33", "#66ff66", "#99ff99", "#ccffcc", "#00e600", "#00c200"],
+        "properties": {
+            "--bg-primary": "#000000", "--bg-secondary": "#0d0d0d", "--bg-tertiary": "#002b00",
+            "--border-primary": "#002b00", "--text-primary": "#00ff00", "--text-secondary": "#008f00",
+            "--accent-primary": "#39ff14", "--accent-secondary": "#bfffab",
+            "--color-status-up": "#39ff14", "--color-status-warn": "#bfffab", "--color-status-down": "#ff3333",
+            "--shadow-light": "rgba(0, 255, 0, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.7)",
+            "--body-bg-image": "linear-gradient(0deg, rgba(0,20,0,0.8), rgba(0,20,0,0.8)), url(\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\")",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E\"), linear-gradient(to bottom, var(--bg-secondary) 50%, #001100)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Cpath d='M0 3h1v1H0V3zm2 0h1v1H2V3zm2 0h1v1H4V3zm2 0h1v1H6V3zM1 4h1v1H1V4zm2 0h1v1H3V4zm2 0h1v1H5V4zM0 5h1v1H0V5zm2 5h1v1H2V5zm2 5h1v1H4V5zm2 5h1v1H6V5z' fill='%2339ff14' fill-opacity='0.2'/%3E%3C/svg%3E\"), linear-gradient(var(--bg-tertiary), #000)"
+        }
+    },
+    "sunset": {
+        "name": "Sunset",
+        "palette": ["#ff6b6b", "#ffa5a5", "#4d908e", "#f9c74f", "#f94144", "#f8961e", "#577590", "#277da1"],
+        "properties": {
+            "--bg-primary": "#f8721c", "--bg-secondary": "#f9c74f", "--bg-tertiary": "#4d908e",
+            "--border-primary": "#a3c1c0", "--text-primary": "#fff", "--text-secondary": "#fce7ba",
+            "--accent-primary": "#f94144", "--accent-secondary": "#ff6b6b",
+            "--color-status-up": "#4d908e", "--color-status-warn": "#f9c74f", "--color-status-down": "#ff6b6b",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #a3501a)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E\"), linear-gradient(to top right, var(--bg-secondary), #f8721c)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E\"), linear-gradient(to top left, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 80%, black))"
+        }
+    },
+    "ocean": {
+        "name": "Ocean",
+        "palette": ["#3a86ff", "#83b9ff", "#48bfe3", "#fca311", "#e71d36", "#ffbe0b", "#fb5607", "#ff006e"],
+        "properties": {
+            "--bg-primary": "#001f3f", "--bg-secondary": "#0074d9", "--bg-tertiary": "#7fdbff",
+            "--border-primary": "#0056b3", "--text-primary": "#fff", "--text-secondary": "#d9e6f2",
+            "--accent-primary": "#ff4136", "--accent-secondary": "#ff851b",
+            "--color-status-up": "#2ecc40", "--color-status-warn": "#ffdc00", "--color-status-down": "#ff4136",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #001122)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #003366)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M25 50h50v50H25z' fill='%23fff' fill-opacity='0.1'/%3E%3Cpath d='M0 0h50v50H0z' fill='%23fff' fill-opacity='0.1'/%3E%3C/svg%3E\"), linear-gradient(to bottom, var(--bg-tertiary), #4a82a0)"
+        }
+    },
+    "terminal": {
+        "name": "Terminal",
+        "palette": ["#4caf50", "#8bc34a", "#aed581", "#dce775", "#fff176", "#ffb74d", "#ff8a65", "#e57373", "#f06292"],
+        "properties": {
+            "--bg-primary": "#000", "--bg-secondary": "#121212", "--bg-tertiary": "#222",
+            "--border-primary": "#555", "--text-primary": "#00ff00", "--text-secondary": "#888",
+            "--accent-primary": "#00ff00", "--accent-secondary": "#008f00",
+            "--color-status-up": "#00ff00", "--color-status-warn": "#ffff00", "--color-status-down": "#ff0000",
+            "--shadow-light": "rgba(0, 255, 0, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.7)",
+            "--body-bg-image": "none", "--main-bg-image": "none", "--muted-bg-image": "none"
+        }
+    },
+    "forest": {
+        "name": "Forest",
+        "palette": ["#1b4332", "#2d6a4f", "#40916c", "#1b4332", "#386641", "#8a817c", "#a3b18a", "#588157"],
+        "properties": {
+            "--bg-primary": "#1b4332", "--bg-secondary": "#2d6a4f", "--bg-tertiary": "#40916c",
+            "--border-primary": "#2d6a4f", "--text-primary": "#e8f5e9", "--text-secondary": "#a2c2b3",
+            "--accent-primary": "#a3e635", "--accent-secondary": "#d3f982",
+            "--color-status-up": "#a3e635", "--color-status-warn": "#f9c74f", "--color-status-down": "#e5383b",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #082a1b)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #1b4332)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23000' fill-opacity='0.1'/%3E%3Cpath d='M20 50l30 30 30-30L50 20z' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E\"), linear-gradient(to bottom, var(--bg-tertiary), #346e56)"
+        }
+    },
+    "dayman": {
+        "name": "Dayman",
+        "palette": ["#f59e0b", "#fbbf24", "#16a34a", "#facc15", "#dc2626", "#3b82f6", "#6366f1", "#8b5cf6"],
+        "properties": {
+            "--bg-primary": "#f0f0f0", "--bg-secondary": "#ffffff", "--bg-tertiary": "#e0e0e0",
+            "--border-primary": "#d0d0d0", "--text-primary": "#333", "--text-secondary": "#666",
+            "--accent-primary": "#f59e0b", "--accent-secondary": "#fbbf24",
+            "--color-status-up": "#16a34a", "--color-status-warn": "#fbbf24", "--color-status-down": "#dc2626",
+            "--shadow-light": "rgba(255, 255, 255, 0.9)", "--shadow-dark": "rgba(0, 0, 0, 0.1)",
+            "--body-bg-image": "none", "--main-bg-image": "none", "--muted-bg-image": "none"
+        }
+    },
+    "vaporware": {
+        "name": "Vaporware",
+        "palette": ["#ff00ff", "#00ffff", "#ffff00", "#ff6ec7", "#00f2ff", "#fdfd96", "#ffb3de", "#a7d8de", "#fffdc2"],
+        "properties": {
+            "--bg-primary": "#000", "--bg-secondary": "#1f014b", "--bg-tertiary": "#380252",
+            "--border-primary": "#ff00ff", "--text-primary": "#00ffff", "--text-secondary": "#66ff66",
+            "--accent-primary": "#ff00ff", "--accent-secondary": "#00ffff",
+            "--color-status-up": "#00ff00", "--color-status-warn": "#ffff00", "--color-status-down": "#ff0000",
+            "--shadow-light": "rgba(0, 255, 255, 0.2)", "--shadow-dark": "rgba(255, 0, 255, 0.2)",
+            "--body-bg-image": "linear-gradient(to right, #001f3f, #0074d9)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23fff' fill-opacity='0.1'%3E%3Cpath d='M0 0h20v20H0z'/%3E%3Cpath d='M40 0h20v20H40z'/%3E%3Cpath d='M0 40h20v20H0z'/%3E%3Cpath d='M40 40h20v20H40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\"), linear-gradient(to top, var(--bg-secondary), #000)",
+            "--muted-bg-image": "linear-gradient(to right, var(--bg-tertiary), #1f014b)"
+        }
+    },
+    "sonic1": {
+        "name": "Sonic 1",
+        "palette": ["#00aaff", "#ffaa00", "#00ccff", "#ffcc00", "#0066ff", "#ff0000", "#00ff00"],
+        "properties": {
+            "--bg-primary": "#002244", "--bg-secondary": "#003366", "--bg-tertiary": "#005588",
+            "--border-primary": "#004477", "--text-primary": "#e6e6e6", "--text-secondary": "#aaaaaa",
+            "--accent-primary": "#00ccff", "--accent-secondary": "#ffcc00",
+            "--color-status-up": "#00ff00", "--color-status-warn": "#ffcc00", "--color-status-down": "#ff0000",
+            "--shadow-light": "rgba(0, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "radial-gradient(circle at bottom, var(--bg-primary) 50%, #000)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #001133)",
+            "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #003366)"
+        }
+    },
+    "sonic2": {
+        "name": "Sonic 2",
+        "palette": ["#2288ff", "#ffdd00", "#66ccff", "#ff9900", "#4499ff", "#dd5555", "#22ff22"],
+        "properties": {
+            "--bg-primary": "#111111", "--bg-secondary": "#222222", "--bg-tertiary": "#333333",
+            "--border-primary": "#444444", "--text-primary": "#ffffff", "--text-secondary": "#cccccc",
+            "--accent-primary": "#33aaff", "--accent-secondary": "#ff5555",
+            "--color-status-up": "#00ff00", "--color-status-warn": "#ffaa00", "--color-status-down": "#ff5555",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.7)",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpath d='M0 0h50v50H0z' fill='%23fff' fill-opacity='0.03'/%3E%3Cpath d='M50 50h50v50H50z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E\")",
+            "--main-bg-image": "linear-gradient(to top, var(--bg-secondary), #000)",
+            "--muted-bg-image": "linear-gradient(to right, var(--bg-tertiary), #222222)"
+        }
+    },
+    "sonic3": {
+        "name": "Sonic 3",
+        "palette": ["#ff0000", "#ffcc00", "#66ff66", "#aa55ff", "#ff8800", "#00aaff", "#99ddff"],
+        "properties": {
+            "--bg-primary": "#484848", "--bg-secondary": "#646464", "--bg-tertiary": "#828282",
+            "--border-primary": "#555555", "--text-primary": "#eeeeee", "--text-secondary": "#cccccc",
+            "--accent-primary": "#ffaa00", "--accent-secondary": "#ff5555",
+            "--color-status-up": "#00ff00", "--color-status-warn": "#ffaa00", "--color-status-down": "#ff5555",
+            "--shadow-light": "rgba(255, 255, 255, 0.2)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #222222)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpath d='M0 0h100v100H0z' fill='%23fff' fill-opacity='0.05'/%3E%3Cpath d='M50 50h50v50H50z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E\")",
+            "--muted-bg-image": "linear-gradient(to left, var(--bg-tertiary), #646464)"
+        }
+    },
+    "chemical": {
+        "name": "Chemical Zone",
+        "palette": ["#ff00ff", "#ffff00", "#660066", "#ff0066", "#ff8800", "#a020f0", "#00ffff"],
+        "properties": {
+            "--bg-primary": "#660066", "--bg-secondary": "#8b008b", "--bg-tertiary": "#a020f0",
+            "--border-primary": "#ff00ff", "--text-primary": "#ffff00", "--text-secondary": "#ffc0cb",
+            "--accent-primary": "#ff00ff", "--accent-secondary": "#ffc0cb",
+            "--color-status-up": "#00ff00", "--color-status-warn": "#ffff00", "--color-status-down": "#ff0000",
+            "--shadow-light": "rgba(255, 0, 255, 0.2)", "--shadow-dark": "rgba(0, 0, 0, 0.7)",
+            "--body-bg-image": "linear-gradient(45deg, var(--bg-primary), #4b0082)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #6a006a)",
+            "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #8b008b)"
+        }
+    },
+    "kentucky_ballistics": {
+        "name": "Kentucky Ballistics",
+        "palette": ["#4f772d", "#90a955", "#c7e8f3", "#9b2226", "#bb3e03"],
+        "properties": {
+            "--bg-primary": "#2b322a", "--bg-secondary": "#4a5750", "--bg-tertiary": "#6e776e",
+            "--border-primary": "#4f772d", "--text-primary": "#c7e8f3", "--text-secondary": "#d5d5d5",
+            "--accent-primary": "#9b2226", "--accent-secondary": "#bb3e03",
+            "--color-status-up": "#4f772d", "--color-status-warn": "#f8b729", "--color-status-down": "#bb3e03",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #1a1e1a)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #3d4642)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 0h50v50H0z' fill='%23fff' fill-opacity='0.03'/%3E%3Cpath d='M50 50h50v50H50z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E\"), linear-gradient(to right, var(--bg-tertiary), #4a5750)"
+        }
+    },
+    "qixr": {
+        "name": "Qixr",
+        "palette": ["#f72585", "#7209b7", "#3a0ca3", "#4361ee", "#4cc9f0"],
+        "properties": {
+            "--bg-primary": "#1a1a1a", "--bg-secondary": "#2d2d2d", "--bg-tertiary": "#424242",
+            "--border-primary": "#555", "--text-primary": "#ffffff", "--text-secondary": "#cccccc",
+            "--accent-primary": "#f72585", "--accent-secondary": "#4cc9f0",
+            "--color-status-up": "#4cc9f0", "--color-status-warn": "#ffc300", "--color-status-down": "#f72585",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.6)",
+            "--body-bg-image": "linear-gradient(45deg, var(--bg-primary), #000)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #1a1a1a)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 0h50v50H0z' fill='%23fff' fill-opacity='0.05'/%3E%3Cpath d='M50 50h50v50H50z' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E\"), linear-gradient(to left, var(--bg-tertiary), #2d2d2d)"
+        }
+    },
+    "action_retro": {
+        "name": "Action Retro",
+        "palette": ["#fdf0d5", "#c77700", "#7f2d01", "#591c04", "#2e0f03"],
+        "properties": {
+            "--bg-primary": "#3a3a3a", "--bg-secondary": "#4f4f4f", "--bg-tertiary": "#6e6e6e",
+            "--border-primary": "#c77700", "--text-primary": "#fdf0d5", "--text-secondary": "#d5c5b5",
+            "--accent-primary": "#c77700", "--accent-secondary": "#7f2d01",
+            "--color-status-up": "#2ecc71", "--color-status-warn": "#f1c40f", "--color-status-down": "#e74c3c",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\"), linear-gradient(to bottom, var(--bg-primary), #1a1a1a)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cpath d='M0 1v50h50V1H0zm1 1h48v48H1V2z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E\"), linear-gradient(to top right, var(--bg-secondary), #3a3a3a)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\"), linear-gradient(to bottom right, var(--bg-tertiary), #4f4f4f)"
+        }
+    },
+    "lgr": {
+        "name": "LGR",
+        "palette": ["#D3C1A1", "#94806A", "#C2BAA6", "#8E6941", "#D3C1A1"],
+        "properties": {
+            "--bg-primary": "#57524A", "--bg-secondary": "#6A655D", "--bg-tertiary": "#8A857D",
+            "--border-primary": "#94806A", "--text-primary": "#E2E0D9", "--text-secondary": "#D3C1A1",
+            "--accent-primary": "#94806A", "--accent-secondary": "#D3C1A1",
+            "--color-status-up": "#4F772D", "--color-status-warn": "#F8B729", "--color-status-down": "#BB3E03",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #4A463F)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 0h50v50H0z' fill='%23fff' fill-opacity='0.03'/%3E%3Cpath d='M50 50h50v50H50z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E\"), linear-gradient(to top right, var(--bg-secondary), #57524A)",
+            "--muted-bg-image": "linear-gradient(to left, var(--bg-tertiary), #6A655D)"
+        }
+    },
+    "periscope_films": {
+        "name": "Periscope Films",
+        "palette": ["#d8b384", "#61402a", "#95724e", "#3a362f", "#1c1b18"],
+        "properties": {
+            "--bg-primary": "#2d2d2d", "--bg-secondary": "#424242", "--bg-tertiary": "#555555",
+            "--border-primary": "#61402a", "--text-primary": "#f8f8f2", "--text-secondary": "#d8b384",
+            "--accent-primary": "#d8b384", "--accent-secondary": "#95724e",
+            "--color-status-up": "#3498db", "--color-status-warn": "#f1c40f", "--color-status-down": "#e74c3c",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #1a1a1a)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #2d2d2d)",
+            "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #424242)"
+        }
+    },
+    "saveitforparts": {
+        "name": "saveitforparts",
+        "palette": ["#e0e0d5", "#c8b090", "#9b7c5e", "#765c40", "#514026"],
+        "properties": {
+            "--bg-primary": "#404040", "--bg-secondary": "#5a5a5a", "--bg-tertiary": "#787878",
+            "--border-primary": "#765c40", "--text-primary": "#e0e0d5", "--text-secondary": "#cccccc",
+            "--accent-primary": "#9b7c5e", "--accent-secondary": "#c8b090",
+            "--color-status-up": "#2ecc40", "--color-status-warn": "#ffdc00", "--color-status-down": "#ff4136",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #202020)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #404040)",
+            "--muted-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E\"), linear-gradient(to top left, var(--bg-tertiary), #5a5a5a)"
+        }
+    },
+    "techmoan": {
+        "name": "Techmoan",
+        "palette": ["#fce303", "#e00078", "#03fcfc", "#009c5b", "#ffffff"],
+        "properties": {
+            "--bg-primary": "#0e0e0e", "--bg-secondary": "#1d1d1d", "--bg-tertiary": "#333333",
+            "--border-primary": "#fce303", "--text-primary": "#ffffff", "--text-secondary": "#cccccc",
+            "--accent-primary": "#fce303", "--accent-secondary": "#e00078",
+            "--color-status-up": "#03fcfc", "--color-status-warn": "#fce303", "--color-status-down": "#e00078",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.6)",
+            "--body-bg-image": "linear-gradient(45deg, var(--bg-primary), #000)",
+            "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #0e0e0e)",
+            "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #1d1d1d)"
+        }
+    },
+    "posy": {
+        "name": "Posy",
+        "palette": ["#FF8C92", "#FFC667", "#A5DD7E", "#83B9FF", "#D783FF"],
+        "properties": {
+            "--bg-primary": "#f5f5f5", "--bg-secondary": "#ffffff", "--bg-tertiary": "#e8e8e8",
+            "--border-primary": "#d0d0d0", "--text-primary": "#333", "--text-secondary": "#666",
+            "--accent-primary": "#FF8C92", "--accent-secondary": "#A5DD7E",
+            "--color-status-up": "#A5DD7E", "--color-status-warn": "#FFC667", "--color-status-down": "#FF8C92",
+            "--shadow-light": "rgba(255, 255, 255, 0.9)", "--shadow-dark": "rgba(0, 0, 0, 0.1)",
+            "--body-bg-image": "none", "--main-bg-image": "none", "--muted-bg-image": "none"
+        }
+    },
+    "plainly_difficult": {
+        "name": "Plainly Difficult",
+        "palette": ["#5A6F54", "#9E9E94", "#6E5B4B", "#4A4D46", "#3A362F"],
+        "properties": {
+            "--bg-primary": "#2a2c26", "--bg-secondary": "#3a3c36", "--bg-tertiary": "#4c4f48",
+            "--border-primary": "#6E5B4B", "--text-primary": "#dddddd", "--text-secondary": "#bbbbbb",
+            "--accent-primary": "#5A6F54", "--accent-secondary": "#9E9E94",
+            "--color-status-up": "#5A6F54", "--color-status-warn": "#FFC300", "--color-status-down": "#E74C3C",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #1a1c16)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E\"), linear-gradient(to top right, var(--bg-secondary), #2a2c26)",
+            "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #3a3c36)"
+        }
+    },
+    "geowizzard": {
+        "name": "GeoWizzard",
+        "palette": ["#0074e4", "#03c03c", "#f39c12", "#c0392b", "#34495e"],
+        "properties": {
+            "--bg-primary": "#34495e", "--bg-secondary": "#4a6480", "--bg-tertiary": "#6e849c",
+            "--border-primary": "#3a3f4e", "--text-primary": "#f8f8f2", "--text-secondary": "#bdc3c7",
+            "--accent-primary": "#03c03c", "--accent-secondary": "#f39c12",
+            "--color-status-up": "#03c03c", "--color-status-warn": "#f39c12", "--color-status-down": "#c0392b",
+            "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.5)",
+            "--body-bg-image": "linear-gradient(to bottom, var(--bg-primary), #2c3e50)",
+            "--main-bg-image": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M25 50h50v50H25z' fill='%23fff' fill-opacity='0.1'/%3E%3Cpath d='M0 0h50v50H0z' fill='%23fff' fill-opacity='0.1'/%3E%3C/svg%3E\"), linear-gradient(to top right, var(--bg-secondary), #34495e)",
+            "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #4a6480)"
+        }
+    }
+}

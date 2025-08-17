@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.N.U.S. v1.0 - Automated Network Utility System</title>
+    <title>A.N.U.S. v1.2.6 - Automated Network Utility System</title>
     <script src="./assets/tailwindcss.js"></script>
     <script src="./assets/tone.js"></script>
     <script src="./assets/chart.js"></script>
@@ -11,7 +11,7 @@
     <script src="./assets/hammer.min.js"></script>
     <script src="./assets/chartjs-plugin-zoom.min.js"></script>
     <link href="./assets/inter.css" rel="stylesheet">
-    <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:%23f59e0b;stroke-width:4;stroke-miterlimit:10;}.st1{fill:%23f59e0b;stroke:%23f59e0b;stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:%23f59e0b;stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3M26.9 73.1l5.3-5.3'/></svg>" />
+    <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:%23f59e0b;stroke-width:4;stroke-miterlimit:10;}.st1{fill:%23f59e0b;stroke:%23f59e0b;stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:%23f59e0b;stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>" />
     <style>
         :root {
             --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
@@ -21,36 +21,9 @@
             --shadow-light: rgba(255, 255, 255, 0.05); --shadow-dark: rgba(0, 0, 0, 0.5);
             --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-primary), color-mix(in srgb, var(--bg-primary) 80%, black));
             --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cpath d='M0 1v50h50V1H0zm1 1h48v48H1V2z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 85%, black));
-            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 85%, black));
+            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 85%, black));
         }
-        html.theme-gwot { 
-            --bg-primary: #6a6a5a; --bg-secondary: #8c8c73; --border-primary: #4b4b3d; 
-            --text-primary: #e0dccf; --text-secondary: #bdb3a0; --accent-primary: #c7b39a; 
-            --accent-secondary: #a8927d; --color-status-up: #6b7f3a; --color-status-warn: #c4a251; 
-            --color-status-down: #a6584c; --shadow-light: rgba(255, 255, 240, 0.1); --shadow-dark: rgba(40, 40, 30, 0.6);
-            --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3Cpattern id='dcu' patternUnits='userSpaceOnUse' width='200' height='200'%3E%3Cg fill-opacity='0.6'%3E%3Cpath fill='%23a18f78' d='M54.5 167.5Q42 153 35.5 133 29 113 42 100q13-13 28.5-4.5T99 100q14.5 4.5 18.5 19.5t-11 23q-15 8-28.5 1.5T54.5 167.5z'/%3E%3Cpath fill='%23695e4e' d='M140 100q-12.5-12.5-12.5-27.5t15.5-1.5q18 11 12.5 30T140 100zM40.5 5.5Q28-9 16.5 11 5 31 20.5 40q15.5 9 28-3.5T40.5 5.5z'/%3E%3Cpath fill='%23d1c5b4' d='M100 200q-15-15-15-32.5t11-12.5q16 12 11.5 31.5T100 200zM194.5 147.5q-12.5-12.5-12.5-27.5t15.5-1.5q18 11 12.5 30T194.5 147.5z'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%238c8c73'/%3E%3Crect width='100%25' height='100%25' fill='url(%23dcu)'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-primary), #3c3c32);
-            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%234b4b3d' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.99-7.5L26 15v18.5L13 41 0 33.5V15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), radial-gradient(circle, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 70%, black));
-            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"), linear-gradient(to top left, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 80%, black));
-        }
-        html.theme-dankpods { 
-            --bg-primary: #121212; --bg-secondary: #1e1e1e; --border-primary: #404040; --text-primary: #e0e0e0; 
-            --accent-primary: #ff4b4b; --accent-secondary: #ff8a8a; --color-status-up: #76ff03; --color-status-warn: #fdd835; 
-            --color-status-down: #ff4b4b; --shadow-light: rgba(255, 255, 255, 0.07); --shadow-dark: rgba(0, 0, 0, 0.6);
-            --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ff4b4b' fill-opacity='0.1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(45deg, var(--bg-primary), #000);
-            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), radial-gradient(ellipse at bottom, var(--bg-secondary), #111);
-            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0v1h1V0H0zm2 0v1h1V0H2zm2 0v1h1V0H4zm2 0v1h1V0H6zM1 1v1h1V1H1zm2 0v1h1V1H3zm2 0v1h1V1H5zm2 0v1h1V1H7zM0 2v1h1V2H0zm2 0v1h1V2H2zm2 0v1h1V2H4zm2 0v1h1V2H6zM1 3v1h1V3H1zm2 0v1h1V3H3zm2 0v1h1V3H5zm2 0v1h1V3H7zM0 4v1h1V4H0zm2 0v1h1V4H2zm2 0v1h1V4H4zm2 0v1h1V4H6zM1 5v1h1V5H1zm2 0v1h1V5H3zm2 0v1h1V5H5zm2 0v1h1V5H7zM0 6v1h1V6H0zm2 0v1h1V6H2zm2 0v1h1V6H4zm2 0v1h1V6H6zM1 7v1h1V7H1zm2 0v1h1V7H3zm2 0v1h1V7H5zm2 0v1h1V7H7z' fill='%23ff4b4b' fill-opacity='0.1'/%3E%3C/svg%3E"), linear-gradient(to right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 90%, black));
-        }
-        html.theme-matrix { 
-            --bg-primary: #000000; --bg-secondary: #0d0d0d; --border-primary: #002b00; 
-            --text-primary: #00ff00; --text-secondary: #008f00; --accent-primary: #39ff14; 
-            --accent-secondary: #bfffab; --color-status-up: #39ff14; --color-status-warn: #bfffab; 
-            --color-status-down: #ff3333; --shadow-light: rgba(0, 255, 0, 0.1); --shadow-dark: rgba(0, 0, 0, 0.7);
-            --body-bg-image: linear-gradient(0deg, rgba(0,20,0,0.8), rgba(0,20,0,0.8)), url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"); /* Placeholder, real animation in JS */
-            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-secondary) 50%, #001100);
-            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Cpath d='M0 3h1v1H0V3zm2 0h1v1H2V3zm2 0h1v1H4V3zm2 0h1v1H6V3zM1 4h1v1H1V4zm2 0h1v1H3V4zm2 0h1v1H5V4zM0 5h1v1H0V5zm2 5h1v1H2V5zm2 5h1v1H4V5zm2 5h1v1H6V5z' fill='%2339ff14' fill-opacity='0.2'/%3E%3C/svg%3E"), linear-gradient(var(--bg-tertiary), #000);
-        }
-        /* Add other theme definitions here */
-
+        
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); transition: background-color 0.3s; background-image: var(--body-bg-image); }
         .bg-main { background-color: var(--bg-secondary); border-color: var(--border-primary); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); background-image: var(--main-bg-image); }
         .border-main { border-color: var(--border-primary); }
@@ -83,8 +56,8 @@
         @keyframes pulse-outer { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.05); opacity: 1; } }
         @keyframes pulse-inner { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(0.85); filter: brightness(1.5); } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes color-shift { 0%, 100% { color: var(--accent-primary); } 50% { color: var(--accent-secondary); } }
-        #logo-container { animation: color-shift 6s infinite ease-in-out; cursor: pointer; }
+        
+        #logo-container { cursor: pointer; transition: color 0.5s ease-in-out; }
         #logo-svg .outer-ring { animation: pulse-outer 4s infinite ease-in-out; }
         #logo-svg .inner-ring { animation: pulse-inner 2.5s infinite ease-in-out; transform-origin: center; }
         #logo-svg .spokes { animation: spin 20s linear infinite; transform-origin: center; }
@@ -183,6 +156,18 @@
             transform: translate(-50%, -50%);
             text-align: center;
         }
+        
+        /* Network Neighborhood specific styles */
+        #network-tree-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        .network-node {
+            position: absolute;
+            z-index: 10;
+        }
     </style>
 </head>
 <body class="bg-primary text-primary flex items-center justify-center min-h-screen p-4">
@@ -196,7 +181,9 @@
                 <g style="transform-origin: center center; animation: spin 25s linear infinite reverse;"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
                 <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow-loader)"/>
                 <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
-                <g class="spokes"><path d="M50 22.5V15 M50 85v-7.5 M77.5 50H85 M15 50h7.5 M32.2 32.2l-5.3-5.3 M73.1 73.1l-5.3-5.3 M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/></g>
+                <g class="spokes">
+                    <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                </g>
             </svg>
         </div>
         <div id="loading-error-container" class="hidden p-4 bg-red-900/50 border border-red-500 rounded-lg text-center">
@@ -230,11 +217,11 @@
                     <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow)"/>
                     <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
                     <g class="spokes">
-                        <path d="M50 22.5V15 M50 85v-7.5 M77.5 50H85 M15 50h7.5 M32.2 32.2l-5.3-5.3 M73.1 73.1l-5.3-5.3 M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
                     </g>
                 </svg>
                 <div>
-                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.0</h1>
+                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.2.6</h1>
                     <p class="text-muted text-center">Automated Network Utility System</p>
                 </div>
             </div>
@@ -248,19 +235,56 @@
         </header>
 
         <main>
-            <div class="border-b border-main mb-6"><nav class="-mb-px flex space-x-6 justify-center" aria-label="Tabs"><button id="tab-dashboard" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-accent tab-active">Dashboard</button><button id="tab-trends" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Trends</button><button id="tab-log" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Event Log</button><button id="tab-settings" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Settings</button></nav></div>
+            <div class="border-b border-main mb-6">
+                <!-- FIX: Removed Trends tab from navigation -->
+                <nav class="-mb-px flex space-x-6 justify-center" aria-label="Tabs">
+                    <button id="tab-dashboard" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-accent tab-active">Dashboard</button>
+                    <button id="tab-neighborhood" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Network Neighborhood</button>
+                    <button id="tab-log" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Event Log</button>
+                    <button id="tab-settings" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Settings</button>
+                </nav>
+            </div>
 
             <div id="view-dashboard">
+                <!-- FIX: Moved Trends chart to Dashboard -->
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Live Latency Trends (24 Hours)</h2>
+                    <div class="bg-muted card-emboss p-4 rounded-lg h-96 relative flex items-center justify-center">
+                        <canvas id="trends-chart"></canvas>
+                        <div id="trends-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
+                            <p class="animate-pulse text-lg font-semibold text-accent">Loading historical data...</p>
+                        </div>
+                        <button id="clear-trends-filter-btn" class="absolute top-2 right-2 bg-accent hover:bg-opacity-80 text-white text-xs font-bold py-1 px-3 rounded-md hidden">Clear Filter</button>
+                    </div>
+                </div>
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Uptime Statistics</h2><div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></div>
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="bg-muted card-emboss p-6 rounded-lg text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div></div>
                 <div><h2 class="text-xl font-semibold text-accent mb-4">Advanced Diagnostics - Network Data Flow</h2><div id="diagnostics-container" class="relative text-muted p-2 min-h-[500px]"></div></div>
             </div>
 
-            <div id="view-trends" class="hidden">
-                <div class="bg-muted card-emboss p-4 rounded-lg h-96 relative">
-                    <canvas id="trends-chart"></canvas>
-                    <button id="clear-trends-filter-btn" class="absolute top-2 right-2 bg-accent hover:bg-opacity-80 text-white text-xs font-bold py-1 px-3 rounded-md">Clear Filter</button>
+            <!-- FIX: This view is no longer needed as the chart is on the dashboard -->
+            <div id="view-trends" class="hidden"></div>
+
+            <!-- New Network Neighborhood View -->
+            <div id="view-neighborhood" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-accent">Network Neighborhood</h2>
+                    <div class="flex items-center gap-4">
+                        <label class="text-sm font-medium text-primary">Responsive Scan Mode</label>
+                        <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                            <input type="checkbox" name="responsive-scan-toggle" id="responsive-scan-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                            <label for="responsive-scan-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-border-primary cursor-pointer"></label>
+                        </div>
+                    </div>
+                </div>
+                <div id="network-tree-container" class="relative bg-muted card-emboss rounded-lg p-6 max-h-[70vh] overflow-auto">
+                    <svg id="network-tree-svg"></svg>
+                    <div id="network-nodes-container" class="relative">
+                        <!-- Network Nodes will be dynamically populated here -->
+                    </div>
+                    <div id="nmap-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
+                        <p class="animate-pulse text-lg font-semibold text-accent">Scanning the network...</p>
+                    </div>
                 </div>
             </div>
 
@@ -298,7 +322,8 @@
             </div>
         </main>
         <footer class="text-center text-xs text-muted mt-8">
-            <p>A.N.U.S. v1.0 - Released under the <a href="#" id="license-link" class="text-accent hover:underline">GPLv3 License</a>.</p>
+            <!-- FIX: Added event listeners to open modals instead of linking directly -->
+            <p>A.N.U.S. v1.2.6 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
         </footer>
     </div>
 
@@ -307,6 +332,7 @@
     <div id="node-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-2xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 id="modal-title" class="text-xl font-semibold text-accent">Node Details</h3><button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="modal-content" class="text-sm space-y-4"></div></div></div>
     <div id="server-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">A.N.U.S. Server Health</h3><button id="server-modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="server-modal-content" class="text-sm space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-muted p-4 rounded-lg h-64"><canvas id="cpu-chart"></canvas></div><div class="bg-muted p-4 rounded-lg h-64"><canvas id="mem-chart"></canvas></div><div class="md:col-span-2 bg-muted p-4 rounded-lg h-64"><canvas id="net-chart"></canvas></div></div></div></div>
     <div id="license-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">GPLv3 License</h3><button id="license-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="license-content" class="text-xs space-y-4 max-h-[70vh] overflow-y-auto pr-4"></div></div></div>
+    <div id="readme-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">A.N.U.S. README</h3><button id="readme-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="readme-content" class="text-sm space-y-4 max-h-[70vh] overflow-y-auto pr-4"></div></div></div>
 
     <script type="module">
         // --- State and Configuration ---
@@ -320,7 +346,11 @@
         let serverChartCPU, serverChartMem, serverChartNet;
         let calendarDate = new Date();
         const uptimeChartInstances = {};
-        let modalUpdateIntervalId = null; 
+        let modalUpdateIntervalId = null;
+        let networkScanIntervalId = null;
+        let isResponsiveScanMode = false;
+        let networkScanData = null; // New state variable for nmap data
+        let themes = {};
 
         const DOMElements = {
             loadingOverlay: document.getElementById('loading-overlay'),
@@ -333,34 +363,31 @@
             updateIntervalGroup: document.getElementById('update-interval-group'), 
             soundToggle: document.getElementById('sound-toggle'), 
             logTimelineContainer: document.getElementById('log-timeline-container'), logCalendarContainer: document.getElementById('log-calendar-container'), logViewToggle: document.getElementById('log-view-toggle'), clearLogBtn: document.getElementById('clear-log-btn'), tabs: document.querySelectorAll('nav[aria-label="Tabs"] button'),
-            views: { dashboard: document.getElementById('view-dashboard'), trends: document.getElementById('view-trends'), log: document.getElementById('view-log'), settings: document.getElementById('view-settings') },
+            views: { dashboard: document.getElementById('view-dashboard'), trends: document.getElementById('view-trends'), log: document.getElementById('view-log'), settings: document.getElementById('view-settings'), neighborhood: document.getElementById('view-neighborhood') },
             confirmModal: document.getElementById('confirm-modal'), modalCancelBtn: document.getElementById('modal-cancel-btn'), modalConfirmBtn: document.getElementById('modal-confirm-btn'), trendsChartCanvas: document.getElementById('trends-chart'),
             nodeDetailsModal: document.getElementById('node-details-modal'), modalTitle: document.getElementById('modal-title'), modalContent: document.getElementById('modal-content'), modalCloseBtn: document.getElementById('modal-close-btn'),
             serverDetailsModal: document.getElementById('server-details-modal'), serverModalCloseBtn: document.getElementById('server-modal-close-btn'),
             logoContainer: document.getElementById('logo-container'), 
+            appTitle: document.getElementById('app-title'),
             themeSelectorGroup: document.getElementById('theme-selector-group'), 
             clearTrendsFilterBtn: document.getElementById('clear-trends-filter-btn'), 
             onlineDetectionMethodGroup: document.getElementById('online-detection-method-group'),
             qualityContainer: document.getElementById('quality-container'), qualityText: document.getElementById('quality-text'), qualityScore: document.getElementById('quality-score'),
             calGrid: document.getElementById('cal-grid'), calMonthYear: document.getElementById('cal-month-year'), calPrevMonthBtn: document.getElementById('cal-prev-month'), calNextMonthBtn: document.getElementById('cal-next-month'),
-            licenseModal: document.getElementById('license-modal'), licenseLink: document.getElementById('license-link'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content')
+            licenseModal: document.getElementById('license-modal'), licenseLink: document.querySelector('a[href="./assets/LICENSE"]'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content'),
+            readmeLink: document.querySelector('a[href="./assets/README.md"]'), readmeModal: document.getElementById('readme-modal'), readmeCloseBtn: document.getElementById('readme-close-btn'), readmeContent: document.getElementById('readme-content'),
+            faviconLink: document.getElementById('favicon'),
+            networkTreeContainer: document.getElementById('network-tree-container'),
+            networkTreeSVG: document.getElementById('network-tree-svg'),
+            networkNodesContainer: document.getElementById('network-nodes-container'),
+            nmapLoadingIndicator: document.getElementById('nmap-loading-indicator'),
+            responsiveScanToggle: document.getElementById('responsive-scan-toggle'),
+            trendsLoadingIndicator: document.getElementById('trends-loading-indicator')
         };
         
-        const themes = { 
-            'dark': { name: 'A.N.U.S. Default', palette: ['#f59e0b', '#38bdf8', '#4ade80', '#fb7185', '#a78bfa', '#f472b6', '#2dd4bf', '#facc15', '#a3e635'] }, 
-            'gwot': { name: 'GWOT', palette: ['#c7b39a', '#a8927d', '#8f9a6d', '#c27d65', '#6a7a8a', '#bfaea1', '#9e9e9e', '#d7b377', '#a1887f'] }, 
-            'dankpods': { name: 'DankPods', palette: ['#ff4b4b', '#ff8a8a', '#76ff03', '#fdd835', '#69f0ae', '#40c4ff', '#b388ff', '#ff80ab', '#ffff8d'] }, 
-            'matrix': { name: 'Matrix', palette: ['#39ff14', '#bfffab', '#00ff00', '#33ff33', '#66ff66', '#99ff99', '#ccffcc', '#00e600', '#00c200'] }, 
-            'vaporwave': { name: 'Vaporwave', palette: ['#ff00ff', '#00ffff', '#ffff00', '#ff6ec7', '#00f2ff', '#fdfd96', '#ffb3de', '#a7d8de', '#fffdc2'] }, 
-            'terminal': { name: 'Terminal', palette: ['#4caf50', '#8bc34a', '#aed581', '#dce775', '#fff176', '#ffb74d', '#ff8a65', '#e57373', '#f06292'] },
-            'ocean': { name: 'Ocean', palette: ['#3a86ff', '#83b9ff', '#48bfe3', '#fca311', '#e71d36', '#ffbe0b', '#fb5607', '#ff006e'] },
-            'sunset': { name: 'Sunset', palette: ['#ff6b6b', '#ffa5a5', '#4d908e', '#f9c74f', '#f94144', '#f8961e', '#577590', '#277da1'] },
-            'forest': { name: 'Forest', palette: ['#6a994e', '#a7c957', '#f2e279', '#bc4749', '#386641', '#8a817c', '#a3b18a', '#588157'] },
-            'dayman': { name: 'Dayman', palette: ['#f59e0b', '#fbbf24', '#16a34a', '#facc15', '#dc2626', '#3b82f6', '#6366f1', '#8b5cf6'] }
-        };
 
         // --- Core Functions ---
-        const apiCall = async (action, payload = {}, timeout = 10000) => {
+        const apiCall = async (action, payload = {}, timeout = 20000) => { // Increased timeout for heavy requests
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), timeout);
 
@@ -415,85 +442,261 @@
         function playSound(player, force = false) { if ((soundEnabled || force) && player?.loaded) { if (Tone.context.state !== 'running') Tone.start(); player.start(); } }
         
         async function fetchAndUpdateData() {
-            const now = new Date();
-            const interval = parseInt(localStorage.getItem('updateInterval') || '1000', 10);
-            if (lastSuccessfulFetch > 0 && (now.getTime() - lastSuccessfulFetch) > interval * 3) {
-                const serverLog = await apiCall('get_log');
-                if (serverLog && serverLog.length > 0) { log = serverLog; currentState = log[0].status; lastStateChangeTime = new Date(log[0].startTime); }
+            try { 
+                const now = new Date();
+                const interval = parseInt(localStorage.getItem('updateInterval') || '1000', 10);
+                if (lastSuccessfulFetch > 0 && (now.getTime() - lastSuccessfulFetch) > interval * 3) {
+                    const serverLog = await apiCall('get_log');
+                    if (serverLog) { log = serverLog; }
+                }
+                const apiData = await apiCall('get_all_latest_metrics');
+                if (!apiData || !apiData.pings) {
+                    throw new Error("Received invalid data structure from 'get_all_latest_metrics'");
+                };
+                lastSuccessfulFetch = now.getTime();
+                allPingsData = apiData.pings;
+                serverGatewayIp = apiData.server_status.server_gateway_ip;
+                clientIp = apiData.server_status.client_ip || 'Unavailable';
+                const [clientToGatewayPing, clientToServerPing] = await Promise.all([ measureHttpLatency(serverGatewayIp), measureServerLatency() ]);
+                
+                const detectionMethod = localStorage.getItem('onlineDetectionMethod') || 'smart_check';
+                let newStatus = 'DOWN';
+                const targets = apiData.pings;
+                const gateway = targets.find(p => p.name === 'Gateway');
+                const dnsTargets = targets.filter(p => p.name.includes('DNS'));
+                const criticalTargets = targets.filter(p => p.critical);
+
+                switch(detectionMethod) {
+                    case 'smart_check': 
+                        const criticalDns = targets.filter(p => p.critical && p.name.includes('DNS'));
+                        const highAvailability = targets.filter(p => ['Google.com', 'Cloudflare.com', 'Microsoft'].includes(p.name));
+                        
+                        if (gateway?.status === 'UP') {
+                            const upCriticalDns = criticalDns.filter(p => p.status === 'UP').length;
+                            const upHighAvailability = highAvailability.filter(p => p.status === 'UP').length;
+                            if (upCriticalDns >= Math.ceil(criticalDns.length / 2) || upHighAvailability >= 2) {
+                                newStatus = 'UP';
+                            }
+                        }
+                        break;
+                    case 'gateway':
+                        newStatus = gateway?.status === 'UP' ? 'UP' : 'DOWN';
+                        break;
+                    case 'majority':
+                        const upCount = targets.filter(p => p.name !== 'Gateway' && p.status === 'UP').length;
+                        newStatus = upCount >= (targets.length - 1) / 2 ? 'UP' : 'DOWN';
+                        break;
+                    case 'dns_resolvers':
+                        const dnsUpCount = dnsTargets.filter(p => p.status === 'UP').length;
+                        newStatus = dnsUpCount > 0 ? 'UP' : 'DOWN';
+                        break;
+                    case 'critical_services':
+                        const criticalUpCount = criticalTargets.filter(p => p.status === 'UP').length;
+                        newStatus = criticalUpCount === criticalTargets.length ? 'UP' : 'DOWN';
+                        break;
+                    case 'google': 
+                        const googlePing = targets.find(p => p.name === 'Google.com');
+                        newStatus = googlePing?.status === 'UP' ? 'UP' : 'DOWN';
+                        break;
+                }
+
+                if (currentState === null) {
+                    currentState = newStatus;
+                    lastStateChangeTime = new Date();
+                } else if (newStatus !== currentState) {
+                    currentState = newStatus;
+                    lastStateChangeTime = new Date();
+                    // Refetch log on status change to ensure it's up to date
+                    apiCall('get_log').then(serverLog => { if (serverLog) log = serverLog; });
+                }
+                updateDashboard(apiData, clientToServerPing, clientToGatewayPing);
+            } catch (e) {
+                handleError(e);
             }
-            const apiData = await apiCall('get_all_latest_metrics');
-            if (!apiData || !apiData.pings) {
-                throw new Error("Received invalid data structure from 'get_all_latest_metrics'");
-            };
-            lastSuccessfulFetch = now.getTime();
-            allPingsData = apiData.pings;
-            serverGatewayIp = apiData.server_status.server_gateway_ip;
-            clientIp = apiData.server_status.client_ip || 'Unavailable';
-            const [clientToGatewayPing, clientToServerPing] = await Promise.all([ measureHttpLatency(serverGatewayIp), measureServerLatency() ]);
+        }
+        
+        async function fetchNetworkNeighborhood() {
+            DOMElements.networkNodesContainer.innerHTML = '';
+            DOMElements.networkTreeSVG.innerHTML = '';
+            DOMElements.nmapLoadingIndicator.classList.remove('hidden');
+            try {
+                const scanData = await apiCall('get_network_neighborhood');
+                networkScanData = scanData; // Cache the data globally
+                renderNetworkTree(scanData);
+            } catch (e) {
+                console.error("Error fetching network neighborhood:", e);
+                DOMElements.networkNodesContainer.innerHTML = `<p class="text-center text-status-down p-8">Failed to fetch network data. Please ensure Nmap is installed and the service has permission to run it.</p>`;
+            } finally {
+                DOMElements.nmapLoadingIndicator.classList.add('hidden');
+            }
+        }
+
+        function renderNetworkTree(scanData) {
+            const container = DOMElements.networkTreeContainer;
+            const svg = DOMElements.networkTreeSVG;
+            const nodesContainer = DOMElements.networkNodesContainer;
+            if (!container || !svg || !nodesContainer) return; // Guard clause
+            const containerRect = container.getBoundingClientRect();
+            const width = containerRect.width;
+            const height = 400; // Fixed height for a reasonable layout
+            container.style.height = `${height}px`;
+
+            if (!scanData || !scanData.hosts || scanData.hosts.length === 0) {
+                nodesContainer.innerHTML = `<p class="text-center text-muted p-8">No devices found on the network.</p>`;
+                return;
+            }
+
+            nodesContainer.innerHTML = '';
+            svg.innerHTML = '';
             
-            const detectionMethod = localStorage.getItem('onlineDetectionMethod') || 'critical_dns';
-            let newStatus = 'DOWN';
-            const targets = apiData.pings;
-            const gateway = targets.find(p => p.name === 'Gateway');
-            const dnsTargets = targets.filter(p => p.name.includes('DNS'));
-            const criticalTargets = targets.filter(p => p.critical);
-
-            switch(detectionMethod) {
-                case 'gateway':
-                    newStatus = gateway?.status === 'UP' ? 'UP' : 'DOWN';
-                    break;
-                case 'majority':
-                    const upCount = targets.filter(p => p.name !== 'Gateway' && p.status === 'UP').length;
-                    newStatus = upCount >= (targets.length - 1) / 2 ? 'UP' : 'DOWN';
-                    break;
-                case 'dns_resolvers':
-                    const dnsUpCount = dnsTargets.filter(p => p.status === 'UP').length;
-                    newStatus = dnsUpCount > 0 ? 'UP' : 'DOWN';
-                    break;
-                case 'critical_services':
-                    const criticalUpCount = criticalTargets.filter(p => p.status === 'UP').length;
-                    newStatus = criticalUpCount === criticalTargets.length ? 'UP' : 'DOWN';
-                    break;
-                case 'weighted_latency':
-                    const lowLatencyTarget = targets.filter(p => p.name !== 'Gateway' && p.ping < 50).some(p => p.status === 'UP');
-                    newStatus = lowLatencyTarget ? 'UP' : 'DOWN';
-                    break;
-                case 'weighted_reliability':
-                    const reliableTarget = targets.filter(p => p.name !== 'Gateway' && p.packet_loss < 5).some(p => p.status === 'UP');
-                    newStatus = reliableTarget ? 'UP' : 'DOWN';
-                    break;
-                case 'google': 
-                    const googlePing = targets.find(p => p.name === 'Google.com');
-                    newStatus = googlePing?.status === 'UP' ? 'UP' : 'DOWN';
-                    break;
-                case 'critical_dns': // New Default
-                default:
-                    const coreDns = ['1.1.1.1', '8.8.8.8', '208.67.222.222', 'dns.nextdns.io'];
-                    const coreDnsTargets = targets.filter(p => coreDns.includes(p.url));
-                    const coreDnsUpCount = coreDnsTargets.filter(p => p.status === 'UP').length;
-                    newStatus = coreDnsUpCount >= 2 ? 'UP' : 'DOWN'; // At least 2 of 4 must be up
+            // Filter and categorize hosts
+            const gateway = scanData.hosts.find(h => h.ip === serverGatewayIp);
+            const server = scanData.hosts.find(h => h.ip === '127.0.0.1'); // Assuming server IP is localhost
+            const client = scanData.hosts.find(h => h.ip === clientIp);
+            let otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== '127.0.0.1' && h.ip !== clientIp);
+            
+            // Fallback for server and client if not found in scan
+            if (!server) {
+                 const serverDetails = scanData.hosts.find(h => h.ip === scanData.server_ip);
+                 if (serverDetails) {
+                    server = serverDetails;
+                    otherHosts = otherHosts.filter(h => h.ip !== server.ip);
+                 }
+            }
+             if (!client) {
+                 const clientDetails = scanData.hosts.find(h => h.ip === scanData.client_ip);
+                 if (clientDetails) {
+                    client = clientDetails;
+                    otherHosts = otherHosts.filter(h => h.ip !== client.ip);
+                 }
             }
 
-            if (currentState === null) {
-                currentState = newStatus;
-                lastStateChangeTime = new Date();
-                log.unshift({ status: newStatus, startTime: lastStateChangeTime.toISOString(), endTime: new Date().toISOString() });
-            } else if (newStatus !== currentState) {
-                const eventEndTime = new Date();
-                if (log.length > 0) log[0].endTime = eventEndTime.toISOString();
-                log.unshift({ status: newStatus, startTime: eventEndTime.toISOString(), endTime: new Date().toISOString() });
-                currentState = newStatus;
-                lastStateChangeTime = eventEndTime;
-            } else if (log.length > 0) {
-                log[0].endTime = new Date().toISOString();
+            const positions = {};
+            const nodeWidth = 250;
+            const nodeHeight = 120;
+            const verticalSpacing = 20;
+
+            // Position nodes
+            if (gateway) {
+                positions[gateway.ip] = { x: width / 2 - nodeWidth / 2, y: 10 };
             }
-            localStorage.setItem('internetLog', JSON.stringify(log));
-            updateDashboard(apiData, clientToServerPing, clientToGatewayPing);
+            if (server) {
+                positions[server.ip] = { x: width / 4 - nodeWidth / 2, y: 10 + nodeHeight + verticalSpacing };
+            }
+            if (client) {
+                positions[client.ip] = { x: 3 * width / 4 - nodeWidth / 2, y: 10 + nodeHeight + verticalSpacing };
+            }
+            
+            let otherX = 10;
+            let otherY = 10 + 2 * (nodeHeight + verticalSpacing);
+            otherHosts.forEach(host => {
+                if (otherX + nodeWidth > width - 10) {
+                    otherX = 10;
+                    otherY += nodeHeight + verticalSpacing;
+                }
+                positions[host.ip] = { x: otherX, y: otherY };
+                otherX += nodeWidth + 20;
+            });
+            
+            // Render nodes and draw lines
+            const drawLine = (fromIp, toIp) => {
+                if (!positions[fromIp] || !positions[toIp]) return;
+                const fromPos = positions[fromIp];
+                const toPos = positions[toIp];
+                const x1 = fromPos.x + nodeWidth / 2;
+                const y1 = fromPos.y + nodeHeight / 2;
+                const x2 = toPos.x + nodeWidth / 2;
+                const y2 = toPos.y + nodeHeight / 2;
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+                path.setAttribute('stroke', 'var(--border-primary)');
+                path.setAttribute('stroke-width', '2');
+                svg.appendChild(path);
+            };
+
+            // Draw connections
+            if (gateway && server) drawLine(gateway.ip, server.ip);
+            if (gateway && client) drawLine(gateway.ip, client.ip);
+            
+            // Dynamically create and position host elements
+            const renderHost = (host) => {
+                const pos = positions[host.ip];
+                if (!pos) return '';
+                const hostType = getHostType(host.ip);
+                const hostName = host.hostname || 'Unknown';
+                const icon = hostType === 'Gateway' ? '&#x1F6A7;' : hostType === 'Client' ? '&#x1F4BB;' : '&#x1F5A5;';
+                const statusColor = host.is_up ? 'text-status-up' : 'text-status-down';
+                const statusText = host.is_up ? 'Online' : 'Offline';
+
+                let services = '';
+                if (host.services && host.services.length > 0) {
+                    services = host.services.map(s => `
+                        <p class="flex items-center text-xs text-muted mt-1">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
+                            <span>${s.port}/${s.protocol} - ${s.name}</span>
+                        </p>
+                    `).join('');
+                }
+                
+                const nodeElement = document.createElement('div');
+                nodeElement.className = "network-node bg-bg-tertiary p-4 rounded-lg border-main border flex items-start gap-4 cursor-pointer hover:bg-bg-secondary transition-colors";
+                nodeElement.style.width = `${nodeWidth}px`;
+                nodeElement.style.top = `${pos.y}px`;
+                nodeElement.style.left = `${pos.x}px`;
+                nodeElement.dataset.ip = host.ip;
+                nodeElement.addEventListener('click', () => showNmapNodeDetailsModal(host));
+                nodesContainer.appendChild(nodeElement);
+                nodeElement.innerHTML = `
+                    <span class="text-3xl">${icon}</span>
+                    <div class="flex-grow">
+                        <h4 class="text-lg font-semibold truncate" title="${hostName}">${hostName}</h4>
+                        <p class="text-sm text-muted">${host.ip}</p>
+                        <p class="text-xs ${statusColor}">${statusText}</p>
+                        ${host.vendor ? `<p class="text-xs text-muted">Vendor: ${host.vendor}</p>` : ''}
+                        ${services ? `<div class="mt-2"><p class="text-xs font-semibold text-accent-secondary">Services:</p>${services}</div>` : ''}
+                    </div>
+                `;
+            };
+
+            if (gateway) renderHost(gateway);
+            if (server) renderHost(server);
+            if (client) renderHost(client);
+            otherHosts.forEach(renderHost);
+
+            // Adjust container height to fit all nodes
+            const maxNodeY = Math.max(...Object.values(positions).map(p => p.y + nodeHeight));
+            DOMElements.networkTreeContainer.style.height = `${Math.max(height, maxNodeY + 20)}px`;
+            
+            // Re-render lines after nodes are in place
+            svg.innerHTML = '';
+            if (gateway && server) drawLine(gateway.ip, server.ip);
+            if (gateway && client) drawLine(gateway.ip, client.ip);
+            otherHosts.forEach(host => drawLine(gateway.ip, host.ip));
+        }
+
+        function showNmapNodeDetailsModal(data) {
+            DOMElements.modalTitle.textContent = `Network Device Details`;
+            let servicesList = 'No open services found.';
+            if (data.services && data.services.length > 0) {
+                servicesList = data.services.map(s => `<li>${s.port}/${s.protocol} - ${s.name}</li>`).join('');
+            }
+
+            DOMElements.modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div><p class="text-muted text-xs">Hostname</p><p class="font-semibold">${data.hostname || 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">IP Address</p><p class="font-semibold">${data.ip || 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">MAC Address</p><p class="font-semibold">${data.mac_address || 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">Vendor</p><p class="font-semibold">${data.vendor || 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">OS Fingerprint</p><p class="font-semibold">${data.os || 'N/A'}</p></div>
+                </div>
+                <div><p class="text-primary font-semibold mb-1">Open Services</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${servicesList}</ul></div>`;
+            DOMElements.nodeDetailsModal.classList.remove('hidden');
         }
 
         // --- UI Rendering Functions ---
         function updateDashboard(data, clientToServerPing, clientToGatewayPing) {
-            updateStatusUI();
+            if (!data) return;
+            updateStatusUI(data.server_status.internet_quality_score);
             updateAllUptimeStats();
             renderServerHealth(data.server_status);
             updateClientInfo();
@@ -501,27 +704,50 @@
             updateGatewayInfo(data.server_status); 
             renderInternetNodeCards(data.pings);
             drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status);
+            if (isTrendsDataLoaded) { updateTrendsChart(data.pings); }
             if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline();
             updateFuzzyQualityMetric(data.pings, data.server_status.internet_quality_score);
-            updateLiveCharts(data);
+            updateLogoColor(data.server_status.internet_quality_score, currentState);
         }
-        function updateStatusUI() {
-            const { statusIndicator, statusText, statusTimer } = DOMElements;
-            DOMElements.currentStatusCard.className = `bg-muted card-emboss status-${currentState?.toLowerCase()} mt-4 rounded-lg p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto`;
-            statusIndicator.classList.toggle('blinking-dot', currentState === null);
-            statusText.textContent = currentState === 'UP' ? 'Connected' : currentState === 'DOWN' ? 'Disconnected' : 'Checking...';
-            if (lastStateChangeTime) statusTimer.textContent = `for ${formatDuration(new Date() - lastStateChangeTime)}`;
+        
+        // FIX: Implement more granular internet status display
+        function updateStatusUI(score) {
+            const { statusIndicator, statusText, statusTimer, currentStatusCard } = DOMElements;
+            let statusClass = 'status-checking';
+            let statusString = 'Checking...';
+
+            if (currentState === 'DOWN') {
+                statusClass = 'status-down';
+                statusString = 'Disconnected';
+            } else if (currentState === 'UP') {
+                if (score > 400) { statusClass = 'status-up'; statusString = 'Excellent'; }
+                else if (score > 300) { statusClass = 'status-up'; statusString = 'Good'; }
+                else if (score > 200) { statusClass = 'status-warn'; statusString = 'Fair'; }
+                else if (score > 100) { statusClass = 'status-warn'; statusString = 'Poor'; }
+                else { statusClass = 'status-down'; statusString = 'Unstable'; }
+            }
+            
+            currentStatusCard.className = `bg-muted card-emboss ${statusClass} mt-4 rounded-lg p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto`;
+            statusIndicator.classList.toggle('blinking-dot', statusString === 'Checking...');
+            statusText.textContent = statusString;
+            if (lastStateChangeTime) {
+                statusTimer.textContent = `for ${formatDuration(new Date() - lastStateChangeTime)}`;
+            }
+
             if (lastState !== null && lastState !== currentState) { 
                 if (currentState === 'DOWN') playSound(bruhPlayer); 
                 if (currentState === 'UP') playSound(upPlayer); 
             }
             lastState = currentState;
         }
-        function renderLogTimeline() { DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatDuration(new Date(e.endTime) - new Date(e.startTime))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
+
+        function renderLogTimeline() {
+            if (!DOMElements.logTimelineContainer) return;
+            DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatDuration(new Date(e.endTime) - new Date(e.startTime))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
         function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatDuration(new Date() - new Date(log[0].startTime)); } }
-        function createUptimeCards() { const wins = [{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; DOMElements.uptimeStatsContainer.innerHTML = wins.map((w,i)=>`<div class="bg-muted card-emboss p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-muted">${w.l}</h3><div id="uptime-chart-${i}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1">--:--:-- downtime</p></div>`).join(''); }
-        function updateAllUptimeStats() { const wins=[{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; const cards=DOMElements.uptimeStatsContainer.children; const now = Date.now(); wins.forEach((w,i)=>{ const dur=w.d.call?w.d():w.d; let downMs=0; let disconnects=0; let lastStatus=null; log.filter(e=>new Date(e.endTime).getTime()>now-dur).forEach(e=>{if(e.status==='DOWN'){downMs+=new Date(e.endTime)-Math.max(new Date(e.startTime),now-dur);if(lastStatus!=='DOWN')disconnects++}lastStatus=e.status}); if(currentState==='DOWN'&&lastStateChangeTime){downMs+=now-Math.max(lastStateChangeTime,now-dur);if(lastStatus!=='DOWN')disconnects++} const upPerc=Math.max(0,(1-downMs/dur)*100); if(cards[i]){ cards[i].querySelector('.downtime-duration').textContent=`${formatDuration(downMs)} downtime`; createOrUpdateUptimeChart(`uptime-chart-${i}`, upPerc, disconnects); } }); }
-        function renderServerHealth(status) { const map=[{t:'Python Service',s:status.service_status},{t:'Apache',s:status.apache_status},{t:'PHP',s:status.php_fpm_status},{t:'Database',s:status.db_status}]; DOMElements.serverHealthContainer.innerHTML = map.map(s=>`<div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');}
+        function createUptimeCards() { if (!DOMElements.uptimeStatsContainer) return; const wins = [{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; DOMElements.uptimeStatsContainer.innerHTML = wins.map((w,i)=>`<div class="bg-muted card-emboss p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-muted">${w.l}</h3><div id="uptime-chart-${i}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1">--:--:-- downtime</p></div>`).join(''); }
+        function updateAllUptimeStats() { const wins=[{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; const cards=DOMElements.uptimeStatsContainer?.children; if (!cards) return; const now = Date.now(); wins.forEach((w,i)=>{ const dur=w.d.call?w.d():w.d; let downMs=0; let disconnects=0; let lastStatus=null; log.filter(e=>new Date(e.endTime).getTime()>now-dur).forEach(e=>{if(e.status==='DOWN'){downMs+=new Date(e.endTime)-Math.max(new Date(e.startTime),now-dur);if(lastStatus!=='DOWN')disconnects++}lastStatus=e.status}); if(currentState==='DOWN'&&lastStateChangeTime){downMs+=now-Math.max(lastStateChangeTime,now-dur);if(lastStatus!=='DOWN')disconnects++} const upPerc=Math.max(0,(1-downMs/dur)*100); if(cards[i]){ cards[i].querySelector('.downtime-duration').textContent=`${formatDuration(downMs)} downtime`; createOrUpdateUptimeChart(`uptime-chart-${i}`, upPerc, disconnects); } }); }
+        function renderServerHealth(status) { if (!DOMElements.serverHealthContainer) return; const map=[{t:'Python Service',s:status.service_status},{t:'Apache',s:status.apache_status},{t:'PHP',s:status.php_fpm_status},{t:'Database',s:status.db_status}]; DOMElements.serverHealthContainer.innerHTML = map.map(s=>`<div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');}
 
         function renderInternetNodeCards(pings) {
             const internetNodes = pings.filter(p => p.name !== 'Gateway');
@@ -529,44 +755,59 @@
             if (!grid) return;
 
             const currentTheme = localStorage.getItem('theme') || 'dark';
-            const palette = [...themes[currentTheme].palette].sort(() => 0.5 - Math.random());
+            const palette = themes[currentTheme].palette;
 
+            // FIX: Use a Set to track existing cards to avoid redundant rendering and flashing
+            const existingCardIds = new Set(Array.from(grid.children).map(c => c.id));
+            const newCardIds = new Set();
+            
             internetNodes.forEach((n, index) => {
                 const cardId = `node-card-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                newCardIds.add(cardId);
                 let card = document.getElementById(cardId);
                 if (!card) {
+                    // Create new card if it doesn't exist
                     card = document.createElement('div');
                     card.id = cardId;
                     card.className = "internet-node-card bg-bg-primary card-emboss card-emboss-hover p-3 rounded-lg border-2 transition-all cursor-pointer";
                     card.dataset.nodeName = n.name;
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}"></p>
-                            <p class="text-xs font-bold node-ping"></p>
-                        </div>
-                        <div class="h-16 w-full my-2"><canvas id="mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}"></canvas></div>
-                        <div class="text-xs text-muted flex justify-between">
-                            <span class="node-jitter"></span>
-                            <span class="node-loss"></span>
-                        </div>`;
-                    grid.appendChild(card);
                     card.addEventListener('click', () => showNodeDetailsModal(n));
+                    grid.appendChild(card);
                 }
 
                 const serverGateway = pings.find(p => p.name === 'Gateway');
                 card.style.borderColor = `${serverGateway?.status === 'UP' && n.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
                 
-                card.querySelector('.node-name').textContent = n.name;
-                const pingEl = card.querySelector('.node-ping');
-                pingEl.className = `text-xs font-bold ${getPingStatusClass(serverGateway?.status === 'UP' && n.status === 'UP' ? n.ping : null)}`;
-                pingEl.textContent = serverGateway?.status === 'UP' && n.status === 'UP' && n.ping !== null ? Math.round(n.ping) + 'ms' : '---';
-
-                card.querySelector('.node-jitter').textContent = `Jitter: ${n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A'}`;
-                card.querySelector('.node-loss').innerHTML = `Loss (15m): <span class="${getUptimeStatusClass(100 - (n.packet_loss_15m || 0))}">${n.packet_loss_15m !== null ? n.packet_loss_15m + '%' : 'N/A'}</span>`;
+                // Update inner HTML of existing cards to prevent re-creating them
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}">${n.name}</p>
+                        <p class="text-xs font-bold node-ping ${getPingStatusClass(serverGateway?.status === 'UP' && n.status === 'UP' ? n.ping : null)}">
+                            ${serverGateway?.status === 'UP' && n.status === 'UP' && n.ping !== null ? Math.round(n.ping) + 'ms' : '---'}
+                        </p>
+                    </div>
+                    <div class="h-16 w-full my-2"><canvas id="mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}"></canvas></div>
+                    <div class="text-xs text-muted flex justify-between">
+                        <span class="node-jitter">Jitter: ${n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A'}</span>
+                        <span class="node-loss">Loss (15m): <span class="${getUptimeStatusClass(100 - (n.packet_loss_15m || 0))}">${n.packet_loss_15m !== null ? n.packet_loss_15m + '%' : 'N/A'}</span></span>
+                    </div>`;
 
                 const canvasId = `mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
                 const color = palette[index % palette.length];
-                createOrUpdateMiniChart(canvasId, n.name, color);
+                // FIX: Ensure canvas element exists before creating chart
+                if (document.getElementById(canvasId)) {
+                    createOrUpdateMiniChart(canvasId, n, color);
+                }
+            });
+
+            // Remove cards that are no longer in the list of targets
+            existingCardIds.forEach(id => {
+                if (!newCardIds.has(id)) {
+                    const cardToRemove = document.getElementById(id);
+                    if (cardToRemove) {
+                        cardToRemove.remove();
+                    }
+                }
             });
         }
         
@@ -582,7 +823,8 @@
                             <div id="diag-ping-cs" class="absolute text-center text-xs p-1 rounded bg-bg-primary/80 backdrop-blur-sm"></div>
                         </div>
                         <div class="mb-8" id="diag-gateway-wrapper">
-                            <div id="diag-gateway" class="bg-bg-primary card-emboss p-4 rounded-lg border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
+                            <div id="diag-gateway" class="bg-muted card-emboss p-4 rounded-lg border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
+                                <!-- Gateway content will be dynamically inserted here -->
                             </div>
                         </div>
                         <div>
@@ -592,7 +834,7 @@
                             </div>
                         </div>`;
             }
-            document.getElementById('diag-server').addEventListener('click', showServerDetailsModal);
+            document.getElementById('diag-server')?.addEventListener('click', showServerDetailsModal);
         }
 
         function drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, pings, serverStatus) {
@@ -652,27 +894,40 @@
             }
             const details = serverStatus.gateway_details;
 
-            gatewayCard.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                    <div class="md:col-span-1 text-center">
-                        <p class="font-semibold text-primary">Network Gateway</p>
-                        <p class="text-xs text-muted truncate" title="${details.vendor || 'Unknown Vendor'}">${details.vendor || 'Unknown Vendor'}</p>
+            if (!document.getElementById('gateway-ping-chart')) {
+                 gatewayCard.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <div class="md:col-span-1 text-center">
+                            <p class="font-semibold text-primary">Network Gateway</p>
+                            <p class="text-xs text-muted truncate" title="${details.vendor || 'Unknown Vendor'}">${details.vendor || 'Unknown Vendor'}</p>
+                            <div class="h-16 w-full my-2"><canvas id="gateway-ping-chart"></canvas></div>
+                        </div>
+                        <div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2">
+                            <p><span class="font-medium text-muted">IP:</span> ${details.ip}</p>
+                            <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
+                            <p><span class="font-medium text-muted">Ping:</span> <span id="gateway-ping-value" class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
+                            <p><span class="font-medium text-muted">Jitter:</span> <span id="gateway-jitter-value">${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
+                            <p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0))}">${gatewayPingData.packet_loss_15m !== null ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}</span></p>
+                        </div>
                     </div>
-                    <div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2">
-                        <p><span class="font-medium text-muted">IP:</span> ${details.ip}</p>
-                        <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
-                        <p><span class="font-medium text-muted">Ping:</span> <span class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
-                        <p><span class="font-medium text-muted">Jitter:</span> <span>${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
-                    </div>
-                </div>
-            `;
+                `;
+                 const newCard = gatewayCard.cloneNode(true);
+                 gatewayCard.parentNode.replaceChild(newCard, gatewayCard);
+                 newCard.addEventListener('click', () => {
+                     if (gatewayPingData) showNodeDetailsModal(gatewayPingData);
+                 });
+            } else {
+                 document.getElementById('gateway-ping-value').textContent = gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A';
+                 document.getElementById('gateway-jitter-value').textContent = gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A';
+                 document.getElementById('gateway-loss-value').innerHTML = `${gatewayPingData.packet_loss_15m !== null ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}`;
+                 document.getElementById('gateway-loss-value').className = getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0));
+            }
+
             gatewayCard.style.borderColor = `${gatewayPingData.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
-            
-            const newCard = gatewayCard.cloneNode(true);
-            gatewayCard.parentNode.replaceChild(newCard, gatewayCard);
-            newCard.addEventListener('click', () => {
-                if (gatewayPingData) showNodeDetailsModal(gatewayPingData);
-            });
+            // FIX: Ensure canvas element exists before creating chart
+            if (document.getElementById('gateway-ping-chart')) {
+                createOrUpdateMiniChart('gateway-ping-chart', gatewayPingData, 'var(--accent-primary)');
+            }
         }
 
         function showNodeDetailsModal(data) {
@@ -680,7 +935,7 @@
             const dnsList = (data.dns_info && Array.isArray(data.dns_info) && data.dns_info.length > 0) ? data.dns_info.map(ip => `<li>${ip}</li>`).join('') : '<li>No DNS data available</li>';
             const traceList = (data.traceroute_info && Array.isArray(data.traceroute_info) && data.traceroute_info.length > 0) ? data.traceroute_info.map(hop => `<li>${hop}</li>`).join('') : '<li>No traceroute data available</li>';
             
-            DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+            DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div><p class="text-muted text-xs">Status</p><p class="font-semibold" style="color:${data.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${data.status}</p></div>
                     <div><p class="text-muted text-xs">Ping</p><p class="font-semibold">${data.ping ? Math.round(data.ping) + ' ms' : 'N/A'}</p></div>
                     <div><p class="text-muted text-xs">Jitter</p><p class="font-semibold">${data.jitter ? data.jitter.toFixed(2) + ' ms' : 'N/A'}</p></div>
@@ -710,47 +965,82 @@
 
         async function initializeTrendsChart() {
             if (isTrendsDataLoaded) return;
-            const historicalData = await apiCall('get_historical_data');
-            if (!historicalData) return;
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            const palette = themes[currentTheme].palette;
-            const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
-                if (!Array.isArray(historicalData[targetName])) return [];
-                const color = palette[index % palette.length];
-                return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2, };
-            });
-            let isFiltered = false;
-            trendsChart = new Chart(DOMElements.trendsChartCanvas, {
-                type: 'line', data: { datasets },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } },
-                    plugins: {
-                        legend: {
-                            labels: { color: 'var(--text-primary)' },
-                            onClick: (e, legendItem, legend) => {
-                                const index = legendItem.datasetIndex;
-                                const ci = legend.chart;
-                                const meta = ci.getDatasetMeta(index);
-                                if (!isFiltered) {
-                                    ci.data.datasets.forEach((ds, i) => { if (i !== index) ci.hide(i); });
-                                    isFiltered = true;
-                                } else {
-                                    meta.hidden = !meta.hidden;
+            DOMElements.trendsLoadingIndicator.classList.remove('hidden');
+            try {
+                const historicalData = await apiCall('get_historical_data');
+                if (!historicalData || Object.keys(historicalData).length === 0) {
+                    const ctx = DOMElements.trendsChartCanvas.getContext('2d');
+                    ctx.fillStyle = 'var(--text-secondary)';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('No historical data available yet.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2);
+                    return;
+                };
+                const currentTheme = localStorage.getItem('theme') || 'dark';
+                const palette = themes[currentTheme].palette;
+                const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
+                    if (!Array.isArray(historicalData[targetName])) return [];
+                    const color = palette[index % palette.length];
+                    return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2, };
+                });
+                let isFiltered = false;
+                trendsChart = new Chart(DOMElements.trendsChartCanvas, {
+                    type: 'line', data: { datasets },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } },
+                        plugins: {
+                            legend: {
+                                labels: { color: 'var(--text-primary)' },
+                                onClick: (e, legendItem, legend) => {
+                                    const index = legendItem.datasetIndex;
+                                    const ci = legend.chart;
+                                    const meta = ci.getDatasetMeta(index);
+                                    if (!isFiltered) {
+                                        ci.data.datasets.forEach((ds, i) => { if (i !== index) ci.hide(i); });
+                                        isFiltered = true;
+                                    } else {
+                                        meta.hidden = !meta.hidden;
+                                    }
+                                    DOMElements.clearTrendsFilterBtn.style.display = 'block';
+                                    legend.legendItems.forEach((item, i) => { item.hidden = !ci.isDatasetVisible(i); });
+                                    ci.update();
                                 }
-                                DOMElements.clearTrendsFilterBtn.style.display = 'block';
-                                legend.legendItems.forEach((item, i) => { item.hidden = !ci.isDatasetVisible(i); });
-                                ci.update();
-                            }
-                        },
-                        zoom: { pan: { enabled: true, mode: 'x' }, zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' } }
+                            },
+                            zoom: { pan: { enabled: true, mode: 'x' }, zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' } }
+                        }
+                    }
+                });
+                DOMElements.clearTrendsFilterBtn?.addEventListener('click', () => {
+                    trendsChart.data.datasets.forEach((ds, i) => trendsChart.show(i));
+                    isFiltered = false;
+                    if (DOMElements.clearTrendsFilterBtn) DOMElements.clearTrendsFilterBtn.style.display = 'none';
+                });
+                isTrendsDataLoaded = true;
+            } catch(e) {
+                console.error("Error initializing trends chart:", e);
+                const ctx = DOMElements.trendsChartCanvas.getContext('2d');
+                ctx.fillStyle = 'var(--text-secondary)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Failed to load chart data.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2);
+            } finally {
+                DOMElements.trendsLoadingIndicator.classList.add('hidden');
+            }
+        }
+        
+        // FIX: Function to update trends chart with live data
+        function updateTrendsChart(pings) {
+            if (!trendsChart || !isTrendsDataLoaded) return;
+
+            pings.forEach(ping => {
+                const dataset = trendsChart.data.datasets.find(ds => ds.label === ping.name);
+                if (dataset) {
+                    dataset.data.push({ x: ping.timestamp * 1000, y: ping.ping });
+                    // Keep the chart from getting too crowded, show ~last 24h
+                    const oneDayAgo = Date.now() - 86400000;
+                    if (dataset.data.length > 1 && dataset.data[0].x < oneDayAgo) {
+                        dataset.data.shift();
                     }
                 }
             });
-            DOMElements.clearTrendsFilterBtn.addEventListener('click', () => {
-                trendsChart.data.datasets.forEach((ds, i) => trendsChart.show(i));
-                isFiltered = false;
-                DOMElements.clearTrendsFilterBtn.style.display = 'none';
-            });
-            isTrendsDataLoaded = true;
+            trendsChart.update('quiet');
         }
 
         // --- Initialization and Event Listeners ---
@@ -771,13 +1061,14 @@
                             }
                         });
                     }
-                    if (view === 'trends') initializeTrendsChart();
+                    if (view === 'dashboard') initializeTrendsChart(); // Initialize chart when dashboard is viewed
+                    if (view === 'neighborhood') fetchNetworkNeighborhood();
                 });
             });
-            DOMElements.clearLogBtn.addEventListener('click', () => DOMElements.confirmModal.classList.remove('hidden'));
-            DOMElements.modalCancelBtn.addEventListener('click', () => DOMElements.confirmModal.classList.add('hidden'));
-            DOMElements.modalConfirmBtn.addEventListener('click', async () => { await apiCall('clear_log'); log = []; totalSessionDowntime = 0; renderLogTimeline(); renderCalendar(calendarDate); updateAllUptimeStats(); if (trendsChart) { trendsChart.data.datasets.forEach(ds => ds.data = []); trendsChart.update(); } DOMElements.confirmModal.classList.add('hidden'); });
-            DOMElements.soundToggle.addEventListener('change', () => {
+            DOMElements.clearLogBtn?.addEventListener('click', () => DOMElements.confirmModal.classList.remove('hidden'));
+            DOMElements.modalCancelBtn?.addEventListener('click', () => DOMElements.confirmModal.classList.add('hidden'));
+            DOMElements.modalConfirmBtn?.addEventListener('click', async () => { await apiCall('clear_log'); log = []; totalSessionDowntime = 0; renderLogTimeline(); renderCalendar(calendarDate); updateAllUptimeStats(); if (trendsChart) { trendsChart.data.datasets.forEach(ds => ds.data = []); trendsChart.update(); } DOMElements.confirmModal.classList.add('hidden'); });
+            DOMElements.soundToggle?.addEventListener('change', () => {
                 soundEnabled = DOMElements.soundToggle.checked;
                 localStorage.setItem('soundEnabled', soundEnabled);
             });
@@ -788,41 +1079,73 @@
                 modalUpdateIntervalId = null;
             };
 
-            DOMElements.modalCloseBtn.addEventListener('click', () => closeModal(DOMElements.nodeDetailsModal));
-            DOMElements.serverModalCloseBtn.addEventListener('click', () => closeModal(DOMElements.serverDetailsModal));
-            DOMElements.licenseCloseBtn.addEventListener('click', () => closeModal(DOMElements.licenseModal));
+            DOMElements.modalCloseBtn?.addEventListener('click', () => closeModal(DOMElements.nodeDetailsModal));
+            DOMElements.serverModalCloseBtn?.addEventListener('click', () => closeModal(DOMElements.serverDetailsModal));
+            DOMElements.licenseCloseBtn?.addEventListener('click', () => closeModal(DOMElements.licenseModal));
+            DOMElements.readmeCloseBtn?.addEventListener('click', () => closeModal(DOMElements.readmeModal));
 
-            DOMElements.logoContainer.addEventListener('click', () => playSound(bruhPlayer, true));
-            DOMElements.logViewToggle.addEventListener('click', (e) => {
+            DOMElements.logoContainer?.addEventListener('click', () => playSound(bruhPlayer, true));
+            DOMElements.logViewToggle?.addEventListener('click', (e) => {
                 if (e.target.tagName === 'BUTTON') {
                     const view = e.target.dataset.view;
                     DOMElements.logViewToggle.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-accent', 'text-white'));
                     e.target.classList.add('bg-accent', 'text-white');
                     if (view === 'timeline') {
-                        DOMElements.logTimelineContainer.classList.remove('hidden');
-                        DOMElements.logCalendarContainer.classList.add('hidden');
+                        DOMElements.logTimelineContainer?.classList.remove('hidden');
+                        DOMElements.logCalendarContainer?.classList.add('hidden');
                     } else {
-                        DOMElements.logTimelineContainer.classList.add('hidden');
-                        DOMElements.logCalendarContainer.classList.remove('hidden');
+                        DOMElements.logTimelineContainer?.classList.add('hidden');
+                        DOMElements.logCalendarContainer?.classList.remove('hidden');
                         renderCalendar(calendarDate);
                     }
                 }
             });
-            DOMElements.calPrevMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(calendarDate); });
-            DOMElements.calNextMonthBtn.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(calendarDate); });
-            DOMElements.licenseLink.addEventListener('click', (e) => { e.preventDefault(); DOMElements.licenseModal.classList.remove('hidden'); });
+            DOMElements.calPrevMonthBtn?.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(calendarDate); });
+            DOMElements.calNextMonthBtn?.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(calendarDate); });
+            
+            DOMElements.responsiveScanToggle?.addEventListener('change', (e) => {
+                isResponsiveScanMode = e.target.checked;
+                localStorage.setItem('responsiveScanMode', isResponsiveScanMode);
+                startNetworkScanPolling();
+            });
+
+            // FIX: Add event listeners to open the License and README modals
+            DOMElements.licenseLink?.addEventListener('click', (e) => { e.preventDefault(); showLicenseModal(); });
+            DOMElements.readmeLink?.addEventListener('click', (e) => { e.preventDefault(); showReadmeModal(); });
+        }
+
+        async function loadThemes() {
+            try {
+                const response = await fetch('./assets/themes.json');
+                themes = await response.json();
+            } catch (error) {
+                console.error("Could not load themes.json:", error);
+            }
         }
 
         function applySettings() {
+            let theme = localStorage.getItem('theme') || 'dark';
+            if (!themes[theme]) {
+                console.error(`Theme '${theme}' not found. Defaulting to 'dark'.`);
+                theme = 'dark';
+                localStorage.setItem('theme', theme);
+            }
+
             soundEnabled = localStorage.getItem('soundEnabled') === 'true';
-            DOMElements.soundToggle.checked = soundEnabled;
-            const theme = localStorage.getItem('theme') || 'dark';
+            if(DOMElements.soundToggle) DOMElements.soundToggle.checked = soundEnabled;
+            
             document.documentElement.className = `theme-${theme}`;
+
+            const themeProperties = themes[theme].properties;
+            for (const [key, value] of Object.entries(themeProperties)) {
+                document.documentElement.style.setProperty(key, value);
+            }
             
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
             document.documentElement.style.setProperty('--accent-primary-trans-1', `${accentColor}33`);
             document.documentElement.style.setProperty('--accent-primary-trans-2', `${accentColor}55`);
-            if (trendsChart) {
+            
+            if (isTrendsDataLoaded && trendsChart) {
                 const palette = themes[theme].palette;
                 trendsChart.data.datasets.forEach((dataset, index) => {
                     const color = palette[index % palette.length];
@@ -831,10 +1154,15 @@
                 });
                 trendsChart.options.scales.x.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary'); trendsChart.options.scales.y.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary'); trendsChart.options.scales.x.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); trendsChart.options.scales.y.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); trendsChart.options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary'); trendsChart.update();
             }
+
+            isResponsiveScanMode = localStorage.getItem('responsiveScanMode') === 'true';
+            if (DOMElements.responsiveScanToggle) DOMElements.responsiveScanToggle.checked = isResponsiveScanMode;
+            startNetworkScanPolling();
         }
 
         function loadSettings() {
             const createRadioGroup = (container, groupName, options, savedValue, callback) => {
+                if (!container) return;
                 container.innerHTML = '';
                 Object.entries(options).forEach(([value, label]) => {
                     const id = `${groupName}-${value}`;
@@ -855,19 +1183,18 @@
 
             const intervalOptions = { '1000': '1s', '2000': '2s', '5000': '5s', '10000': '10s' };
             const detectionOptions = {
-                'critical_dns': 'Critical DNS Check (Default)', 'gateway': 'Gateway Ping', 'majority': 'Majority of Nodes',
+                'smart_check': 'Smart Check (Default)', 'gateway': 'Gateway Ping', 'majority': 'Majority of Nodes',
                 'dns_resolvers': 'Any DNS Resolver', 'critical_services': 'All Critical Services',
-                'weighted_latency': 'Weighted (Latency)', 'weighted_reliability': 'Weighted (Reliability)', 'google': 'Google Ping'
+                'google': 'Google Ping'
             };
             const themeOptions = Object.fromEntries(Object.entries(themes).map(([key, val]) => [key, val.name]));
 
             createRadioGroup(DOMElements.updateIntervalGroup, 'update-interval', intervalOptions, localStorage.getItem('updateInterval') || '1000', (e) => {
                 localStorage.setItem('updateInterval', e.target.value);
-                apiCall('save_settings', { settings: { update_interval: e.target.value } });
                 startPolling(e.target.value);
             });
 
-            createRadioGroup(DOMElements.onlineDetectionMethodGroup, 'online-detection-method', detectionOptions, localStorage.getItem('onlineDetectionMethod') || 'critical_dns', (e) => {
+            createRadioGroup(DOMElements.onlineDetectionMethodGroup, 'online-detection-method', detectionOptions, localStorage.getItem('onlineDetectionMethod') || 'smart_check', (e) => {
                 localStorage.setItem('onlineDetectionMethod', e.target.value);
             });
 
@@ -879,11 +1206,26 @@
             applySettings();
         }
 
-        function startPolling(interval) { if (pollingIntervalId) clearInterval(pollingIntervalId); fetchAndUpdateData().catch(handleError); pollingIntervalId = setInterval(() => fetchAndUpdateData().catch(handleError), interval); setInterval(updateActiveLogTimer, 1000); }
+        function startPolling(interval) {
+            if (pollingIntervalId) clearInterval(pollingIntervalId);
+            fetchAndUpdateData();
+            pollingIntervalId = setInterval(fetchAndUpdateData, interval);
+            setInterval(updateActiveLogTimer, 1000);
+        }
+
+        function startNetworkScanPolling() {
+            if (networkScanIntervalId) clearInterval(networkScanIntervalId);
+            const interval = isResponsiveScanMode ? parseInt(localStorage.getItem('updateInterval'), 10) : 300000; // 5 minutes
+            if (!DOMElements.views.neighborhood.classList.contains('hidden')) {
+                fetchNetworkNeighborhood();
+            }
+            networkScanIntervalId = setInterval(fetchNetworkNeighborhood, interval);
+        }
+
 
         async function loadFuzzySayings() {
             try {
-                const response = await fetch('./fuzzy_sayings.json');
+                const response = await fetch('./assets/fuzzy_sayings.json');
                 if(response.ok) {
                     FUZZY_SAYINGS = await response.json();
                 } else {
@@ -893,9 +1235,36 @@
                 console.error("Could not load fuzzy sayings:", error);
             }
         }
+        
+        // FIX: Update logo and favicon color based on internet quality score
+        function updateLogoColor(score, status) {
+            const logo = DOMElements.logoContainer;
+            const title = DOMElements.appTitle;
+            if (!logo || !title) return;
+
+            let colorVar;
+            if (status === 'DOWN') {
+                colorVar = 'var(--color-status-down)';
+            } else if (status === 'UP') {
+                if (score > 300) { colorVar = 'var(--color-status-up)'; }
+                else if (score > 150) { colorVar = 'var(--color-status-warn)'; }
+                else { colorVar = 'var(--color-status-down)'; }
+            } else {
+                colorVar = 'var(--accent-primary)';
+            }
+            
+            logo.style.color = colorVar;
+            title.style.color = colorVar;
+
+            // Update favicon dynamically
+            const faviconSVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:${colorVar};stroke-width:4;stroke-miterlimit:10;}.st1{fill:${colorVar};stroke:${colorVar};stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:${colorVar};stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>`;
+            const faviconDataURI = `data:image/svg+xml,${encodeURIComponent(faviconSVG)}`;
+            DOMElements.faviconLink.href = faviconDataURI;
+        }
+
 
         function updateFuzzyQualityMetric(pings, score) {
-            if (!FUZZY_SAYINGS || Object.keys(FUZZY_SAYINGS).length === 0) return;
+            if (!FUZZY_SAYINGS || Object.keys(FUZZY_SAYINGS).length === 0 || !DOMElements.qualityText) return;
             if (currentState === 'DOWN') {
                 DOMElements.qualityText.textContent = FUZZY_SAYINGS["0"][Math.floor(Math.random() * FUZZY_SAYINGS["0"].length)];
                 DOMElements.qualityScore.textContent = "(Score: 0)";
@@ -922,23 +1291,25 @@
             DOMElements.qualityScore.textContent = `(Score: ${score})`;
             if (score < 150) DOMElements.qualityText.style.color = 'var(--color-status-down)';
             else if (score < 300) DOMElements.qualityText.style.color = 'var(--color-status-warn)';
-            else DOMElements.qualityText.style.color = 'var(--color-status-up)';
+            else if (score >= 300) DOMElements.qualityText.style.color = 'var(--color-status-up)';
         }
 
-        async function createOrUpdateMiniChart(canvasId, targetName, color) {
+        async function createOrUpdateMiniChart(canvasId, nodeData, color) {
             const ctx = document.getElementById(canvasId);
             if (!ctx) return;
             
             if (miniChartInstances[canvasId]) {
-                const recentData = await apiCall('get_recent_history', { target: targetName });
-                if (!recentData) return;
-                miniChartInstances[canvasId].data.labels = recentData.map(d => d.timestamp * 1000);
-                miniChartInstances[canvasId].data.datasets[0].data = recentData.map(d => d.ping);
-                miniChartInstances[canvasId].data.datasets[0].borderColor = color || 'var(--accent-primary)';
-                miniChartInstances[canvasId].update('none');
+                const chart = miniChartInstances[canvasId];
+                chart.data.labels.push(nodeData.timestamp * 1000);
+                chart.data.datasets[0].data.push(nodeData.ping);
+                if (chart.data.labels.length > 30) { // Keep the chart to 30 data points
+                    chart.data.labels.shift();
+                    chart.data.datasets[0].data.shift();
+                }
+                chart.update('none');
             } else {
-                const recentData = await apiCall('get_recent_history', { target: targetName });
-                if (!recentData) return;
+                const recentData = await apiCall('get_recent_history', { target: nodeData.name });
+                if (!recentData || recentData.length === 0) return;
                 const data = {
                     labels: recentData.map(d => d.timestamp * 1000),
                     datasets: [{
@@ -990,38 +1361,27 @@
                     circle: container.querySelector('.progress'),
                     disconnects: container.querySelector('.disconnect-count .font-bold')
                 };
-                // Trigger the animation on the first render
                 setTimeout(() => {
                     uptimeChartInstances[containerId].circle.style.strokeDashoffset = offset;
                 }, 100);
             } else {
                 const { circle, disconnects: disconnectsEl } = uptimeChartInstances[containerId];
-                circle.style.strokeDashoffset = offset;
-                circle.setAttribute('stroke', `${colorVar})`);
-                disconnectsEl.textContent = disconnects;
-                disconnectsEl.className = `font-bold text-2xl ${colorClass}`;
-            }
-        }
-
-        function updateLiveCharts(apiData) {
-            if (trendsChart && !DOMElements.views.trends.classList.contains('hidden')) {
-                apiData.pings.forEach(ping => {
-                    const dataset = trendsChart.data.datasets.find(d => d.label === ping.name);
-                    if (dataset) {
-                        dataset.data.push({ x: ping.timestamp * 1000, y: ping.ping });
-                        if (dataset.data.length > 500) {
-                            dataset.data.shift();
-                        }
-                    }
-                });
-                trendsChart.update('none');
+                if (circle) {
+                    circle.style.strokeDashoffset = offset;
+                    circle.setAttribute('stroke', `${colorVar})`);
+                }
+                if (disconnectsEl) {
+                    disconnectsEl.textContent = disconnects;
+                    disconnectsEl.className = `font-bold text-2xl ${colorClass}`;
+                }
             }
         }
         
         async function renderCalendar(date) {
             const year = date.getFullYear();
             const month = date.getMonth();
-            DOMElements.calMonthYear.textContent = `${date.toLocaleString('default', { month: 'long' })} ${year}`;
+            if (DOMElements.calMonthYear) DOMElements.calMonthYear.textContent = `${date.toLocaleString('default', { month: 'long' })} ${year}`;
+            if (!DOMElements.calGrid) return;
 
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -1077,12 +1437,14 @@
 
 
         async function showServerDetailsModal() {
-            DOMElements.serverDetailsModal.classList.remove('hidden');
+            DOMElements.serverDetailsModal?.classList.remove('hidden');
             const history = await apiCall('get_resource_history');
             if (!history) return;
 
-            const createChart = (canvasId, label, dataKey, unit, color) => {
-                const ctx = document.getElementById(canvasId).getContext('2d');
+            const createChart = (canvasId, label, dataKey, unit, colorVarName) => {
+                const ctx = document.getElementById(canvasId)?.getContext('2d');
+                if (!ctx) return;
+                const color = getComputedStyle(document.documentElement).getPropertyValue(colorVarName).trim();
                 return new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -1110,25 +1472,27 @@
             if (serverChartMem) serverChartMem.destroy();
             if (serverChartNet) serverChartNet.destroy();
 
-            serverChartCPU = createChart('cpu-chart', 'CPU Usage', 'cpu_usage', '%', 'var(--accent-secondary)');
-            serverChartMem = createChart('mem-chart', 'Memory Usage', 'mem_usage', '%', 'var(--color-status-up)');
+            serverChartCPU = createChart('cpu-chart', 'CPU Usage', 'cpu_usage', '%', '--accent-secondary');
+            serverChartMem = createChart('mem-chart', 'Memory Usage', 'mem_usage', '%', '--color-status-up');
             
-            const netCtx = document.getElementById('net-chart').getContext('2d');
-            serverChartNet = new Chart(netCtx, {
-                type: 'line',
-                data: {
-                    labels: history.map(d => d.timestamp * 1000),
-                    datasets: [
-                        { label: 'Download', data: history.map(d => d.net_down_kbps), borderColor: '#38bdf8', backgroundColor: '#38bdf833', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true },
-                        { label: 'Upload', data: history.map(d => d.net_up_kbps), borderColor: '#a78bfa', backgroundColor: '#a78bfa33', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' Kbps' } } },
-                    plugins: { legend: { labels: { color: 'var(--text-primary)' } }, title: { display: true, text: 'Network Usage', color: 'var(--text-primary)' } }
-                }
-            });
+            const netCtx = document.getElementById('net-chart')?.getContext('2d');
+            if (netCtx) {
+                serverChartNet = new Chart(netCtx, {
+                    type: 'line',
+                    data: {
+                        labels: history.map(d => d.timestamp * 1000),
+                        datasets: [
+                            { label: 'Download', data: history.map(d => d.net_down_kbps), borderColor: '#38bdf8', backgroundColor: '#38bdf833', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true },
+                            { label: 'Upload', data: history.map(d => d.net_up_kbps), borderColor: '#a78bfa', backgroundColor: '#a78bfa33', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' Kbps' } } },
+                        plugins: { legend: { labels: { color: 'var(--text-primary)' } }, title: { display: true, text: 'Network Usage', color: 'var(--text-primary)' } }
+                    }
+                });
+            }
         }
 
         async function updateClientInfo() {
@@ -1183,18 +1547,38 @@
             `;
         }
 
-        function showLicense() {
-            DOMElements.licenseContent.innerHTML = `<p class="font-bold">GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</p><p>Copyright © 2007 Free Software Foundation, Inc. <a href="https://fsf.org/" class="text-accent hover:underline">https://fsf.org/</a></p><p>Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.</p><p class="font-semibold mt-4">Preamble</p><p>The GNU General Public License is a free, copyleft license for software and other kinds of works...</p><p>[... Full license text would go here ...]</p><p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>`;
+        async function showLicenseModal() {
+            try {
+                const response = await fetch('./assets/LICENSE');
+                const text = await response.text();
+                // FIX: Use <pre> to display pre-formatted text correctly
+                DOMElements.licenseContent.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`;
+                DOMElements.licenseModal.classList.remove('hidden');
+            } catch (error) {
+                DOMElements.licenseContent.textContent = 'Failed to load license content.';
+                console.error('Failed to load license:', error);
+            }
+        }
+        
+        async function showReadmeModal() {
+            try {
+                const response = await fetch('./assets/README.md');
+                const text = await response.text();
+                // FIX: Use <pre> to display pre-formatted text correctly
+                DOMElements.readmeContent.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`;
+                DOMElements.readmeModal.classList.remove('hidden');
+            } catch (error) {
+                DOMElements.readmeContent.textContent = 'Failed to load README content.';
+                console.error('Failed to load README:', error);
+            }
         }
         
         function handleError(error) {
             console.error("Caught error:", error);
-            // MODIFICATION: Only show the fatal error overlay on initial load.
-            // For subsequent errors, just log to console and allow polling to continue.
-            if (document.getElementById('app-container').classList.contains('hidden-on-load')) {
-                DOMElements.loadingOverlay.classList.add('loading-error');
-                DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
-                DOMElements.loadingErrorContainer.classList.remove('hidden');
+            if (DOMElements.appContainer?.classList.contains('hidden-on-load')) {
+                DOMElements.loadingOverlay?.classList.add('loading-error');
+                if (DOMElements.loadingErrorMessage) DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
+                DOMElements.loadingErrorContainer?.classList.remove('hidden');
                 if (pollingIntervalId) {
                     clearInterval(pollingIntervalId);
                 }
@@ -1203,11 +1587,13 @@
 
         async function initializeApp() {
             try {
-                // Setup UI skeletons first
+                // Ensure themes are loaded before anything else
+                await loadThemes();
+                
+                // Now load all settings and other assets
                 createUptimeCards();
                 setupEventListeners();
                 loadSettings();
-                showLicense();
                 renderDiagnostics();
                 
                 // Load assets and initial data in parallel
@@ -1224,27 +1610,50 @@
                     })
                 ]);
 
+                // Initialize the main trends chart now that the dashboard is the default view
+                initializeTrendsChart();
+
                 // Trigger the success animation
-                DOMElements.loadingOverlay.classList.add('loading-success');
-                DOMElements.loadingLogoContainer.addEventListener('animationend', () => {
-                    DOMElements.loadingOverlay.style.display = 'none';
-                    DOMElements.appContainer.classList.remove('hidden-on-load');
-                    DOMElements.appContainer.classList.add('visible');
+                DOMElements.loadingOverlay?.classList.add('loading-success');
+                DOMElements.loadingLogoContainer?.addEventListener('animationend', () => {
+                    if(DOMElements.loadingOverlay) DOMElements.loadingOverlay.style.display = 'none';
+                    if(DOMElements.appContainer) {
+                        DOMElements.appContainer.classList.remove('hidden-on-load');
+                        DOMElements.appContainer.classList.add('visible');
+                    }
                     
-                    // Start the main data loop only after the app is visible
                     const updateInterval = localStorage.getItem('updateInterval') || 1000;
                     startPolling(updateInterval);
                 }, { once: true });
 
-
-                new ResizeObserver(() => {
-                    if (!DOMElements.views.dashboard.classList.contains('hidden') && allPingsData.length > 0) {
-                        drawDiagnosticPaths(null, null, allPingsData, { server_ip: clientIp, server_gateway_ip: serverGatewayIp });
-                    }
-                }).observe(DOMElements.diagnosticsContainer);
+                if (DOMElements.diagnosticsContainer) {
+                    new ResizeObserver(() => {
+                        if (!DOMElements.views.dashboard?.classList.contains('hidden') && allPingsData.length > 0) {
+                            drawDiagnosticPaths(null, null, allPingsData, { server_ip: clientIp, server_gateway_ip: serverGatewayIp });
+                        }
+                        if (!DOMElements.views.neighborhood?.classList.contains('hidden') && networkScanData) {
+                            renderNetworkTree(networkScanData);
+                        }
+                    }).observe(DOMElements.diagnosticsContainer);
+                }
+                if (DOMElements.networkTreeContainer) {
+                    new ResizeObserver(() => {
+                        if (!DOMElements.views.neighborhood?.classList.contains('hidden') && networkScanData) {
+                            renderNetworkTree(networkScanData);
+                        }
+                    }).observe(DOMElements.networkTreeContainer);
+                }
+                
             } catch (e) {
                 handleError(e);
             }
+        }
+        // Helper function for network tree layout
+        function getHostType(ip) {
+            if (ip === serverGatewayIp) return 'Gateway';
+            if (ip === clientIp) return 'Client';
+            // Could add more logic here to identify servers, etc.
+            return 'Device';
         }
 
         document.addEventListener('DOMContentLoaded', initializeApp);

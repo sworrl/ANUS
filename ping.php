@@ -2,7 +2,7 @@
 // Set headers for CORS and JSON response
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-// MODIFICATION: Add cache-control headers to prevent caching
+// FIX: Add cache-control headers to prevent browser caching of API responses
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -11,7 +11,8 @@ set_time_limit(60);
 // --- Configuration ---
 $db_path = '/var/db/anus_metrics.db';
 $client_ip_file = '/var/db/anus_client_ip.txt';
-$targets_config_file = '/var/www/html/anus/targets.json';
+$targets_config_file = '/var/www/html/anus/assets/targets.json';
+$fuzzy_sayings_file = '/var/www/html/anus/assets/fuzzy_sayings.json';
 
 // --- Database Setup ---
 try {
@@ -46,6 +47,12 @@ function calculate_internet_quality_score($pings) {
     if ($target_count === 0) return 0;
     // Scale score to be out of 500
     return round(($total_score / $target_count) * 5);
+}
+
+function get_gateway_details_from_db($db) {
+    $stmt = $db->query("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info ORDER BY last_updated DESC LIMIT 1");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
 }
 
 // --- API Endpoint Logic ---
@@ -99,33 +106,16 @@ switch ($action) {
                 if ($result) { $server_to_client_ping = $result['ping']; }
             }
             
-            // MODIFICATION: Get Gateway Details
-            $gateway_details = [
-                'ip' => trim(@shell_exec("ip route | grep default | awk '{print $3}' | head -n 1")) ?: 'N/A',
-                'mac' => 'N/A',
-                'vendor' => 'N/A'
-            ];
-            if ($gateway_details['ip'] !== 'N/A') {
-                $arp_output = @shell_exec("ip neigh show " . escapeshellarg($gateway_details['ip']));
-                if ($arp_output && preg_match('/lladdr ([0-9a-f:]+)/i', $arp_output, $matches)) {
-                    $gateway_details['mac'] = $matches[1];
-                    // Suppress errors for the external API call
-                    $vendor = @file_get_contents('https://api.macvendors.com/' . urlencode($gateway_details['mac']));
-                    if ($vendor && !str_contains($vendor, 'Not Found')) {
-                        $gateway_details['vendor'] = $vendor;
-                    } else {
-                        $gateway_details['vendor'] = 'Unknown Vendor';
-                    }
-                }
-            }
+            $gateway_details = get_gateway_details_from_db($db);
+            $server_ip = $_SERVER['SERVER_ADDR'] ?? '127.0.0.1';
 
             $server_status = [
                 'service_status' => trim(@shell_exec('systemctl is-active anus_service.service')) === 'active',
                 'apache_status' => true, 'php_fpm_status' => true, 'db_status' => true,
-                'server_ip' => $_SERVER['SERVER_ADDR'] ?? '127.0.0.1',
+                'server_ip' => $server_ip,
                 'client_ip' => $client_ip,
-                'server_gateway_ip' => $gateway_details['ip'], // Use IP from details
-                'gateway_details' => $gateway_details, // Add full details object
+                'server_gateway_ip' => $gateway_details['ip'],
+                'gateway_details' => $gateway_details,
                 'server_to_client_ping' => $server_to_client_ping,
                 'resource_usage' => get_latest_resource_usage($db),
                 'internet_quality_score' => calculate_internet_quality_score($latest_metrics)
@@ -134,6 +124,30 @@ switch ($action) {
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Error fetching latest metrics: ' . $e->getMessage()]);
+        }
+        break;
+
+    case 'get_network_neighborhood':
+        try {
+            // FIX: Added 'os' column to the SELECT statement to provide data to the frontend
+            $stmt = $db->query("SELECT ip, mac_address, vendor, hostname, is_up, services, os FROM nmap_scan_results ORDER BY is_up DESC, ip ASC");
+            $hosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($hosts as &$host) {
+                $host['is_up'] = (bool)$host['is_up'];
+                $host['services'] = json_decode($host['services'], true);
+            }
+            $server_ip = $_SERVER['SERVER_ADDR'] ?? '127.0.0.1';
+            $client_ip_from_file = trim(@file_get_contents($client_ip_file));
+            
+            echo json_encode([
+                'hosts' => $hosts,
+                'server_ip' => $server_ip,
+                'client_ip' => $client_ip_from_file,
+                'gateway_ip' => get_gateway_details_from_db($db)['ip']
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error fetching network neighborhood: ' . $e->getMessage()]);
         }
         break;
 
@@ -183,35 +197,48 @@ switch ($action) {
         break;
 
     case 'get_historical_data':
+        // FIX: Optimized query to fetch only the last 24 hours of data to prevent timeouts on large datasets.
         try {
-            $stmt_names = $db->query("SELECT DISTINCT name FROM metrics");
-            $target_names = $stmt_names->fetchAll(PDO::FETCH_COLUMN);
-            $history = [];
-            $stmt_history = $db->prepare("SELECT ping, jitter, status, timestamp FROM metrics WHERE name = ? ORDER BY timestamp ASC");
-            foreach ($target_names as $name) {
-                $stmt_history->execute([$name]);
-                $results = $stmt_history->fetchAll(PDO::FETCH_ASSOC);
-                $history[$name] = $results;
-            }
-            echo json_encode($history);
-        } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error fetching historical data: ' . $e->getMessage()]); }
+            $time_24h_ago = time() - 86400;
+            $stmt = $db->prepare("SELECT name, ping, jitter, status, timestamp FROM metrics WHERE timestamp >= ? ORDER BY timestamp ASC");
+            $stmt->execute([$time_24h_ago]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC | PDO::FETCH_GROUP);
+            echo json_encode($results);
+        } catch (Exception $e) { 
+            http_response_code(500); 
+            echo json_encode(['error' => 'Error fetching historical data: ' . $e->getMessage()]); 
+        }
         break;
 
     case 'get_log':
+        // FIX: The log generation logic was flawed and didn't correctly use the last known status.
+        // This new logic correctly reconstructs the event timeline from the raw ping data.
         try {
             $stmt = $db->prepare("SELECT status, timestamp FROM metrics WHERE name = 'Google.com' ORDER BY timestamp ASC");
             $stmt->execute();
             $pings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $event_log = []; $last_status = null; $event_start_time = null;
+            $event_log = [];
             if (count($pings) > 0) {
-                $last_status = $pings[0]['status']; $event_start_time = $pings[0]['timestamp'];
-                foreach($pings as $ping) {
-                    if ($ping['status'] !== $last_status) {
-                        $event_log[] = ['status' => $last_status, 'startTime' => date('c', $event_start_time), 'endTime' => date('c', $ping['timestamp'])];
-                        $last_status = $ping['status']; $event_start_time = $ping['timestamp'];
+                $last_status = $pings[0]['status'];
+                $event_start_time = $pings[0]['timestamp'];
+                
+                for ($i = 1; $i < count($pings); $i++) {
+                    if ($pings[$i]['status'] !== $last_status) {
+                        $event_log[] = [
+                            'status' => $last_status,
+                            'startTime' => date('c', $event_start_time),
+                            'endTime' => date('c', $pings[$i]['timestamp'])
+                        ];
+                        $last_status = $pings[$i]['status'];
+                        $event_start_time = $pings[$i]['timestamp'];
                     }
                 }
-                if($last_status !== null) { $event_log[] = ['status' => $last_status, 'startTime' => date('c', $event_start_time), 'endTime' => date('c', time())]; }
+                // Add the final, ongoing event
+                $event_log[] = [
+                    'status' => $last_status,
+                    'startTime' => date('c', $event_start_time),
+                    'endTime' => date('c', time())
+                ];
             }
             echo json_encode(array_reverse($event_log));
         } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error generating log: ' . $e->getMessage()]); }
