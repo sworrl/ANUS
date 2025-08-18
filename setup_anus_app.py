@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A.N.U.S. v1.3.0
+# A.N.U.S. v1.3.3
 
 import subprocess
 import os
@@ -12,6 +12,7 @@ import shutil
 import re
 from datetime import datetime
 import json
+import threading
 
 # --- Curses Check ---
 try:
@@ -31,9 +32,9 @@ CLIENT_IP_FILE = os.path.join(DB_DIR, "anus_client_ip.txt")
 SERVICE_NAME = "anus_service"
 PYTHON_SERVICE_FILE = "anus_service.py"
 SYSTEMD_SERVICE_PATH = f"/etc/systemd/system/{SERVICE_NAME}.service"
-VERSION = "v1.3.0"
+VERSION = "v1.3.3"
 SSL_INFO_CONFIG_FILE = os.path.join(ASSETS_DIR, "ssl_info.json")
-VERBOSE_MODE = "-verbose" in sys.argv
+VERBOSE_MODE = any(arg in ['-verbose', '--verbose', '/verbose'] for arg in sys.argv)
 
 # --- Assets to be self-hosted ---
 ASSETS = {
@@ -114,33 +115,45 @@ def detect_hostname():
     return socket.getfqdn()
 
 def detect_ssl_certs(print_info_func, print_warning_func):
-    """Detects Let's Encrypt SSL certificate paths."""
-    hostname = detect_hostname()
-    print_info_func(f"Detected hostname: {hostname}")
+    """Detects Let's Encrypt SSL certificate paths with smarter matching."""
+    short_hostname = socket.gethostname()
+    fqdn = socket.getfqdn()
+    print_info_func(f"Detected hostname: {short_hostname} (FQDN: {fqdn})")
     letsencrypt_dir = "/etc/letsencrypt/live"
-    cert_path = None
-    key_path = None
-
-    if os.path.isdir(letsencrypt_dir):
-        potential_path = os.path.join(letsencrypt_dir, hostname)
-        if os.path.isdir(potential_path):
-            cert_path = os.path.join(potential_path, "fullchain.pem")
-            key_path = os.path.join(potential_path, "privkey.pem")
-            if os.path.exists(cert_path) and os.path.exists(key_path):
-                print_info_func(f"Found matching SSL certs for {hostname}")
-                return hostname, cert_path, key_path
-
-        subdirs = [d for d in os.listdir(letsencrypt_dir) if os.path.isdir(os.path.join(letsencrypt_dir, d))]
-        if subdirs:
-            first_dir = subdirs[0]
-            cert_path = os.path.join(letsencrypt_dir, first_dir, "fullchain.pem")
-            key_path = os.path.join(letsencrypt_dir, first_dir, "privkey.pem")
-            if os.path.exists(cert_path) and os.path.exists(key_path):
-                print_warning_func(f"No exact match found for '{hostname}'.")
-                print_warning_func(f"Falling back to first available certs: {first_dir}")
-                return first_dir, cert_path, key_path
     
-    return hostname, None, None
+    if not os.path.isdir(letsencrypt_dir):
+        return fqdn, None, None
+
+    # 1. Try for an exact match with the FQDN
+    potential_path = os.path.join(letsencrypt_dir, fqdn)
+    if os.path.isdir(potential_path):
+        cert_path = os.path.join(potential_path, "fullchain.pem")
+        key_path = os.path.join(potential_path, "privkey.pem")
+        if os.path.exists(cert_path) and os.path.exists(key_path):
+            print_info_func(f"Found exact SSL cert match for FQDN: {fqdn}")
+            return fqdn, cert_path, key_path
+
+    # 2. Try for a partial match where the cert name starts with the short hostname
+    subdirs = [d for d in os.listdir(letsencrypt_dir) if os.path.isdir(os.path.join(letsencrypt_dir, d))]
+    for dir_name in subdirs:
+        if dir_name.startswith(short_hostname + '.'):
+            cert_path = os.path.join(letsencrypt_dir, dir_name, "fullchain.pem")
+            key_path = os.path.join(letsencrypt_dir, dir_name, "privkey.pem")
+            if os.path.exists(cert_path) and os.path.exists(key_path):
+                print_warning_func(f"No exact FQDN match found. Found partial match for '{short_hostname}': {dir_name}")
+                return dir_name, cert_path, key_path
+
+    # 3. Fallback to the first available certificate as a last resort
+    if subdirs:
+        first_dir = subdirs[0]
+        cert_path = os.path.join(letsencrypt_dir, first_dir, "fullchain.pem")
+        key_path = os.path.join(letsencrypt_dir, first_dir, "privkey.pem")
+        if os.path.exists(cert_path) and os.path.exists(key_path):
+            print_warning_func(f"No matching cert found. Falling back to first available: {first_dir}")
+            return first_dir, cert_path, key_path
+    
+    return fqdn, None, None
+
 
 def get_ssl_cert_details(cert_path):
     """Gets details from an SSL certificate file using openssl."""
@@ -366,29 +379,30 @@ def apply_system_tweaks(run_cmd_func, print_header_func, print_success_func, pri
     nmap_path = shutil.which("nmap")
     traceroute_path = shutil.which("traceroute")
 
-    if not nmap_path:
-        print_error_func("Could not find 'nmap' executable. Please ensure 'nmap' is installed and in your system's PATH.")
-        return False
-    if not traceroute_path:
-        print_error_func("Could not find 'traceroute' executable. Please ensure 'traceroute' is installed.")
+    if not nmap_path or not traceroute_path:
+        print_error_func("Could not find 'nmap' or 'traceroute' executables.")
         return False
 
+    # Reverting to sudoers file method for better compatibility
     sudoers_file = "/etc/sudoers.d/anus-permissions"
     sudoers_content = (
         f"www-data ALL=(ALL) NOPASSWD: {nmap_path}\n"
         f"www-data ALL=(ALL) NOPASSWD: {traceroute_path}\n"
     )
     
-    print_info_func(f"Creating sudoers file at {sudoers_file} to grant nmap & traceroute permissions.")
+    print_info_func(f"Creating sudoers file at {sudoers_file}...")
     try:
         with open("anus-permissions.tmp", "w") as f:
             f.write(sudoers_content)
-        if not run_cmd_func(f"sudo cp anus-permissions.tmp {sudoers_file}"): return False
-        if not run_cmd_func(f"sudo chmod 440 {sudoers_file}"): return False
-        os.remove("anus-permissions.tmp")
-        print_success_func("Sudoers rule for nmap created successfully.")
+        
+        # Use a command to move and set permissions, as direct Python calls might fail
+        if not run_cmd_func(f"sudo mv anus-permissions.tmp {sudoers_file}"): return False
+        if not run_cmd_func(f"sudo chown root:root {sudoers_file}"): return False
+        if not run_cmd_func(f"sudo chmod 0440 {sudoers_file}"): return False
+        
+        print_success_func("Sudoers rule for nmap & traceroute created successfully.")
     except Exception as e:
-        print_error_func(f"Failed to create sudoers file: {e}")
+        print_error_func(f"Failed to create or set permissions on sudoers file: {e}")
         return False
 
     return True
@@ -397,7 +411,7 @@ def apply_system_tweaks(run_cmd_func, print_header_func, print_success_func, pri
 class CursesUI:
     def __init__(self, stdscr):
         self.stdscr = stdscr
-        self.menu = ["Install / Update", "View Service Status", "View Service Logs", "Clear Output", "Clear Database", "Uninstall", "Exit"]
+        self.menu = ["Install / Update", "Re-install", "View Service Status", "View Service Logs", "Clear Output", "Clear Database", "Uninstall", "Exit"]
         self.current_row = 0
         self.init_curses()
 
@@ -414,7 +428,7 @@ class CursesUI:
         curses.init_pair(7, curses.COLOR_WHITE, -1)    # Default Text
         curses.init_pair(8, curses.COLOR_BLUE, -1)     # Panel titles
 
-    def draw_layout(self):
+    def draw_layout(self, menu_visible=True):
         h, w = self.stdscr.getmaxyx()
         self.stdscr.bkgd(' ', curses.color_pair(7))
         self.stdscr.clear()
@@ -425,34 +439,37 @@ class CursesUI:
         self.stdscr.addstr(0, w // 2 - len(header_text) // 2, header_text)
         self.stdscr.attroff(curses.color_pair(6) | curses.A_BOLD)
         
-        footer_text = "Use ↑/↓ to navigate, Enter to select, Q to quit."
+        footer_text = "Use ↑/↓ to navigate, Enter to select, Q to quit." if menu_visible else "Installation in progress..."
         self.stdscr.attron(curses.color_pair(6) | curses.A_BOLD)
         self.stdscr.addstr(h - 1, 0, " " * (w-1))
         self.stdscr.addstr(h - 1, w // 2 - len(footer_text) // 2, footer_text)
         self.stdscr.attroff(curses.color_pair(6) | curses.A_BOLD)
 
-        menu_width = 30
-        status_height = 8
-        
-        self.menu_win = curses.newwin(h - 2, menu_width, 1, 1)
-        self.output_win = curses.newwin(h - 2 - status_height, w - menu_width - 2, 1, menu_width + 1)
-        self.status_win = curses.newwin(status_height, w - menu_width - 2, h - 1 - status_height, menu_width + 1)
-        self.progress_win = curses.newwin(3, w - 2, h - 4, 1)
+        if menu_visible:
+            menu_width = 30
+            status_height = 8
+            self.menu_win = curses.newwin(h - 2, menu_width, 1, 1)
+            self.output_win = curses.newwin(h - 2 - status_height, w - menu_width - 2, 1, menu_width + 1)
+            self.status_win = curses.newwin(status_height, w - menu_width - 2, h - 1 - status_height, menu_width + 1)
+            
+            self.menu_win.box()
+            self.status_win.box()
+            self.menu_win.addstr(0, 2, " Menu ", curses.color_pair(8) | curses.A_BOLD)
+            self.status_win.addstr(0, 2, " System Info ", curses.color_pair(8) | curses.A_BOLD)
+        else:
+            self.output_win = curses.newwin(h - 2, w - 2, 1, 1)
 
-        self.menu_win.box()
+        self.progress_win = curses.newwin(3, w - 2, h - 4, 1)
         self.output_win.box()
-        self.status_win.box()
-        
-        self.menu_win.addstr(0, 2, " Menu ", curses.color_pair(8) | curses.A_BOLD)
         self.output_win.addstr(0, 2, " Output ", curses.color_pair(8) | curses.A_BOLD)
-        self.status_win.addstr(0, 2, " System Info ", curses.color_pair(8) | curses.A_BOLD)
-        
         self.output_win.scrollok(True)
 
         self.stdscr.refresh()
-        self.menu_win.refresh()
+        if menu_visible:
+            self.menu_win.refresh()
+            self.status_win.refresh()
         self.output_win.refresh()
-        self.status_win.refresh()
+
 
     def update_status_panel(self):
         self.status_win.clear()
@@ -508,40 +525,60 @@ class CursesUI:
             win.addstr(f"{command}\n", curses.color_pair(7))
             win.refresh()
         
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
-        stdout_output = ""
-        while True:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                stdout_output += output
-                if VERBOSE_MODE:
-                    for line in textwrap.wrap(output, win.getmaxyx()[1] - 4):
-                        win.addstr(f"  {line}\n", curses.color_pair(7))
-                    win.refresh()
+        try:
+            process = subprocess.Popen(
+                command, shell=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, bufsize=1, universal_newlines=True
+            )
 
-        stderr = process.communicate()[1]
-        if process.returncode != 0 and not ignore_errors:
-            win.addstr("\nError:\n", curses.color_pair(2) | curses.A_BOLD)
-            # Show stdout and stderr on error regardless of verbose mode
-            for line in textwrap.wrap(stdout_output, win.getmaxyx()[1] - 4):
-                 win.addstr(f"  {line}\n", curses.color_pair(2))
-            for line in textwrap.wrap(stderr, win.getmaxyx()[1] - 4):
-                 win.addstr(f"  {line}\n", curses.color_pair(2))
+            stdout_lines = []
+            stderr_lines = []
+
+            def read_stream(stream, line_list, color):
+                for line in iter(stream.readline, ''):
+                    line_list.append(line)
+                    if VERBOSE_MODE:
+                        for wrapped_line in textwrap.wrap(line.strip(), win.getmaxyx()[1] - 4):
+                            win.addstr(f"  {wrapped_line}\n", color)
+                        win.refresh()
+
+            stdout_thread = threading.Thread(target=read_stream, args=(process.stdout, stdout_lines, curses.color_pair(7)))
+            stderr_thread = threading.Thread(target=read_stream, args=(process.stderr, stderr_lines, curses.color_pair(3)))
+
+            stdout_thread.start()
+            stderr_thread.start()
+            
+            stdout_thread.join()
+            stderr_thread.join()
+            
+            return_code = process.wait()
+
+            if return_code != 0 and not ignore_errors:
+                win.addstr(f"\nError: Command failed with exit code {return_code}\n", curses.color_pair(2) | curses.A_BOLD)
+                # If not in verbose mode, the output wasn't streamed, so print it now.
+                if not VERBOSE_MODE:
+                    if stdout_lines:
+                        win.addstr("--- STDOUT ---\n", curses.color_pair(2))
+                        for line in stdout_lines:
+                            for wrapped_line in textwrap.wrap(line.strip(), win.getmaxyx()[1] - 4):
+                                win.addstr(f"  {wrapped_line}\n", curses.color_pair(7))
+                    if stderr_lines:
+                        win.addstr("--- STDERR ---\n", curses.color_pair(2))
+                        for line in stderr_lines:
+                            for wrapped_line in textwrap.wrap(line.strip(), win.getmaxyx()[1] - 4):
+                                win.addstr(f"  {wrapped_line}\n", curses.color_pair(2))
+                win.refresh()
+                return False
+                
+            return True
+        except Exception as e:
+            win.addstr(f"\nFATAL ERROR running command: {e}\n", curses.color_pair(2) | curses.A_BOLD)
             win.refresh()
             return False
-        elif stderr and VERBOSE_MODE:
-             win.addstr("\nWarning/Stderr:\n", curses.color_pair(3) | curses.A_BOLD)
-             win.addstr(stderr, curses.color_pair(3))
-             win.refresh()
-        return True
 
-    def show_output_window(self, title, action_func):
-        self.draw_layout() 
-        self.update_status_panel()
-        self.draw_menu()
+    def show_output_window(self, title, action_func, menu_visible=True):
+        self.draw_layout(menu_visible=menu_visible) 
         
         self.output_win.clear()
         self.output_win.box()
@@ -550,104 +587,100 @@ class CursesUI:
         
         action_func(self.output_win)
         
-        self.output_win.addstr("\n\nPress any key to return to the menu.", curses.color_pair(3) | curses.A_BOLD)
+        if menu_visible:
+            self.output_win.addstr("\n\nPress any key to return to the menu.", curses.color_pair(3) | curses.A_BOLD)
+        else:
+            self.output_win.addstr("\n\nInstallation finished. Press any key to exit.", curses.color_pair(3) | curses.A_BOLD)
+
         self.output_win.getch()
 
     def run(self):
         self.draw_layout()
         self.update_status_panel()
         self.draw_menu()
+        
+        action_on_exit = None
+        try:
+            while True:
+                key = self.stdscr.getch()
 
-        while True:
-            key = self.stdscr.getch()
-
-            if key == curses.KEY_UP and self.current_row > 0:
-                self.current_row -= 1
-            elif key == curses.KEY_DOWN and self.current_row < len(self.menu) - 1:
-                self.current_row += 1
-            elif key == ord('q'):
-                break
-            elif key == curses.KEY_ENTER or key in [10, 13]:
-                selected_action_title = self.menu[self.current_row]
-                
-                if selected_action_title == "Exit":
+                if key == curses.KEY_UP and self.current_row > 0:
+                    self.current_row -= 1
+                elif key == curses.KEY_DOWN and self.current_row < len(self.menu) - 1:
+                    self.current_row += 1
+                elif key == ord('q'):
                     break
-                
-                if selected_action_title == "Clear Output":
+                elif key == curses.KEY_ENTER or key in [10, 13]:
+                    selected_action_title = self.menu[self.current_row]
+                    
+                    if selected_action_title == "Exit":
+                        break
+                    
+                    if selected_action_title == "Clear Output":
+                        self.output_win.clear()
+                        self.output_win.box()
+                        self.output_win.addstr(0, 2, " Output ", curses.color_pair(8) | curses.A_BOLD)
+                        self.output_win.refresh()
+                        continue
+
+                    if selected_action_title in ["Uninstall", "Clear Database", "Re-install"]:
+                        action_on_exit = selected_action_title.lower().replace("-", "_")
+                        break
+
                     self.output_win.clear()
                     self.output_win.box()
-                    self.output_win.addstr(0, 2, " Output ", curses.color_pair(8) | curses.A_BOLD)
+                    self.output_win.addstr(0, 2, f" {selected_action_title} ", curses.color_pair(8) | curses.A_BOLD)
                     self.output_win.refresh()
-                    continue
 
-                if selected_action_title in ["Uninstall", "Clear Database"]:
-                    curses.endwin()
-                    if selected_action_title == "Uninstall":
-                        simple_uninstall()
-                        print("\nUninstallation complete. Press Enter to exit.")
-                        input()
-                        return # Exit the run method
-                    elif selected_action_title == "Clear Database":
-                        simple_clear_database()
-                        input("\nPress Enter to return to the menu...")
+                    funcs = self.create_action_funcs(self.output_win)
+
+                    if selected_action_title == "Install / Update":
+                        install_steps = [
+                            ("Installing prerequisites", lambda: install_prerequisites(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Setting up directories", lambda: setup_directories_and_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Downloading assets", lambda: download_assets(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_error"])),
+                            ("Copying application files", lambda: copy_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
+                            ("Setting permissions", lambda: set_permissions(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Configuring Apache", lambda: configure_apache(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_warning"], funcs["p_error"])),
+                            ("Applying system tweaks", lambda: apply_system_tweaks(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
+                            ("Setting up systemd service", lambda: setup_systemd_service(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Finalizing setup", lambda: funcs["run_cmd"]("sudo systemctl restart apache2", ignore_errors=True))
+                        ]
+                        
+                        for i, (msg, step_func) in enumerate(install_steps):
+                            self.update_progress_bar(i, len(install_steps), msg)
+                            if not step_func():
+                                funcs["p_error"](f"\n--- Step '{msg}' failed. Aborting installation. ---")
+                                break
+                        else:
+                            self.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
+                            funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
+
+                    elif selected_action_title == "View Service Status":
+                        funcs["run_cmd"](f"sudo systemctl status {SERVICE_NAME}.service --no-pager")
+                    elif selected_action_title == "View Service Logs":
+                        funcs["run_cmd"](f"sudo journalctl -u {SERVICE_NAME}.service -n 50 --no-pager")
                     
-                    self.stdscr = curses.initscr()
-                    self.init_curses()
+                    self.output_win.addstr("\n\nPress any key to return to the menu.", curses.color_pair(3) | curses.A_BOLD)
+                    self.output_win.getch()
                     self.draw_layout()
                     self.update_status_panel()
                     self.draw_menu()
-                    continue
 
-                self.output_win.clear()
-                self.output_win.box()
-                self.output_win.addstr(0, 2, f" {selected_action_title} ", curses.color_pair(8) | curses.A_BOLD)
-                self.output_win.refresh()
-
-                funcs = self.create_action_funcs(self.output_win)
-
-                if selected_action_title == "Install / Update":
-                    install_steps = [
-                        ("Installing prerequisites", lambda: install_prerequisites(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Setting up directories", lambda: setup_directories_and_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Downloading assets", lambda: download_assets(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_error"])),
-                        ("Copying application files", lambda: copy_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                        ("Setting permissions", lambda: set_permissions(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Configuring Apache", lambda: configure_apache(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_warning"], funcs["p_error"])),
-                        ("Applying system tweaks", lambda: apply_system_tweaks(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                        ("Setting up systemd service", lambda: setup_systemd_service(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Finalizing setup", lambda: funcs["run_cmd"]("sudo systemctl restart apache2", ignore_errors=True))
-                    ]
-                    
-                    for i, (msg, step_func) in enumerate(install_steps):
-                        self.update_progress_bar(i, len(install_steps), msg)
-                        if not step_func():
-                            funcs["p_error"](f"\n--- Step '{msg}' failed. Aborting installation. ---")
-                            break
-                    else:
-                        self.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
-                        funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
-
-                elif selected_action_title == "View Service Status":
-                    funcs["run_cmd"](f"sudo systemctl status {SERVICE_NAME}.service --no-pager")
-                elif selected_action_title == "View Service Logs":
-                    funcs["run_cmd"](f"sudo journalctl -u {SERVICE_NAME}.service -n 50 --no-pager")
-                
-                self.output_win.addstr("\n\nPress any key to return to the menu.", curses.color_pair(3) | curses.A_BOLD)
-                self.output_win.getch()
-                self.draw_layout()
-                self.update_status_panel()
                 self.draw_menu()
-
-            self.draw_menu()
+        except KeyboardInterrupt:
+            pass
+        
+        return action_on_exit
 
     def create_action_funcs(self, win):
         return {
             "run_cmd": lambda cmd, ignore_errors=False: self.run_command_curses(win, cmd, ignore_errors),
-            "p_header": lambda msg: VERBOSE_MODE and (win.addstr(f"\n--- {msg} ---\n", curses.color_pair(3) | curses.A_BOLD) and win.refresh()),
-            "p_success": lambda msg: win.addstr(f"✔ {msg}\n", curses.color_pair(5) | curses.A_BOLD) and win.refresh(),
-            "p_info": lambda msg: VERBOSE_MODE and (win.addstr(f"{msg}\n", curses.color_pair(4)) and win.refresh()),
-            "p_error": lambda msg: win.addstr(f"✖ {msg}\n", curses.color_pair(2) | curses.A_BOLD) and win.refresh(),
-            "p_warning": lambda msg: win.addstr(f"⚠ {msg}\n", curses.color_pair(3)) and win.refresh(),
+            "p_header": lambda msg: VERBOSE_MODE and (win.addstr(f"\n--- {msg} ---\n", curses.color_pair(3) | curses.A_BOLD), win.refresh()),
+            "p_success": lambda msg: (win.addstr(f"✔ {msg}\n", curses.color_pair(5) | curses.A_BOLD), win.refresh()),
+            "p_info": lambda msg: VERBOSE_MODE and (win.addstr(f"{msg}\n", curses.color_pair(4)), win.refresh()),
+            "p_error": lambda msg: (win.addstr(f"✖ {msg}\n", curses.color_pair(2) | curses.A_BOLD), win.refresh()),
+            "p_warning": lambda msg: (win.addstr(f"⚠ {msg}\n", curses.color_pair(3)), win.refresh()),
         }
 
 # --- Simple Fallback Functions ---
@@ -670,12 +703,13 @@ def simple_install_or_update():
     simple_print_success(f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
     print("The Apache web server and the Python monitoring service have been configured and restarted.")
 
-def simple_uninstall():
+def simple_uninstall(confirm=True):
     simple_print_header("Uninstalling A.N.U.S.")
-    confirm = input(f"{colors.YELLOW}Are you sure you want to completely uninstall A.N.U.S.? (y/N): {colors.ENDC}")
-    if confirm.lower() != 'y':
-        simple_print_info("Uninstallation cancelled.")
-        return
+    if confirm:
+        user_confirm = input(f"{colors.YELLOW}Are you sure you want to completely uninstall A.N.U.S.? (y/N): {colors.ENDC}")
+        if user_confirm.lower() != 'y':
+            simple_print_info("Uninstallation cancelled.")
+            return
     simple_run_command(f"sudo systemctl stop {SERVICE_NAME}.service", ignore_errors=True)
     simple_run_command(f"sudo systemctl disable {SERVICE_NAME}.service", ignore_errors=True)
     if os.path.exists(SYSTEMD_SERVICE_PATH): simple_run_command(f"sudo rm {SYSTEMD_SERVICE_PATH}")
@@ -687,6 +721,8 @@ def simple_uninstall():
     if os.path.isdir(APP_DIR): simple_run_command(f"sudo rm -rf {APP_DIR}")
     if os.path.exists(DB_FILE): simple_run_command(f"sudo rm {DB_FILE}")
     if os.path.exists(CLIENT_IP_FILE): simple_run_command(f"sudo rm {CLIENT_IP_FILE}")
+    sudoers_file = "/etc/sudoers.d/anus-permissions"
+    if os.path.exists(sudoers_file): simple_run_command(f"sudo rm {sudoers_file}")
     simple_print_success("\n--- Uninstallation complete. ---")
 
 def simple_clear_database():
@@ -706,14 +742,51 @@ def main():
         simple_print_error("This script must be run as root. Please use sudo.")
         sys.exit(1)
 
+    # Handle command-line flags for non-interactive mode
+    args = {arg.lstrip('-/').lower() for arg in sys.argv[1:]}
+    
+    if 'uninstall' in args:
+        simple_uninstall()
+        sys.exit(0)
+    if 'reinstall' in args:
+        simple_uninstall(confirm=False)
+        simple_install_or_update()
+        sys.exit(0)
+    if 'clear-database' in args or 'cleardatabase' in args:
+        simple_clear_database()
+        sys.exit(0)
+    if 'status' in args:
+        os.system(f"sudo systemctl status {SERVICE_NAME}.service")
+        sys.exit(0)
+    if 'logs' in args:
+        os.system(f"sudo journalctl -u {SERVICE_NAME}.service -n 50")
+        sys.exit(0)
+
     os.system('cls' if os.name == 'nt' else 'clear')
 
     if CURSES_AVAILABLE:
-        is_menu_mode = len(sys.argv) > 1 and any(arg in ['-menu', '/menu', '--menu'] for arg in sys.argv)
+        is_menu_mode = 'menu' in args
         
+        def curses_main_loop(stdscr):
+            ui = CursesUI(stdscr)
+            return ui.run()
+
         if is_menu_mode:
-            curses.wrapper(lambda stdscr: CursesUI(stdscr).run())
-        else:
+            action_on_exit = curses.wrapper(curses_main_loop)
+            # After curses has exited, perform the requested action
+            if action_on_exit == "uninstall":
+                simple_uninstall()
+                print("\nUninstallation complete. Press Enter to exit.")
+                input()
+            elif action_on_exit == "re_install":
+                simple_uninstall(confirm=False)
+                simple_install_or_update()
+                input("\nRe-installation complete. Press Enter to continue.")
+            elif action_on_exit == "clear_database":
+                 simple_clear_database()
+                 input("\nDatabase cleared. Press Enter to return to the menu...")
+
+        else: # Default action: direct install
             def direct_install_wrapper(stdscr):
                 ui = CursesUI(stdscr)
                 
@@ -740,9 +813,7 @@ def main():
                         ui.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
                         funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
                 
-                ui.show_output_window("Install / Update", install_action)
-                ui.output_win.addstr("\n\nInstallation finished. Press any key to exit.", curses.color_pair(3) | curses.A_BOLD)
-                ui.output_win.getch()
+                ui.show_output_window("Install / Update", install_action, menu_visible=False)
 
             curses.wrapper(direct_install_wrapper)
 

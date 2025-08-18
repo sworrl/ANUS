@@ -108,7 +108,7 @@ Both of the methods below will install the software, so **you should only choose
 This command uses the **Git** version control system to clone the repository into a new folder named `ANUS`, preserving the entire project history. It then changes into that directory and runs the fully automated installation script.
 
 ```bash
-git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py
+git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git) && cd ANUS && sudo ./setup_anus_app.py
 ```
 
 -----
@@ -118,7 +118,7 @@ git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app
 This command uses `wget` to download the repository as a ZIP file, then uses `unzip` to extract the files. This method does not preserve the project's commit history. The extracted directory is named `ANUS-main`, and the command then changes into that directory and runs the installation script.
 
 ```bash
-wget -qO- https://github.com/sworrl/ANUS/archive/main.zip | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py
+wget -qO- [https://github.com/sworrl/ANUS/archive/main.zip](https://github.com/sworrl/ANUS/archive/main.zip) | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py
 ```
 
 -----
@@ -128,9 +128,7 @@ wget -qO- https://github.com/sworrl/ANUS/archive/main.zip | sudo apt-get install
 Again, choose only one of the following commands to install the software with the interactive menu.
 
 ```bash
-git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py -menu
-```
-
+git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git) && cd ANUS && sudo ./setup_anus_app.py -menu
 ```bash
 wget -qO- https://github.com/sworrl/ANUS/archive/main.zip | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py -menu
 ```
@@ -141,10 +139,8 @@ For more options, including uninstalling or managing the service, use the follow
 
 ```bash
 git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py -menu
-```
-
 ```bash
-wget -qO- https://github.com/sworrl/ANUS/archive/main.zip | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py -menu
+wget -qO- [https://github.com/sworrl/ANUS/archive/main.zip](https://github.com/sworrl/ANUS/archive/main.zip) | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py -menu
 ```
 
 ### Manual Install (Safest Method)
@@ -153,7 +149,7 @@ For maximum security, you should manually review the code before running it.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/sworrl/ANUS.git
+    git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git)
     ```
 2.  **Navigate into the project directory:**
     ```bash
@@ -172,7 +168,7 @@ For maximum security, you should manually review the code before running it.
 For more options, including uninstalling or managing the service, run the setup script with the `-menu` flag.
 
 ```bash
-wget https://raw.githubusercontent.com/sworrl/ANUS/main/ANUS/setup_anus_app.py && sudo python3 setup_anus_app.py -menu
+wget [https://raw.githubusercontent.com/sworrl/ANUS/main/ANUS/setup_anus_app.py](https://raw.githubusercontent.com/sworrl/ANUS/main/ANUS/setup_anus_app.py) && sudo python3 setup_anus_app.py -menu
 ```
 
 ## ⚙️ Configuration

@@ -1,10 +1,10 @@
-<!-- A.N.U.S. v1.3.0 -->
+<!-- A.N.U.S. v1.3.3 -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.N.U.S. v1.3.0 - Automated Network Utility System</title>
+    <title>A.N.U.S. v1.3.3 - Automated Network Utility System</title>
     <script src="./assets/tailwindcss.js"></script>
     <script src="./assets/tone.js"></script>
     <script src="./assets/chart.js"></script>
@@ -18,7 +18,7 @@
 <body class="bg-primary text-primary flex items-center justify-center min-h-screen p-4">
 
     <!-- Loading Overlay -->
-    <div id="loading-overlay">
+    <div id="loading-overlay" class="fixed inset-0 bg-bg-primary z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div id="loading-logo-container" class="text-accent">
              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <defs><filter id="glow-loader" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>
@@ -44,9 +44,9 @@
         </div>
     </div>
 
-    <div id="app-container" class="w-full max-w-7xl mx-auto bg-main border border-main rounded-2xl shadow-lg p-6 md:p-8 hidden-on-load">
+    <div id="app-container" class="w-full max-w-7xl mx-auto bg-main border border-main rounded-2xl shadow-lg p-6 md:p-8 opacity-0 transition-opacity duration-500">
         <header class="flex flex-col items-center mb-6 border-b border-main pb-6">
-             <div id="logo-container" class="flex flex-col items-center gap-2">
+             <div id="logo-container" class="flex flex-col items-center gap-2 cursor-pointer">
                 <svg id="logo-svg" class="w-24 h-24 text-accent" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -57,11 +57,11 @@
                             </feMerge>
                         </filter>
                     </defs>
-                    <g style="transform-origin: center center; animation: spin 40s linear infinite;">
+                    <g class="logo-spin-outer">
                         <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
                         <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/>
                     </g>
-                    <g style="transform-origin: center center; animation: spin 25s linear infinite reverse;">
+                    <g class="logo-spin-inner">
                         <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
                         <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
                         <path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
@@ -73,11 +73,11 @@
                     </g>
                 </svg>
                 <div>
-                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.3.0</h1>
+                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.3.3</h1>
                     <p class="text-muted text-center">Automated Network Utility System</p>
                 </div>
             </div>
-            <div id="current-status-card" class="bg-muted card-emboss status-checking mt-4 rounded-lg p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto">
+            <div id="current-status-card" class="card card-muted status-checking mt-4 p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto">
                 <div class="flex items-center justify-center gap-3">
                     <div id="status-indicator" class="w-4 h-4 rounded-full bg-[var(--status-color)] blinking-dot"></div>
                     <span id="status-text" class="font-semibold text-lg text-accent-secondary">Checking...</span>
@@ -100,14 +100,14 @@
 
             <div id="view-dashboard">
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Uptime Statistics</h2><div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></div>
-                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="bg-muted card-emboss p-6 rounded-lg text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="card card-muted p-6 text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></div>
                 <div><h2 class="text-xl font-semibold text-accent mb-4">Advanced Diagnostics - Network Data Flow</h2><div id="diagnostics-container" class="relative text-muted p-2 min-h-[500px]"></div></div>
             </div>
 
             <div id="view-trends" class="hidden">
                  <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Live Latency Trends</h2>
-                    <div class="bg-muted card-emboss p-4 rounded-lg h-96 relative flex items-center justify-center">
+                    <div class="card chart-card p-4 h-96 relative flex items-center justify-center">
                         <canvas id="trends-chart"></canvas>
                         <div id="trends-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
                             <p class="animate-pulse text-lg font-semibold text-accent">Loading historical data...</p>
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="network-tree-container" class="relative bg-muted card-emboss rounded-lg p-6 max-h-[70vh] overflow-auto">
+                <div id="network-tree-container" class="card relative p-6 max-h-[70vh] overflow-auto">
                     <svg id="network-tree-svg"></svg>
                     <div id="network-nodes-container" class="relative"></div>
                     <div id="nmap-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
@@ -148,8 +148,8 @@
                         <button id="clear-log-btn" class="px-4 py-2 text-sm font-medium text-white bg-status-down hover:bg-status-down-hover rounded-lg">Clear Log</button>
                     </div>
                 </div>
-                <div id="log-timeline-container" class="bg-muted card-emboss rounded-lg max-h-[500px] overflow-y-auto border border-main p-6"></div>
-                <div id="log-calendar-container" class="hidden card-emboss p-4 rounded-lg">
+                <div id="log-timeline-container" class="card card-muted max-h-[500px] overflow-y-auto border border-main p-6"></div>
+                <div id="log-calendar-container" class="hidden card p-4">
                     <div class="flex justify-between items-center mb-4 bg-muted p-2 rounded-lg">
                         <button id="cal-prev-month" class="px-3 py-1 text-lg font-bold rounded hover:bg-border-primary">&lt;</button>
                         <h3 id="cal-month-year" class="text-lg font-semibold text-accent-secondary"></h3>
@@ -160,7 +160,7 @@
             </div>
 
             <div id="view-settings" class="hidden">
-                 <div class="bg-muted card-emboss rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="card card-muted p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="lg:col-span-2"><h3 class="text-lg font-semibold text-accent-secondary mb-2">General</h3></div>
                     <div class="flex items-center justify-between"><label for="sound-toggle" class="text-sm font-medium text-primary">Sound FX</label><div class="relative inline-block w-10 mr-2 align-middle select-none"><input type="checkbox" name="sound-toggle" id="sound-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="sound-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-border-primary cursor-pointer"></label></div></div>
                     
@@ -171,7 +171,7 @@
             </div>
             
             <div id="view-diagnostics" class="hidden">
-                 <div class="bg-muted card-emboss rounded-lg p-6 space-y-6">
+                 <div class="card card-muted p-6 space-y-6">
                     <h2 class="text-xl font-semibold text-accent">On-Demand Diagnostics</h2>
                     <p class="text-sm text-muted">Perform a full diagnostic test on any host, with customizable options. This will return live data directly to the screen and is not logged.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -193,7 +193,7 @@
             </div>
         </main>
         <footer class="text-center text-xs text-muted mt-8">
-            <p>A.N.U.S. v1.3.0 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
+            <p>A.N.U.S. v1.3.3 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
         </footer>
     </div>
 
@@ -372,7 +372,7 @@
             if (!container || !svg || !nodesContainer) return;
             const containerRect = container.getBoundingClientRect();
             const width = containerRect.width;
-            const height = 400; 
+            let height = 400; 
             container.style.height = `${height}px`;
 
             if (!scanData || !scanData.hosts || scanData.hosts.length === 0) {
@@ -384,8 +384,8 @@
             svg.innerHTML = '';
             
             const gateway = scanData.hosts.find(h => h.ip === serverGatewayIp);
-            const server = scanData.hosts.find(h => h.ip === '127.0.0.1');
-            const client = scanData.hosts.find(h => h.ip === clientIp);
+            let server = scanData.hosts.find(h => h.ip === '127.0.0.1');
+            let client = scanData.hosts.find(h => h.ip === clientIp);
             let otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== '127.0.0.1' && h.ip !== clientIp);
             
             if (!server) {
@@ -552,7 +552,7 @@
                 else { statusClass = 'status-down'; statusString = 'Unstable'; }
             }
             
-            currentStatusCard.className = `bg-muted card-emboss ${statusClass} mt-4 rounded-lg p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto`;
+            currentStatusCard.className = `card card-muted ${statusClass} mt-4 p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto`;
             statusIndicator.classList.toggle('blinking-dot', statusString === 'Checking...');
             statusText.textContent = statusString;
             if (lastStateChangeTime) {
@@ -570,7 +570,7 @@
             if (!DOMElements.logTimelineContainer) return;
             DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatDuration(new Date(e.endTime) - new Date(e.startTime))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
         function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatDuration(new Date() - new Date(log[0].startTime)); } }
-        function createUptimeCards() { if (!DOMElements.uptimeStatsContainer) return; const wins = [{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; DOMElements.uptimeStatsContainer.innerHTML = wins.map((w,i)=>`<div class="bg-muted card-emboss p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-muted">${w.l}</h3><div id="uptime-chart-${i}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1">--:--:-- downtime</p></div>`).join(''); }
+        function createUptimeCards() { if (!DOMElements.uptimeStatsContainer) return; const wins = [{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; DOMElements.uptimeStatsContainer.innerHTML = wins.map((w,i)=>`<div class="card card-muted p-4 text-center"><h3 class="text-sm font-medium text-muted">${w.l}</h3><div id="uptime-chart-${i}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1">--:--:-- downtime</p></div>`).join(''); }
         function updateAllUptimeStats() { const wins=[{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; const cards=DOMElements.uptimeStatsContainer?.children; if (!cards) return; const now = Date.now(); wins.forEach((w,i)=>{ const dur=w.d.call?w.d():w.d; let downMs=0; let disconnects=0; let lastStatus=null; log.filter(e=>new Date(e.endTime).getTime()>now-dur).forEach(e=>{if(e.status==='DOWN'){downMs+=new Date(e.endTime)-Math.max(new Date(e.startTime),now-dur);if(lastStatus!=='DOWN')disconnects++}lastStatus=e.status}); if(currentState==='DOWN'&&lastStateChangeTime){downMs+=now-Math.max(lastStateChangeTime,now-dur);if(lastStatus!=='DOWN')disconnects++} const upPerc=Math.max(0,(1-downMs/dur)*100); if(cards[i]){ cards[i].querySelector('.downtime-duration').textContent=`${formatDuration(downMs)} downtime`; createOrUpdateUptimeChart(`uptime-chart-${i}`, upPerc, disconnects); } }); }
         
         function renderServerHealth(status) {
@@ -580,7 +580,7 @@
                 {t:'Apache',s:status.apache_status},
                 {t:'PHP',s:status.php_fpm_status},
             ];
-            let serviceMarkup = services.map(s=>`<div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');
+            let serviceMarkup = services.map(s=>`<div class="card card-muted p-4 flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');
 
             let sslMarkup = '';
             if (status.ssl_cert_details) {
@@ -592,7 +592,7 @@
                 if (daysLeft < 7) expiryClass = 'text-status-down';
 
                 sslMarkup = `
-                    <div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg col-span-1 md:col-span-2 lg:col-span-1">
+                    <div class="card card-muted p-4 col-span-1 md:col-span-2 lg:col-span-1">
                         <p class="text-sm text-muted font-semibold mb-2">SSL Certificate</p>
                         <p class="text-xs text-muted truncate" title="${details.fingerprint}">
                             <span class="font-bold text-primary">Issuer:</span> ${details.issuer}
@@ -630,7 +630,7 @@
                 let card = document.querySelector(`.internet-node-card[data-node-name="${n.name}"]`);
                 if (!card) {
                     card = document.createElement('div');
-                    card.className = "internet-node-card bg-bg-primary card-emboss card-emboss-hover p-3 rounded-lg border-2 transition-all cursor-pointer";
+                    card.className = "internet-node-card bg-bg-primary card p-3 border-2 transition-all cursor-pointer";
                     card.dataset.nodeName = n.name;
                     card.addEventListener('click', () => showNodeDetailsModal(n));
                     grid.appendChild(card);
@@ -677,17 +677,17 @@
                     <div id="diag-layout" class="relative w-full max-w-5xl mx-auto">
                         <svg id="diagnostics-svg-container"></svg>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-8 relative">
-                            <div id="diag-client" class="text-center flex-shrink-0 bg-muted card-emboss p-4 rounded-lg node-glow min-h-[160px]"></div>
-                            <div id="diag-server" class="text-center flex-shrink-0 bg-muted card-emboss card-emboss-hover p-4 rounded-lg node-glow cursor-pointer min-h-[160px]"></div>
+                            <div id="diag-client" class="text-center flex-shrink-0 card card-muted p-4 node-glow min-h-[160px]"></div>
+                            <div id="diag-server" class="text-center flex-shrink-0 card card-muted p-4 node-glow cursor-pointer min-h-[160px]"></div>
                             <div id="diag-ping-cs" class="absolute text-center text-xs p-1 rounded bg-bg-primary/80 backdrop-blur-sm"></div>
                         </div>
                         <div class="mb-8" id="diag-gateway-wrapper">
-                            <div id="diag-gateway" class="bg-muted card-emboss p-4 rounded-lg border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
+                            <div id="diag-gateway" class="card card-muted p-4 border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
                                 <!-- Gateway content will be dynamically inserted here -->
                             </div>
                         </div>
                         <div>
-                            <div id="diag-internet" class="internet-nodes-container bg-muted card-emboss p-4 rounded-lg node-glow">
+                            <div id="diag-internet" class="internet-nodes-container card card-muted p-4 node-glow">
                                 <p class="font-semibold text-primary text-center mb-4">Internet Nodes</p>
                                 <div id="internet-nodes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
                             </div>
@@ -1180,7 +1180,7 @@
                 colorVar = 'var(--color-status-down)';
             } else if (status === 'UP') {
                 if (score > 300) { colorVar = 'var(--color-status-up)'; }
-                else if (score > 150) { colorVar = 'var(--color-status-warn)'; }
+                else if (score < 150) { colorVar = 'var(--color-status-warn)'; }
                 else { colorVar = 'var(--color-status-down)'; }
             } else {
                 colorVar = 'var(--accent-primary)';
@@ -1569,7 +1569,7 @@
                 DOMElements.loadingLogoContainer?.addEventListener('animationend', () => {
                     if(DOMElements.loadingOverlay) DOMElements.loadingOverlay.style.display = 'none';
                     if(DOMElements.appContainer) {
-                        DOMElements.appContainer.classList.remove('hidden-on-load');
+                        DOMElements.appContainer.classList.remove('opacity-0');
                         DOMElements.appContainer.classList.add('visible');
                     }
                     

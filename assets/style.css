@@ -1,4 +1,4 @@
-/* A.N.U.S. v1.3.2 */
+/* A.N.U.S. v1.3.3 */
 :root {
     --bg-primary: #0f172a;
     --bg-secondary: #1e293b;
@@ -34,6 +34,7 @@ body {
     margin: 0;
     transition: background-color 0.5s ease;
     overflow-x: hidden;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 /* --- Layout Containers --- */
@@ -47,7 +48,9 @@ body {
 
 /* --- Card Styles --- */
 .card {
-    background-color: var(--bg-secondary);
+    background-color: rgba(30, 41, 59, 0.5); /* Semi-transparent background */
+    backdrop-filter: blur(8px); /* Blur effect */
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
     background-image: var(--main-bg-image);
     border: 1px solid var(--border-primary);
     border-radius: 12px;
@@ -55,6 +58,10 @@ body {
     box-shadow: 0 4px 6px var(--shadow-dark), 0 1px 3px var(--shadow-light) inset;
     transition: all 0.3s ease;
     overflow: hidden;
+    text-shadow: none;
+}
+.card * {
+    text-shadow: none;
 }
 .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px var(--shadow-dark), 0 1px 3px var(--shadow-light) inset; }
 .card-header { 
@@ -172,6 +179,11 @@ body {
 
 /* --- Chart Styles --- */
 #history-chart-container { height: 400px; } /* Set a fixed height */
+
+/* --- Logo Animation --- */
+.logo-spin-outer { animation: spin 40s linear infinite; transform-origin: center center; }
+.logo-spin-inner { animation: spin 25s linear infinite reverse; transform-origin: center center; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 /* --- Responsive Design --- */
 @media (max-width: 900px) {

@@ -1,4 +1,4 @@
-<?php // A.N.U.S. v1.3.1
+<?php // A.N.U.S. v1.3.3
 // Set headers for CORS and JSON response
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");

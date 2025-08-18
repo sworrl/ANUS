@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A.N.U.S. v1.3.0
+# A.N.U.S. v1.3.3
 
 import subprocess
 import os
@@ -232,10 +232,8 @@ def scan_network():
             nmap_command = f"sudo {nmap_path} -sS -sV -O -oX - {network_range}"
             try:
                 nmap_output = subprocess.check_output(nmap_command, shell=True, text=True, stderr=subprocess.PIPE)
-                if "requires root privileges" in nmap_output.lower() or "permission denied" in nmap_output.lower():
-                    raise subprocess.CalledProcessError(1, nmap_command, stderr="Requires root privileges")
             except subprocess.CalledProcessError as e:
-                print(f"Privileged nmap scan failed: {e.stderr.strip()}. This may happen if the sudoers rule is not set up correctly.")
+                print(f"Nmap scan failed: {e.stderr.strip()}. This may happen if the sudoers rule is not set up correctly.")
                 stop_event.wait(60)
                 continue
 
@@ -485,7 +483,7 @@ def on_demand_diagnostic(payload):
             results['hostname'] = "N/A"
 
         try:
-            traceroute_output = subprocess.check_output(f"traceroute -n -q 1 -w 1 -m 15 {host}", shell=True, text=True, stderr=subprocess.STDOUT)
+            traceroute_output = subprocess.check_output(f"sudo traceroute -n -q 1 -w 1 -m 15 {host}", shell=True, text=True, stderr=subprocess.STDOUT)
             results['traceroute_info'] = [line for line in traceroute_output.strip().split('\n') if line]
         except Exception:
             results['traceroute_info'] = ["Traceroute failed"]
