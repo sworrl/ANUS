@@ -102,7 +102,7 @@ The new installation method below downloads the entire project first, making it 
 This command will clone the repository into a folder named `ANUS`, change into that directory, and then run the fully automated installation.
 
 ```bash
-git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 ANUS/setup_anus_app.py
+git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 sudo ./setup_anus_app.py
 ```
 
 ### Interactive Menu Install
@@ -110,7 +110,7 @@ git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 ANUS/set
 For more options, including uninstalling or managing the service, use the following command to run the setup script with the interactive menu.
 
 ```bash
-git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 ANUS/setup_anus_app.py -menu
+git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 sudo ./setup_anus_app.py -menu
 ```
 
 ### Manual Install (Safest Method)
