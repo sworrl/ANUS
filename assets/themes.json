@@ -43,21 +43,21 @@
     },
     "matrix": {
         "name": "Matrix (Digital Rain)",
-        "palette":,
+        "palette": ["#00FF41", "#bfffab", "#ff3333", "#008F11", "#ffffff"],
         "properties": {
             "--bg-primary": "#0D0208", "--bg-secondary": "#001a05", "--bg-tertiary": "#002b00",
             "--border-primary": "#003B00", "--text-primary": "#00FF41", "--text-secondary": "#008F11",
             "--accent-primary": "#00FF41", "--accent-secondary": "#bfffab",
             "--color-status-up": "#00FF41", "--color-status-warn": "#bfffab", "--color-status-down": "#ff3333",
             "--shadow-light": "rgba(0, 255, 65, 0.2)", "--shadow-dark": "rgba(0, 0, 0, 0.7)",
-            "--body-bg-image": "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3e%3cstyle%3e.c %7b font-family: monospace; font-size: 10px; fill: %2300ff41; %7d%3c/style%3e%3cdefs%3e%3clinearGradient id='g' x1='0.5' y1='0' x2='0.5' y2='1'%3e%3cstop offset='0%25' stop-color='%2300ff41'/%3e%3cstop offset='15%25' stop-color='%23008F11'/%3e%3cstop offset='100%25' stop-color='%230D0208' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='%230D0208'/%3e%3cmask id='m'%3e%3crect width='100%25' height='100%25' fill='url(%23g)'/%3e%3c/mask%3e%3c!-%2d Katakana glyphs -%2d%3e%3ctext class='c' mask='url(%23m)'%3e%3ctspan x='10' dy='12'%3e%e3%83%a1%e3%83%88%e3%83%aa%e3%83%83%e3%82%af%e3%82%b9%e3%82%b7%e3%82%b9%e3%83%86%e3%83%a0%e3%83%87%e3%82%b6%e3%82%a4%e3%83%b3%3c/tspan%3e%3ctspan x='30' dy='12'%3e%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%83%bc%e3%82%ad%e3%83%a3%e3%83%a9%e3%82%af%e3%82%bf%e3%83%bc%3c/tspan%3e%3ctspan x='50' dy='12'%3e%e3%83%87%e3%82%b8%e3%82%bf%e3%83%ab%e3%83%ac%e3%82%a4%e3%83%b3%e3%82%a2%e3%83%8b%e3%83%a1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%3c/tspan%3e%3ctspan x='70' dy='12'%3e%e3%82%b3%e3%83%bc%e3%83%89%e3%82%b7%e3%83%bc%e3%82%b1%e3%83%b3%e3%82%b9%e3%82%b0%e3%83%aa%e3%83%83%e3%83%81%e3%82%a2%e3%83%bc%e3%83%88%3c/tspan%3e%3ctspan x='90' dy='12'%3e%e3%82%b5%e3%82%a4%e3%83%90%e3%83%bc%e3%83%91%e3%83%b3%e3%82%af%e3%83%95%e3%83%a5%e3%83%bc%e3%83%81%e3%83%a3%e3%83%bc%3c/tspan%3e%3ctspan x='110' dy='12'%3e%e3%83%8d%e3%82%aa%e3%83%b3%e3%82%b0%e3%83%aa%e3%83%bc%e3%83%b3%e3%82%b7%e3%83%b3%e3%83%9c%e3%83%ab%e3%82%b0%e3%83%aa%e3%83%83%e3%83%89%3c/tspan%3e%3ctspan x='130' dy='12'%3e%e3%83%8f%e3%83%83%e3%82%ab%e3%83%bc%e3%82%ab%e3%83%ab%e3%83%81%e3%83%a3%e3%83%bc%e3%83%90%e3%82%a4%e3%83%8a%e3%83%aa%3c/tspan%3e%3ctspan x='150' dy='12'%3e%e3%83%86%e3%82%af%e3%83%8e%e3%83%ad%e3%82%b8%e3%83%bc%e3%82%a4%e3%83%b3%e3%82%bf%e3%83%bc%e3%83%95%e3%82%a7%e3%83%bc%e3%82%b9%3c/tspan%3e%3ctspan x='170' dy='12'%3e%e3%83%90%e3%83%bc%e3%83%81%e3%83%a3%e3%83%ab%e3%83%aa%e3%82%a2%e3%83%aa%e3%83%86%e3%82%a3%e3%83%bc%e3%82%b7%e3%83%9f%e3%83%a5%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%3c/tspan%3e%3c/text%3e%3c/svg%3e\")",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3e%3cstyle%3e.c %7b font-family: monospace; font-size: 10px; fill: %2300ff41; %7d%3c/style%3e%3cdefs%3e%3clinearGradient id='g' x1='0.5' y1='0' x2='0.5' y2='1'%3e%3cstop offset='0%25' stop-color='%2300ff41'/%3e%3cstop offset='15%25' stop-color='%23008F11'/%3e%3cstop offset='100%25' stop-color='%230D0208' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='%230D0208'/%3e%3cmask id='m'%3e%3crect width='100%25' height='100%25' fill='url(%23g)'/%3e%3c/mask%3e%3c!-%2d Katakana glyphs -%2d%3e%3ctext class='c' mask='url(%23m)'%3e%3ctspan x='10' dy='12'%3e%e3%83%a1%e3%83%88%e3%83%aa%e3%83%83%e3%82%af%e3%82%b9%e3%82%b7%e3%82%b9%e3%83%86%e3%83%a0%e3%83%87%e3%82%b6%e3%82%a4%e3%83%b3%3c/tspan%3e%3ctspan x='30' dy='12'%3e%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%83%bc%e3%82%ad%e3%83%a3%e3%83%a9%e3%82%af%e3%82%bf%e3%83%bc%3c/tspan%3e%3ctspan x='50' dy='12'%3e%e3%82%b3%e3%83%bc%e3%83%89%e3%82%b7%e3%83%bc%e3%82%b1%e3%83%b3%e3%82%b9%e3%82%b0%e3%83%aa%e3%83%83%e3%83%81%e3%82%a2%e3%83%bc%e3%83%88%3c/tspan%3e%3ctspan x='70' dy='12'%3e%e3%82%b5%e3%82%a4%e3%83%90%e3%83%bc%e3%83%91%e3%83%b3%e3%82%af%e3%83%95%e3%83%a5%e3%83%bc%e3%83%81%e3%83%a3%e3%83%bc%3c/tspan%3e%3ctspan x='90' dy='12'%3e%e3%83%8d%e3%82%aa%e3%83%b3%e3%82%b0%e3%83%aa%e3%83%bc%e3%83%b3%e3%82%b7%e3%83%b3%e3%83%9c%e3%83%ab%e3%82%b0%e3%83%aa%e3%83%83%e3%83%89%3c/tspan%3e%3ctspan x='110' dy='12'%3e%e3%83%8f%e3%83%83%e3%82%ab%e3%83%bc%e3%82%ab%e3%83%ab%e3%83%81%e3%83%a3%e3%83%bc%e3%83%90%e3%82%a4%e3%83%8a%e3%83%aa%3c/tspan%3e%3ctspan x='130' dy='12'%3e%e3%83%86%e3%82%af%e3%83%8e%e3%83%ad%e3%82%b8%e3%83%bc%e3%82%a4%e3%83%b3%e3%82%bf%e3%83%bc%e3%83%95%e3%82%a7%e3%83%bc%e3%82%b9%3c/tspan%3e%3ctspan x='150' dy='12'%3e%e3%83%90%e3%83%bc%e3%83%81%e3%83%a3%e3%83%ab%e3%83%aa%e3%82%a2%e3%83%aa%e3%83%86%e3%82%a3%e3%83%bc%e3%82%b7%e3%83%9f%e3%83%a5%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%3c/tspan%3e%3ctspan x='170' dy='12'%3e%e3%83%87%e3%82%b8%e3%82%bf%e3%83%ab%e3%83%ac%e3%82%a4%e3%83%b3%e3%82%a2%e3%83%8b%e3%83%a1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%3c/tspan%3e%3c/text%3e%3c/svg%3E\")",
             "--main-bg-image": "linear-gradient(to bottom, var(--bg-secondary) 50%, #001100)",
             "--muted-bg-image": "linear-gradient(var(--bg-tertiary), #000)"
         }
     },
     "sunset": {
         "name": "Sunset (Atmospheric)",
-        "palette":,
+        "palette": ["#a3b18a", "#FFE373", "#FD5E53", "#FC9C54", "#4B3D60"],
         "properties": {
             "--bg-primary": "#08183A", "--bg-secondary": "#152852", "--bg-tertiary": "#4B3D60",
             "--border-primary": "#4B3D60", "--text-primary": "#FFF9E6", "--text-secondary": "#FC9C54",
@@ -71,7 +71,7 @@
     },
     "ocean": {
         "name": "Ocean (Abyssal)",
-        "palette":,
+        "palette": ["#5BC0BE", "#6FFFE9", "#2ecc40", "#ffdc00", "#ff4136"],
         "properties": {
             "--bg-primary": "#0B132B", "--bg-secondary": "#1C2541", "--bg-tertiary": "#3A506B",
             "--border-primary": "#3A506B", "--text-primary": "#f0f8ff", "--text-secondary": "#a9d6e5",
@@ -285,14 +285,14 @@
             "--accent-primary": "#fce303", "--accent-secondary": "#e00078",
             "--color-status-up": "#03fcfc", "--color-status-warn": "#fce303", "--color-status-down": "#e00078",
             "--shadow-light": "rgba(255, 255, 255, 0.1)", "--shadow-dark": "rgba(0, 0, 0, 0.6)",
-            "--body-bg-image": "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3cdefs%3e%3cfilter id='glow'%3e%3cfeGaussianBlur stdDeviation='1' result='b'/%3e%3cfeMerge%3e%3cfeMergeNode in='b'/%3e%3cfeMergeNode in='SourceGraphic'/%3e%3c/feMerge%3e%3c/filter%3e%3c/defs%3e%3cg filter='url(%23glow)' opacity='0.5'%3e%3crect width='100%25' height='1' y='10' fill='%23fce303'/%3e%3crect width='100%25' height='1' y='30' fill='%23e00078'/%3e%3crect width='100%25' height='1' y='50' fill='%2303fcfc'/%3e%3crect width='100%25' height='1' y='70' fill='%23009c5b'/%3e%3c/g%3e%3c/svg%3e\"), linear-gradient(45deg, var(--bg-primary), #000)",
+            "--body-bg-image": "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3cdefs%3e%3cfilter id='glow'%3e%3cfeGaussianBlur stdDeviation='1.5' result='b'/%3e%3cfeMerge%3e%3cfeMergeNode in='b'/%3e%3cfeMergeNode in='SourceGraphic'/%3e%3c/feMerge%3e%3c/filter%3e%3c/defs%3e%3cg filter='url(%23glow)' opacity='0.5'%3e%3crect width='100%25' height='1' y='10' fill='%23fce303'/%3e%3crect width='100%25' height='1' y='30' fill='%23e00078'/%3e%3crect width='100%25' height='1' y='50' fill='%2303fcfc'/%3e%3crect width='100%25' height='1' y='70' fill='%23009c5b'/%3e%3c/g%3e%3c/svg%3e\"), linear-gradient(45deg, var(--bg-primary), #000)",
             "--main-bg-image": "linear-gradient(to top right, var(--bg-secondary), #0e0e0e)",
             "--muted-bg-image": "linear-gradient(to bottom, var(--bg-tertiary), #1d1d1d)"
         }
     },
     "posy": {
         "name": "Posy (Watercolor)",
-        "palette":,
+        "palette": ["#FF8C92", "#A5DD7E", "#FFC667", "#87CEEB", "#d3aaff"],
         "properties": {
             "--bg-primary": "#fdfcf9", "--bg-secondary": "#ffffff", "--bg-tertiary": "#f5f5f5",
             "--border-primary": "#e0e0e0", "--text-primary": "#4f4f4f", "--text-secondary": "#666",
@@ -305,7 +305,7 @@
     },
     "plainly_difficult": {
         "name": "Plainly Difficult (Archival)",
-        "palette":,
+        "palette": ["#5A6F54", "#9E9E94", "#6E5B4B", "#dddddd", "#bbbbbb"],
         "properties": {
             "--bg-primary": "#2a2c26", "--bg-secondary": "#3a3c36", "--bg-tertiary": "#4c4f48",
             "--border-primary": "#6E5B4B", "--text-primary": "#dddddd", "--text-secondary": "#bbbbbb",

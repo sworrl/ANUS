@@ -1,4 +1,4 @@
-<?php // A.N.U.S. v1.3.0
+<?php // A.N.U.S. v1.3.1
 // Set headers for CORS and JSON response
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -117,8 +117,8 @@ switch ($action) {
 
             $gateway_details = get_gateway_details_from_db($db);
             
-            $stmt_status = $db->query("SELECT overall_status, quality_score, timestamp FROM event_log ORDER BY timestamp DESC LIMIT 1");
-            $status_data = $stmt_status->fetch(PDO::FETCH_ASSOC) ?: ['overall_status' => 'DOWN', 'quality_score' => 0, 'timestamp' => time()];
+            $stmt_status = $db->query("SELECT status, quality_score, timestamp FROM event_log ORDER BY timestamp DESC LIMIT 1");
+            $status_data = $stmt_status->fetch(PDO::FETCH_ASSOC) ?: ['status' => 'DOWN', 'quality_score' => 0, 'timestamp' => time()];
             
             $ssl_cert_details = null;
             if (file_exists($ssl_info_file)) {
@@ -137,7 +137,7 @@ switch ($action) {
                 'server_gateway_ip' => $gateway_details['ip'],
                 'gateway_details' => $gateway_details,
                 'resource_usage' => $resource_usage,
-                'overall_status' => $status_data['overall_status'],
+                'overall_status' => $status_data['status'],
                 'internet_quality_score' => $status_data['quality_score'],
                 'status_start_time' => date('c', $status_data['timestamp']),
                 'ssl_cert_details' => $ssl_cert_details
@@ -169,6 +169,9 @@ switch ($action) {
         try {
             $stmt = $db->query("SELECT ip, mac_address, vendor, hostname, is_up, services, os FROM nmap_scan_results ORDER BY is_up DESC, ip ASC");
             $hosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($hosts === false) {
+                $hosts = []; // Ensure hosts is an array even if query fails
+            }
             foreach ($hosts as &$host) {
                 $host['is_up'] = (bool)$host['is_up'];
                 $host['services'] = json_decode($host['services'], true);
@@ -184,7 +187,14 @@ switch ($action) {
             ]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Error fetching network neighborhood: ' . $e->getMessage()]);
+            // Return a valid structure on error so the frontend doesn't break
+            echo json_encode([
+                'error' => 'Error fetching network neighborhood: ' . $e->getMessage(),
+                'hosts' => [],
+                'server_ip' => $_SERVER['SERVER_ADDR'] ?? '127.0.0.1',
+                'client_ip' => trim(@file_get_contents($client_ip_file)),
+                'gateway_ip' => get_gateway_details_from_db($db)['ip']
+            ]);
         }
         break;
 

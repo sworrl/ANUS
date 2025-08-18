@@ -78,7 +78,9 @@ def setup_database():
                 id INTEGER PRIMARY KEY,
                 status TEXT,
                 startTime TEXT,
-                endTime TEXT
+                endTime TEXT,
+                quality_score INTEGER,
+                timestamp INTEGER
             )
         """)
         conn.commit()
@@ -421,8 +423,9 @@ def analyze_and_update_status():
                 last_log_status = cursor.fetchone()
                 if not last_log_status or last_log_status[0] != overall_status:
                     now_iso = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+                    now_unix = int(time.time())
                     cursor.execute("UPDATE event_log SET endTime = ? WHERE id = (SELECT MAX(id) FROM event_log)", (now_iso,))
-                    cursor.execute("INSERT INTO event_log (status, startTime, endTime) VALUES (?, ?, ?)", (overall_status, now_iso, now_iso))
+                    cursor.execute("INSERT INTO event_log (status, startTime, endTime, quality_score, timestamp) VALUES (?, ?, ?, ?, ?)", (overall_status, now_iso, now_iso, quality_score, now_unix))
 
                 conn.commit()
 
