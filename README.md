@@ -99,17 +99,41 @@ The new installation method below downloads the entire project first, making it 
 
 ### One-Liner Install
 
-This command will download the repository, extract it into a folder named `ANUS-main`, change into that directory, and then run the fully automated installation.
+Both of the methods below will install the software, so **you should only choose one.** The `git clone` method is generally preferred if you have Git installed, as it's the standard way to interact with Git repositories. The `wget` method is a good alternative if you don't have Git on your system or prefer to avoid installing it.
+
+-----
+
+### Git Clone Method
+
+This command uses the **Git** version control system to clone the repository into a new folder named `ANUS`, preserving the entire project history. It then changes into that directory and runs the fully automated installation script.
 
 ```bash
 git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py
 ```
+
+-----
+
+### Wget Method
+
+This command uses `wget` to download the repository as a ZIP file, then uses `unzip` to extract the files. This method does not preserve the project's commit history. The extracted directory is named `ANUS-main`, and the command then changes into that directory and runs the installation script.
 
 ```bash
 wget -qO- https://github.com/sworrl/ANUS/archive/main.zip | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py
 ```
 
 -----
+
+### Interactive Menu Install
+
+Again, choose only one of the following commands to install the software with the interactive menu.
+
+```bash
+git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py -menu
+```
+
+```bash
+wget -qO- https://github.com/sworrl/ANUS/archive/main.zip | sudo apt-get install -y unzip && unzip main.zip -d . && cd ANUS-main && sudo ./setup_anus_app.py -menu
+```
 
 ### Interactive Menu Install
 
