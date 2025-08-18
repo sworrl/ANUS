@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# A.N.U.S. v1.3.0
 
 import subprocess
 import os
@@ -11,6 +12,7 @@ import threading
 import signal
 import socket
 import xml.etree.ElementTree as ET
+import shutil
 
 # --- Configuration ---
 DB_PATH = '/var/db/anus_metrics.db'
@@ -18,7 +20,7 @@ CLIENT_IP_FILE = '/var/db/anus_client_ip.txt'
 TARGETS_CONFIG_FILE = '/var/www/html/anus/assets/targets.json'
 FUZZY_SAYINGS_FILE = '/var/www/html/anus/assets/fuzzy_sayings.json'
 NET_STATS_CACHE = '/var/tmp/anus_net_stats.json'
-
+SOCKET_PATH = '/var/tmp/anus_service_cmd.sock'
 try:
     output = subprocess.check_output("ip route | grep default | awk '{print $5}' | head -n 1", shell=True, text=True).strip()
     NETWORK_INTERFACE = output.splitlines()[0]
@@ -34,9 +36,8 @@ DEFAULT_TARGETS = [
     {"name": "Google.com", "url": "google.com"},
     {"name": "Cloudflare.com", "url": "cloudflare.com"}
 ]
-MAX_WORKERS = 30 # Increased for more concurrent pings + diagnostics
+MAX_WORKERS = 60
 stop_event = threading.Event()
-# Global variable to store gateway info
 GATEWAY_DETAILS = {'ip': 'N/A', 'mac': 'N/A', 'vendor': 'N/A'}
 
 # --- Database Functions ---
@@ -57,14 +58,12 @@ def setup_database():
                 cpu_usage REAL, mem_usage REAL, net_down_kbps REAL, net_up_kbps REAL
             )
         """)
-        # New table to store local network gateway info
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS local_network_info (
                 id INTEGER PRIMARY KEY, gateway_ip TEXT UNIQUE, gateway_mac TEXT,
                 gateway_vendor TEXT, last_updated INTEGER
             )
         """)
-        # New table for nmap scan results
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS nmap_scan_results (
                 id INTEGER PRIMARY KEY, ip TEXT UNIQUE, mac_address TEXT,
@@ -72,9 +71,16 @@ def setup_database():
                 services TEXT, os TEXT, last_scanned INTEGER
             )
         """)
-        try:
-            cursor.execute("ALTER TABLE metrics ADD COLUMN packet_loss REAL")
-        except sqlite3.OperationalError: pass
+        cursor.execute("CREATE TABLE IF NOT EXISTS client_pings (ip TEXT PRIMARY KEY, ping REAL, timestamp INTEGER)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS event_log (
+                id INTEGER PRIMARY KEY,
+                status TEXT,
+                startTime TEXT,
+                endTime TEXT
+            )
+        """)
         conn.commit()
 
 def log_metric(metric):
@@ -90,17 +96,6 @@ def log_metric(metric):
         ))
         conn.commit()
 
-def update_diagnostics(name, dns_info, traceroute_info):
-    """Updates the most recent metric record with new diagnostic info."""
-    with sqlite3.connect(DB_PATH) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE metrics
-            SET dns_info = ?, traceroute_info = ?
-            WHERE id = (SELECT id FROM metrics WHERE name = ? ORDER BY timestamp DESC LIMIT 1)
-        """, (json.dumps(dns_info), json.dumps(traceroute_info), name))
-        conn.commit()
-
 def log_resource_usage(usage_data):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
@@ -111,6 +106,17 @@ def log_resource_usage(usage_data):
             int(time.time()), usage_data['cpu'], usage_data['mem'],
             usage_data['net_down'], usage_data['net_up']
         ))
+        conn.commit()
+
+def update_diagnostics(name, dns_info, traceroute_info):
+    """Updates the most recent metric record with new diagnostic info."""
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE metrics
+            SET dns_info = ?, traceroute_info = ?
+            WHERE id = (SELECT id FROM metrics WHERE name = ? ORDER BY timestamp DESC LIMIT 1)
+        """, (json.dumps(dns_info), json.dumps(traceroute_info), name))
         conn.commit()
 
 # --- System & Network Diagnostics ---
@@ -189,7 +195,6 @@ def get_network_details():
                 'vendor': current_gateway_vendor
             }
 
-            # Update the database
             cursor.execute("REPLACE INTO local_network_info (id, gateway_ip, gateway_mac, gateway_vendor, last_updated) VALUES (?, ?, ?, ?, ?)",
                            (1, GATEWAY_DETAILS['ip'], GATEWAY_DETAILS['mac'], GATEWAY_DETAILS['vendor'], int(time.time())))
             conn.commit()
@@ -208,19 +213,30 @@ def get_network_cidr():
         ip_output = subprocess.check_output(f"ip addr show {NETWORK_INTERFACE} | grep 'inet ' | awk '{{print $2}}'", shell=True, text=True).strip()
         return ip_output.splitlines()[0]
     except Exception:
-        return '192.168.1.0/24' # Fallback
+        return '192.168.1.0/24'
 
 def scan_network():
     """Performs an nmap scan and updates the database."""
     while not stop_event.is_set():
         try:
             network_range = get_network_cidr()
+            nmap_path = shutil.which("nmap")
+            if not nmap_path:
+                print("nmap executable not found!")
+                stop_event.wait(300)
+                continue
+
             print(f"Starting nmap scan of {network_range}...")
-            # Use -sS (SYN scan), -sV (Service detection), -O (OS detection) and -oX for XML output
-            # This is a more comprehensive scan that takes longer but provides more info
-            nmap_command = f"nmap -sS -sV -O -oX - {network_range}"
-            nmap_output = subprocess.check_output(nmap_command, shell=True, text=True)
-            
+            nmap_command = f"sudo {nmap_path} -sS -sV -O -oX - {network_range}"
+            try:
+                nmap_output = subprocess.check_output(nmap_command, shell=True, text=True, stderr=subprocess.PIPE)
+                if "requires root privileges" in nmap_output.lower() or "permission denied" in nmap_output.lower():
+                    raise subprocess.CalledProcessError(1, nmap_command, stderr="Requires root privileges")
+            except subprocess.CalledProcessError as e:
+                print(f"Privileged nmap scan failed: {e.stderr.strip()}. This may happen if the sudoers rule is not set up correctly.")
+                stop_event.wait(60)
+                continue
+
             root = ET.fromstring(nmap_output)
             
             scanned_hosts = []
@@ -260,10 +276,9 @@ def scan_network():
                 }
                 scanned_hosts.append(host_info)
             
-            # Update the database with new scan results
             with sqlite3.connect(DB_PATH) as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM nmap_scan_results") # Clear old results
+                cursor.execute("DELETE FROM nmap_scan_results")
                 for host in scanned_hosts:
                     services_json = json.dumps(host['services'])
                     cursor.execute("""
@@ -279,8 +294,7 @@ def scan_network():
         except Exception as e:
             print(f"Error in scan_network: {e}")
         
-        # This interval can be dynamic, tied to a setting later
-        stop_event.wait(300) # Wait 5 minutes between scans
+        stop_event.wait(60)
 
 def get_diagnostics(target, server_gateway_ip):
     """Periodically runs traceroute and DNS lookups for a target."""
@@ -293,7 +307,6 @@ def get_diagnostics(target, server_gateway_ip):
         try:
             dns_info, traceroute_info = [], []
             try:
-                # FIX: More robust error handling for dig
                 dig_output = subprocess.check_output(f"dig +short {clean_host}", shell=True, timeout=10, text=True, stderr=subprocess.PIPE)
                 dns_info = [line for line in dig_output.strip().split('\n') if line]
                 if not dns_info:
@@ -302,11 +315,14 @@ def get_diagnostics(target, server_gateway_ip):
                 dns_info = [f"DNS lookup failed: {e.stderr.strip() if e.stderr else str(e)}"]
             
             try:
-                 # FIX: Use -n in traceroute to prevent DNS lookups, making it faster and more reliable
-                traceroute_output = subprocess.check_output(f"traceroute -n -q 1 -w 1 -m 15 {clean_host}", shell=True, timeout=30, text=True, stderr=subprocess.PIPE)
-                traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
-                if not traceroute_info:
-                    traceroute_info = ["Traceroute returned no hops."]
+                traceroute_path = shutil.which("traceroute")
+                if traceroute_path:
+                    traceroute_output = subprocess.check_output(f"sudo {traceroute_path} -n -q 1 -w 1 -m 15 {clean_host}", shell=True, timeout=30, text=True, stderr=subprocess.PIPE)
+                    traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
+                    if not traceroute_info:
+                        traceroute_info = ["Traceroute returned no hops."]
+                else:
+                    traceroute_info = ["Traceroute command not found."]
             except Exception as e:
                 traceroute_info = [f"Traceroute failed: {e.stderr.strip() if e.stderr else str(e)}"]
             
@@ -314,12 +330,9 @@ def get_diagnostics(target, server_gateway_ip):
         except Exception as e:
             print(f"Error in get_diagnostics for {target['name']}: {e}")
         
-        # FIX: Reduced interval to 5 minutes to get diagnostic data faster
-        stop_event.wait(300)
+        stop_event.wait(60)
 
 def continuous_ping_target(target, server_gateway_ip):
-    # This entire function is wrapped in a loop to make it resilient.
-    # If the ping process fails for any reason, it will wait 5 seconds and restart.
     while not stop_event.is_set():
         try:
             is_gateway = target.get('url') == 'DETECT_GATEWAY'
@@ -365,10 +378,159 @@ def continuous_ping_target(target, server_gateway_ip):
             print(f"Error in continuous_ping_target for {target['name']}, restarting in 5s. Error: {e}")
             time.sleep(5)
 
+def analyze_and_update_status():
+    """Analyzes recent metrics to determine overall status and quality."""
+    while not stop_event.is_set():
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                cursor = conn.cursor()
+                ten_seconds_ago = int(time.time()) - 10
+                
+                cursor.execute("SELECT name, status, ping, jitter, packet_loss FROM metrics WHERE timestamp >= ?", (ten_seconds_ago,))
+                recent_pings = cursor.fetchall()
+                
+                targets_by_name = {}
+                for name, status, ping, jitter, loss in recent_pings:
+                    if name not in targets_by_name:
+                        targets_by_name[name] = []
+                    targets_by_name[name].append({'status': status, 'ping': ping, 'jitter': jitter, 'packet_loss': loss})
+
+                gateway_pings = targets_by_name.get('Gateway', [])
+                is_up = any(p['status'] == 'UP' for p in gateway_pings)
+                overall_status = 'UP' if is_up else 'DOWN'
+                
+                quality_score = 0
+                if is_up:
+                    critical_pings = []
+                    for name, pings in targets_by_name.items():
+                        if name in ["Gateway", "Google DNS", "Cloudflare DNS", "OpenDNS Primary"]:
+                            critical_pings.extend(p for p in pings if p['status'] == 'UP')
+                    
+                    if critical_pings:
+                        avg_ping = sum(p['ping'] for p in critical_pings if p['ping'] is not None) / len(critical_pings)
+                        avg_jitter = sum(p['jitter'] for p in critical_pings if p['jitter'] is not None) / len(critical_pings)
+                        avg_loss = sum(p['packet_loss'] for p in critical_pings if p['packet_loss'] is not None) / len(critical_pings)
+                        
+                        score = 500
+                        score -= avg_ping * 2
+                        score -= avg_jitter * 10
+                        score -= avg_loss * 20
+                        quality_score = max(0, int(score))
+
+                cursor.execute("SELECT status FROM event_log ORDER BY id DESC LIMIT 1")
+                last_log_status = cursor.fetchone()
+                if not last_log_status or last_log_status[0] != overall_status:
+                    now_iso = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+                    cursor.execute("UPDATE event_log SET endTime = ? WHERE id = (SELECT MAX(id) FROM event_log)", (now_iso,))
+                    cursor.execute("INSERT INTO event_log (status, startTime, endTime) VALUES (?, ?, ?)", (overall_status, now_iso, now_iso))
+
+                conn.commit()
+
+        except Exception as e:
+            print(f"Error in analyze_and_update_status: {e}")
+        
+        stop_event.wait(10)
+
+
+def on_demand_diagnostic(payload):
+    """Performs a single diagnostic test and returns structured results."""
+    target = payload.get('target')
+    ping_count = payload.get('count', 4)
+    ping_size = payload.get('size', 56)
+
+    if not target:
+        return {"error": "Target not specified."}
+    
+    host = target.replace("https://", "").replace("http://", "").split('/')[0]
+    
+    results = {
+        "status": "DOWN", "ping": None, "jitter": None, "packet_loss": 100.0,
+        "hostname": None, "mac_address": None, "vendor": None,
+        "dns_info": [], "traceroute_info": []
+    }
+
+    try:
+        ping_command = f"ping -c {ping_count} -s {ping_size} {host}"
+        ping_output = subprocess.check_output(ping_command, shell=True, text=True, stderr=subprocess.STDOUT)
+        
+        latencies = [float(f) for f in re.findall(r'time=([\d\.]+)', ping_output)]
+        if latencies:
+            results['status'] = "UP"
+            results['ping'] = round(sum(latencies) / len(latencies), 2)
+            results['jitter'] = round((sum((x - results['ping']) ** 2 for x in latencies) / (len(latencies) - 1)) ** 0.5, 2) if len(latencies) > 1 else 0.0
+        
+        loss_match = re.search(r'(\d+)% packet loss', ping_output)
+        if loss_match:
+            results['packet_loss'] = float(loss_match.group(1))
+
+        arp_output = subprocess.check_output(f"ip neigh show {host}", shell=True, text=True, stderr=subprocess.DEVNULL)
+        mac_match = re.search(r'lladdr ([0-9a-f:]+)', arp_output)
+        if mac_match:
+            results['mac_address'] = mac_match.group(1)
+            try:
+                vendor_output = subprocess.check_output(f"curl -s https://api.macvendors.com/{results['mac_address']}", shell=True, text=True, timeout=5)
+                results['vendor'] = vendor_output.strip() if "Not Found" not in vendor_output else "Unknown"
+            except:
+                results['vendor'] = "Lookup Failed"
+        
+        try:
+            dns_output = subprocess.check_output(f"dig +short {host}", shell=True, text=True, stderr=subprocess.STDOUT)
+            results['dns_info'] = [line for line in dns_output.strip().split('\n') if line]
+            results['hostname'] = socket.gethostbyaddr(host)[0]
+        except Exception:
+            results['dns_info'] = ["DNS lookup failed"]
+            results['hostname'] = "N/A"
+
+        try:
+            traceroute_output = subprocess.check_output(f"traceroute -n -q 1 -w 1 -m 15 {host}", shell=True, text=True, stderr=subprocess.STDOUT)
+            results['traceroute_info'] = [line for line in traceroute_output.strip().split('\n') if line]
+        except Exception:
+            results['traceroute_info'] = ["Traceroute failed"]
+
+    except subprocess.CalledProcessError as e:
+        results['error'] = f"Command failed: {e.output}"
+    except Exception as e:
+        results['error'] = str(e)
+        
+    return results
+
+def command_server():
+    """Starts a local Unix domain socket server to handle on-demand commands."""
+    if os.path.exists(SOCKET_PATH):
+        os.remove(SOCKET_PATH)
+    
+    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    server.bind(SOCKET_PATH)
+    os.chmod(SOCKET_PATH, 0o777) # Allow web user to connect
+    
+    print(f"Command server listening on {SOCKET_PATH}")
+    
+    while not stop_event.is_set():
+        try:
+            conn, _ = server.accept()
+            data = conn.recv(4096)
+            if data:
+                payload = json.loads(data.decode('utf-8'))
+                command = payload.get('command')
+                result = None
+                if command == 'on_demand_diagnostic':
+                    result = on_demand_diagnostic(payload)
+                
+                if result:
+                    conn.sendall(json.dumps(result).encode('utf-8'))
+            conn.close()
+        except socket.timeout:
+            continue
+        except Exception as e:
+            print(f"Error in command server: {e}")
+            
+    server.close()
 
 def signal_handler(sig, frame):
     print("Signal received, shutting down.")
     stop_event.set()
+    if os.path.exists(SOCKET_PATH):
+        os.remove(SOCKET_PATH)
 
 # --- Main Execution ---
 if __name__ == "__main__":
@@ -377,7 +539,7 @@ if __name__ == "__main__":
     
     print("Starting A.N.U.S. Python Service...")
     setup_database()
-    get_network_details() # Initialize gateway details with caching
+    get_network_details()
     server_gateway_ip = GATEWAY_DETAILS['ip']
     print(f"Detected Server Gateway: {server_gateway_ip} on interface {NETWORK_INTERFACE}")
     
@@ -387,9 +549,11 @@ if __name__ == "__main__":
             with open(TARGETS_CONFIG_FILE, 'r') as f: targets = json.load(f)
         except (json.JSONDecodeError): pass
     
-    with ThreadPoolExecutor(max_workers=len(targets) * 2 + 2) as executor:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.submit(get_resource_usage)
-        executor.submit(scan_network) # Start nmap scan thread
+        executor.submit(scan_network)
+        executor.submit(command_server)
+        executor.submit(analyze_and_update_status)
         for target in targets:
             executor.submit(continuous_ping_target, target, server_gateway_ip)
             executor.submit(get_diagnostics, target, server_gateway_ip)

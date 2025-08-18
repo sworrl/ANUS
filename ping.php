@@ -1,18 +1,18 @@
-<?php
+<?php // A.N.U.S. v1.3.0
 // Set headers for CORS and JSON response
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-// FIX: Add cache-control headers to prevent browser caching of API responses
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
-set_time_limit(60);
+set_time_limit(120);
 
 // --- Configuration ---
 $db_path = '/var/db/anus_metrics.db';
 $client_ip_file = '/var/db/anus_client_ip.txt';
 $targets_config_file = '/var/www/html/anus/assets/targets.json';
-$fuzzy_sayings_file = '/var/www/html/anus/assets/fuzzy_sayings.json';
+$socket_path = '/var/tmp/anus_service_cmd.sock';
+$ssl_info_file = '/var/www/html/anus/assets/ssl_info.json';
 
 // --- Database Setup ---
 try {
@@ -25,34 +25,43 @@ try {
 }
 
 // --- Helper Functions ---
-function get_latest_resource_usage($db) {
-    $stmt = $db->query("SELECT cpu_usage, mem_usage, net_down_kbps, net_up_kbps FROM resource_metrics ORDER BY timestamp DESC LIMIT 1");
-    $usage = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $usage ?: ['cpu_usage' => 0, 'mem_usage' => 0, 'net_down_kbps' => 0, 'net_up_kbps' => 0];
-}
-
-function calculate_internet_quality_score($pings) {
-    if (empty($pings)) return 0;
-    $total_score = 0;
-    $target_count = 0;
-    foreach ($pings as $ping) {
-        if ($ping['name'] === 'Gateway' || $ping['status'] !== 'UP' || $ping['ping'] === null) continue;
-        $ping_score = max(0, 100 - ($ping['ping'] / 2));
-        $jitter_score = max(0, 100 - ($ping['jitter'] * 2));
-        $packet_loss_score = 100 - ($ping['packet_loss'] ?? 0);
-        $target_score = ($ping_score * 0.4) + ($jitter_score * 0.2) + ($packet_loss_score * 0.4);
-        $total_score += $target_score;
-        $target_count++;
+function get_data_from_socket($command) {
+    global $socket_path;
+    $client = stream_socket_client("unix://{$socket_path}", $errno, $errstr, 30);
+    if (!$client) {
+        throw new Exception("Socket connection failed: {$errstr} ({$errno})");
     }
-    if ($target_count === 0) return 0;
-    // Scale score to be out of 500
-    return round(($total_score / $target_count) * 5);
+    fwrite($client, $command);
+    $response = '';
+    while (!feof($client)) {
+        $response .= fread($client, 8192);
+    }
+    fclose($client);
+    return json_decode($response, true);
 }
 
 function get_gateway_details_from_db($db) {
-    $stmt = $db->query("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info ORDER BY last_updated DESC LIMIT 1");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
+    $stmt_gateway = $db->query("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info ORDER BY last_updated DESC LIMIT 1");
+    return $stmt_gateway->fetch(PDO::FETCH_ASSOC) ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
+}
+
+function get_ssl_cert_details($cert_path) {
+    if (!$cert_path || !file_exists($cert_path)) {
+        return null;
+    }
+    $details = [];
+    try {
+        $cert_content = file_get_contents($cert_path);
+        $cert_info = openssl_x509_parse($cert_content);
+        
+        $details['issuer'] = $cert_info['issuer']['CN'] ?? 'N/A';
+        $details['start_date'] = date('Y-m-d H:i:s', $cert_info['validFrom_time_t']);
+        $details['end_date'] = date('Y-m-d H:i:s', $cert_info['validTo_time_t']);
+        $details['fingerprint'] = openssl_x509_fingerprint($cert_content, "sha256");
+    } catch (Exception $e) {
+        return null;
+    }
+    return $details;
 }
 
 // --- API Endpoint Logic ---
@@ -69,56 +78,69 @@ switch ($action) {
     case 'get_all_latest_metrics':
         try {
             $time_15m_ago = time() - 900;
-            $query = "
-                WITH LatestMetrics AS (
-                    SELECT
-                        m.id, m.name, m.ping, m.jitter, m.status, m.dns_info, m.traceroute_info, m.timestamp, m.packet_loss,
-                        ROW_NUMBER() OVER(PARTITION BY name ORDER BY timestamp DESC) as rn
-                    FROM metrics m
-                )
+            $stmt = $db->prepare("
                 SELECT
-                    lm.name, lm.ping, lm.jitter, lm.status, lm.dns_info, lm.traceroute_info, lm.timestamp, lm.packet_loss,
-                    (SELECT AVG(packet_loss) FROM metrics WHERE name = lm.name AND timestamp >= :time_15m_ago) as packet_loss_15m,
-                    (SELECT MIN(ping) FROM metrics WHERE name = lm.name AND timestamp >= :time_15m_ago) as min_ping_15m,
-                    (SELECT MAX(ping) FROM metrics WHERE name = lm.name AND timestamp >= :time_15m_ago) as max_ping_15m
-                FROM LatestMetrics lm
-                WHERE lm.rn = 1;
-            ";
-
-            $stmt = $db->prepare($query);
-            $stmt->execute([':time_15m_ago' => $time_15m_ago]);
+                    m.name, m.ping, m.jitter, m.status, m.dns_info, m.traceroute_info, m.timestamp, m.packet_loss,
+                    COALESCE(agg.min_ping_15m, 0) as min_ping_15m,
+                    COALESCE(agg.max_ping_15m, 0) as max_ping_15m,
+                    COALESCE(agg.packet_loss_15m, 0) as packet_loss_15m
+                FROM metrics m
+                INNER JOIN (
+                    SELECT name, MAX(timestamp) AS max_timestamp
+                    FROM metrics
+                    GROUP BY name
+                ) AS latest ON m.name = latest.name AND m.timestamp = latest.max_timestamp
+                LEFT JOIN (
+                    SELECT
+                        name,
+                        MIN(ping) as min_ping_15m,
+                        MAX(ping) as max_ping_15m,
+                        AVG(packet_loss) as packet_loss_15m
+                    FROM metrics
+                    WHERE timestamp >= ?
+                    GROUP BY name
+                ) AS agg ON m.name = agg.name
+            ");
+            $stmt->execute([$time_15m_ago]);
             $latest_metrics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
             foreach ($latest_metrics as &$metric_data) {
                 $metric_data['dns_info'] = json_decode($metric_data['dns_info'], true);
                 $metric_data['traceroute_info'] = json_decode($metric_data['traceroute_info'], true);
-                $metric_data['packet_loss_15m'] = ($metric_data['packet_loss_15m'] !== null) ? round($metric_data['packet_loss_15m'], 2) : null;
-                $metric_data['min_ping_15m'] = ($metric_data['min_ping_15m'] !== null) ? round($metric_data['min_ping_15m'], 2) : null;
-                $metric_data['max_ping_15m'] = ($metric_data['max_ping_15m'] !== null) ? round($metric_data['max_ping_15m'], 2) : null;
+                $metric_data['packet_loss_15m'] = round(floatval($metric_data['packet_loss_15m']), 2);
             }
             unset($metric_data);
 
-            $server_to_client_ping = null;
-            if ($client_ip) {
-                $stmt_client_ping = $db->prepare("SELECT ping FROM client_pings WHERE ip = ? LIMIT 1");
-                $stmt_client_ping->execute([$client_ip]);
-                $result = $stmt_client_ping->fetch(PDO::FETCH_ASSOC);
-                if ($result) { $server_to_client_ping = $result['ping']; }
-            }
-            
+            $stmt_resource = $db->query("SELECT cpu_usage, mem_usage, net_down_kbps, net_up_kbps FROM resource_metrics ORDER BY timestamp DESC LIMIT 1");
+            $resource_usage = $stmt_resource->fetch(PDO::FETCH_ASSOC) ?: ['cpu_usage' => 0, 'mem_usage' => 0, 'net_down_kbps' => 0, 'net_up_kbps' => 0];
+
             $gateway_details = get_gateway_details_from_db($db);
-            $server_ip = $_SERVER['SERVER_ADDR'] ?? '127.0.0.1';
+            
+            $stmt_status = $db->query("SELECT overall_status, quality_score, timestamp FROM event_log ORDER BY timestamp DESC LIMIT 1");
+            $status_data = $stmt_status->fetch(PDO::FETCH_ASSOC) ?: ['overall_status' => 'DOWN', 'quality_score' => 0, 'timestamp' => time()];
+            
+            $ssl_cert_details = null;
+            if (file_exists($ssl_info_file)) {
+                $ssl_config = json_decode(file_get_contents($ssl_info_file), true);
+                if (isset($ssl_config['cert_path'])) {
+                    $ssl_cert_details = get_ssl_cert_details($ssl_config['cert_path']);
+                }
+            }
+
 
             $server_status = [
                 'service_status' => trim(@shell_exec('systemctl is-active anus_service.service')) === 'active',
                 'apache_status' => true, 'php_fpm_status' => true, 'db_status' => true,
-                'server_ip' => $server_ip,
+                'server_ip' => $_SERVER['SERVER_ADDR'] ?? '127.0.0.1',
                 'client_ip' => $client_ip,
                 'server_gateway_ip' => $gateway_details['ip'],
                 'gateway_details' => $gateway_details,
-                'server_to_client_ping' => $server_to_client_ping,
-                'resource_usage' => get_latest_resource_usage($db),
-                'internet_quality_score' => calculate_internet_quality_score($latest_metrics)
+                'resource_usage' => $resource_usage,
+                'overall_status' => $status_data['overall_status'],
+                'internet_quality_score' => $status_data['quality_score'],
+                'status_start_time' => date('c', $status_data['timestamp']),
+                'ssl_cert_details' => $ssl_cert_details
             ];
             echo json_encode(['pings' => $latest_metrics, 'server_status' => $server_status]);
         } catch (Exception $e) {
@@ -127,9 +149,24 @@ switch ($action) {
         }
         break;
 
+    case 'on_demand_diagnostic':
+        try {
+            $command = json_encode([
+                'command' => 'on_demand_diagnostic', 
+                'target' => $data['target'],
+                'count' => $data['count'],
+                'size' => $data['size']
+            ]);
+            $response = get_data_from_socket($command);
+            echo json_encode($response);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error communicating with service: ' . $e->getMessage()]);
+        }
+        break;
+
     case 'get_network_neighborhood':
         try {
-            // FIX: Added 'os' column to the SELECT statement to provide data to the frontend
             $stmt = $db->query("SELECT ip, mac_address, vendor, hostname, is_up, services, os FROM nmap_scan_results ORDER BY is_up DESC, ip ASC");
             $hosts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($hosts as &$host) {
@@ -197,13 +234,45 @@ switch ($action) {
         break;
 
     case 'get_historical_data':
-        // FIX: Optimized query to fetch only the last 24 hours of data to prevent timeouts on large datasets.
         try {
-            $time_24h_ago = time() - 86400;
-            $stmt = $db->prepare("SELECT name, ping, jitter, status, timestamp FROM metrics WHERE timestamp >= ? ORDER BY timestamp ASC");
-            $stmt->execute([$time_24h_ago]);
-            $results = $stmt->fetchAll(PDO::FETCH_ASSOC | PDO::FETCH_GROUP);
-            echo json_encode($results);
+            $start_time = $data['start'] ?? (time() - 86400);
+            $end_time = $data['end'] ?? time();
+            $range_seconds = $end_time - $start_time;
+
+            // Determine aggregation level based on time range
+            if ($range_seconds < 7200) { // Less than 2 hours
+                $group_format = "'%Y-%m-%d %H:%M:%S'"; // No aggregation (by second)
+            } elseif ($range_seconds < 172800) { // Less than 2 days
+                $group_format = "'%Y-%m-%d %H:%M:00'"; // By minute
+            } elseif ($range_seconds < 1209600) { // Less than 14 days
+                $group_format = "'%Y-%m-%d %H:00:00'"; // By hour
+            } else {
+                $group_format = "'%Y-%m-%d 00:00:00'"; // By day
+            }
+
+            $stmt = $db->prepare("
+                SELECT 
+                    name,
+                    strftime({$group_format}, timestamp, 'unixepoch') as time_bucket,
+                    AVG(ping) as ping
+                FROM metrics
+                WHERE timestamp >= ? AND timestamp <= ?
+                GROUP BY name, time_bucket
+                ORDER BY time_bucket ASC
+            ");
+            $stmt->execute([$start_time, $end_time]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Re-group by name for the chart
+            $grouped_results = [];
+            foreach ($results as $row) {
+                $grouped_results[$row['name']][] = [
+                    'timestamp' => strtotime($row['time_bucket']),
+                    'ping' => $row['ping']
+                ];
+            }
+            
+            echo json_encode($grouped_results);
         } catch (Exception $e) { 
             http_response_code(500); 
             echo json_encode(['error' => 'Error fetching historical data: ' . $e->getMessage()]); 
@@ -211,42 +280,15 @@ switch ($action) {
         break;
 
     case 'get_log':
-        // FIX: The log generation logic was flawed and didn't correctly use the last known status.
-        // This new logic correctly reconstructs the event timeline from the raw ping data.
         try {
-            $stmt = $db->prepare("SELECT status, timestamp FROM metrics WHERE name = 'Google.com' ORDER BY timestamp ASC");
-            $stmt->execute();
-            $pings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $event_log = [];
-            if (count($pings) > 0) {
-                $last_status = $pings[0]['status'];
-                $event_start_time = $pings[0]['timestamp'];
-                
-                for ($i = 1; $i < count($pings); $i++) {
-                    if ($pings[$i]['status'] !== $last_status) {
-                        $event_log[] = [
-                            'status' => $last_status,
-                            'startTime' => date('c', $event_start_time),
-                            'endTime' => date('c', $pings[$i]['timestamp'])
-                        ];
-                        $last_status = $pings[$i]['status'];
-                        $event_start_time = $pings[$i]['timestamp'];
-                    }
-                }
-                // Add the final, ongoing event
-                $event_log[] = [
-                    'status' => $last_status,
-                    'startTime' => date('c', $event_start_time),
-                    'endTime' => date('c', time())
-                ];
-            }
-            echo json_encode(array_reverse($event_log));
+            $stmt = $db->query("SELECT status, startTime, endTime FROM event_log ORDER BY startTime DESC");
+            echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error generating log: ' . $e->getMessage()]); }
         break;
 
     case 'clear_log':
         try {
-            $db->exec("DELETE FROM metrics"); $db->exec("DELETE FROM client_pings"); $db->exec("DELETE FROM resource_metrics");
+            $db->exec("DELETE FROM metrics"); $db->exec("DELETE FROM client_pings"); $db->exec("DELETE FROM resource_metrics"); $db->exec("DELETE FROM event_log");
             echo json_encode(['status' => 'success, all metrics cleared.']);
         } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error clearing log: ' . $e->getMessage()]); }
         break;

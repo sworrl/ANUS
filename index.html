@@ -1,9 +1,10 @@
+<!-- A.N.U.S. v1.3.0 -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.N.U.S. v1.2.6 - Automated Network Utility System</title>
+    <title>A.N.U.S. v1.3.0 - Automated Network Utility System</title>
     <script src="./assets/tailwindcss.js"></script>
     <script src="./assets/tone.js"></script>
     <script src="./assets/chart.js"></script>
@@ -11,164 +12,8 @@
     <script src="./assets/hammer.min.js"></script>
     <script src="./assets/chartjs-plugin-zoom.min.js"></script>
     <link href="./assets/inter.css" rel="stylesheet">
+    <link href="./assets/style.css" rel="stylesheet">
     <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:%23f59e0b;stroke-width:4;stroke-miterlimit:10;}.st1{fill:%23f59e0b;stroke:%23f59e0b;stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:%23f59e0b;stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>" />
-    <style>
-        :root {
-            --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
-            --border-primary: #334155; --text-primary: #e2e8f0; --text-secondary: #94a3b8;
-            --accent-primary: #f59e0b; --accent-secondary: #fbbf24;
-            --color-status-up: #22c55e; --color-status-warn: #eab308; --color-status-down: #ef4444;
-            --shadow-light: rgba(255, 255, 255, 0.05); --shadow-dark: rgba(0, 0, 0, 0.5);
-            --body-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"), linear-gradient(to bottom, var(--bg-primary), color-mix(in srgb, var(--bg-primary) 80%, black));
-            --main-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cpath d='M0 1v50h50V1H0zm1 1h48v48H1V2z' fill='%23fff' fill-opacity='0.03'/%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-secondary), color-mix(in srgb, var(--bg-secondary) 85%, black));
-            --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 85%, black));
-        }
-        
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); transition: background-color 0.3s; background-image: var(--body-bg-image); }
-        .bg-main { background-color: var(--bg-secondary); border-color: var(--border-primary); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); background-image: var(--main-bg-image); }
-        .border-main { border-color: var(--border-primary); }
-        .text-accent { color: var(--accent-primary); }
-        .text-accent-secondary { color: var(--accent-secondary); }
-        .bg-accent { background-color: var(--accent-primary); }
-        .border-accent { border-color: var(--accent-primary); }
-        .text-muted { color: var(--text-secondary); }
-        .bg-muted { background-color: var(--bg-tertiary); background-image: var(--muted-bg-image); }
-
-        .card-emboss { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transition: box-shadow 0.3s ease-in-out; }
-        .card-emboss-hover:hover { box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); }
-        canvas { filter: drop-shadow(0 0 8px var(--accent-primary-trans-2)); transition: filter 0.3s ease; }
-
-        .status-up { --status-color: var(--color-status-up); }
-        .status-down { --status-color: var(--color-status-down); }
-        .status-checking { --status-color: var(--color-status-warn); }
-        .text-status-up { color: var(--color-status-up); }
-        .text-status-warn { color: var(--color-status-warn); }
-        .text-status-down { color: var(--color-status-down); }
-        .bg-status-down { background-color: var(--color-status-down); }
-        .hover\\:bg-status-down-hover:hover { filter: brightness(0.85); }
-        
-        .blinking-dot { animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .tab-active { border-color: var(--accent-primary); color: var(--accent-primary); font-weight: 600; }
-        .toggle-checkbox:checked { right: 0; border-color: var(--accent-primary); }
-        .toggle-checkbox:checked + .toggle-label { background-color: var(--accent-primary); }
-
-        @keyframes pulse-outer { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.05); opacity: 1; } }
-        @keyframes pulse-inner { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(0.85); filter: brightness(1.5); } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        #logo-container { cursor: pointer; transition: color 0.5s ease-in-out; }
-        #logo-svg .outer-ring { animation: pulse-outer 4s infinite ease-in-out; }
-        #logo-svg .inner-ring { animation: pulse-inner 2.5s infinite ease-in-out; transform-origin: center; }
-        #logo-svg .spokes { animation: spin 20s linear infinite; transform-origin: center; }
-
-        .node-glow { animation: pulse-glow 2.5s infinite ease-in-out; }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 8px 2px var(--accent-primary-trans-1), inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
-            50% { box-shadow: 0 0 18px 6px var(--accent-primary-trans-2), inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
-        }
-
-        #diagnostics-svg-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .flow-path { fill: none; stroke-width: 4px; stroke: var(--bg-tertiary); }
-        .flow-dot { r: 4px; }
-        .flow-dot.up { fill: var(--color-status-up); filter: drop-shadow(0 0 4px var(--color-status-up)); }
-        .flow-dot.down { fill: var(--color-status-down); filter: drop-shadow(0 0 4px var(--color-status-down)); }
-
-        .legend-item-hidden { text-decoration: line-through; color: #64748b !important; }
-
-        /* Timeline & Calendar Styles */
-        .timeline { position: relative; padding-left: 2rem; }
-        .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 4px; background-color: var(--border-primary); border-radius: 2px; }
-        .timeline-item { position: relative; margin-bottom: 1.5rem; }
-        .timeline-dot { position: absolute; left: -1px; top: 4px; height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 4px solid var(--border-primary); }
-        .timeline-dot.up { background-color: var(--color-status-up); }
-        .timeline-dot.down { background-color: var(--color-status-down); }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; }
-        .calendar-day { background-color: var(--bg-tertiary); padding: 8px; min-height: 120px; display: flex; flex-direction: column; }
-        .calendar-day.other-month { background-color: var(--bg-primary); opacity: 0.5; }
-        .event-bar { height: 8px; margin-top: 4px; border-radius: 4px; }
-        .event-bar-up { background-color: var(--color-status-up); }
-        .event-bar-down { background-color: var(--color-status-down); }
-        .day-name { font-size: 0.75rem; text-align: center; padding: 0.5rem 0; font-weight: 600; color: var(--text-secondary); }
-
-        /* Loading Overlay Styles */
-        #loading-overlay {
-            position: fixed; inset: 0; z-index: 100;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            background-color: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            transition: opacity 0.8s ease-in-out;
-        }
-        #loading-logo-container svg {
-            width: 200px; height: 200px;
-            animation: pulse-loader 2s infinite ease-in-out;
-            transition: filter 0.5s ease;
-        }
-        @keyframes pulse-loader {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-        #loading-overlay.loading-success #loading-logo-container {
-            animation: zoom-through 0.8s forwards ease-in;
-        }
-        @keyframes zoom-through {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(20); opacity: 0; }
-        }
-        #loading-overlay.loading-error #loading-logo-container svg {
-            filter: blur(5px);
-            animation: none;
-        }
-        #loading-error-container {
-            margin-top: 2rem;
-            max-width: 80%;
-        }
-        #app-container.hidden-on-load {
-            display: none;
-        }
-        #app-container.visible {
-            display: block;
-            animation: fade-in 0.5s forwards;
-        }
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .uptime-chart-container {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0.5rem auto 0;
-        }
-        .uptime-chart-container svg {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-        .uptime-chart-container circle {
-            transition: stroke-dashoffset 0.5s ease-out;
-        }
-        .disconnect-count {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-        
-        /* Network Neighborhood specific styles */
-        #network-tree-svg {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-        }
-        .network-node {
-            position: absolute;
-            z-index: 10;
-        }
-    </style>
 </head>
 <body class="bg-primary text-primary flex items-center justify-center min-h-screen p-4">
 
@@ -186,9 +31,16 @@
                 </g>
             </svg>
         </div>
-        <div id="loading-error-container" class="hidden p-4 bg-red-900/50 border border-red-500 rounded-lg text-center">
+        <div class="w-full max-w-md mt-8 text-center">
+            <p id="loading-status-text" class="text-lg text-accent-secondary font-semibold mb-2">Initializing...</p>
+            <div class="w-full bg-bg-tertiary rounded-full h-2.5">
+                <div id="loading-progress-bar" class="bg-accent h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+        <div id="loading-error-container" class="hidden mt-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-center max-w-xl">
             <h2 class="text-lg font-bold text-red-300">Initialization Failed</h2>
-            <p id="loading-error-message" class="mt-2 text-red-200 font-mono text-sm"></p>
+            <p id="loading-error-message" class="mt-2 text-red-200 font-mono text-sm break-all select-text"></p>
+            <button id="copy-error-btn" class="mt-4 px-4 py-2 text-sm font-medium bg-accent rounded-lg hover:bg-opacity-80">Copy Error</button>
         </div>
     </div>
 
@@ -221,7 +73,7 @@
                     </g>
                 </svg>
                 <div>
-                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.2.6</h1>
+                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.3.0</h1>
                     <p class="text-muted text-center">Automated Network Utility System</p>
                 </div>
             </div>
@@ -236,18 +88,25 @@
 
         <main>
             <div class="border-b border-main mb-6">
-                <!-- FIX: Removed Trends tab from navigation -->
                 <nav class="-mb-px flex space-x-6 justify-center" aria-label="Tabs">
                     <button id="tab-dashboard" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-accent tab-active">Dashboard</button>
+                    <button id="tab-trends" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Trends</button>
                     <button id="tab-neighborhood" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Network Neighborhood</button>
                     <button id="tab-log" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Event Log</button>
                     <button id="tab-settings" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Settings</button>
+                    <button id="tab-diagnostics" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">On-Demand Diagnostics</button>
                 </nav>
             </div>
 
             <div id="view-dashboard">
-                <!-- FIX: Moved Trends chart to Dashboard -->
-                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Live Latency Trends (24 Hours)</h2>
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Uptime Statistics</h2><div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></div>
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="bg-muted card-emboss p-6 rounded-lg text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
+                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></div>
+                <div><h2 class="text-xl font-semibold text-accent mb-4">Advanced Diagnostics - Network Data Flow</h2><div id="diagnostics-container" class="relative text-muted p-2 min-h-[500px]"></div></div>
+            </div>
+
+            <div id="view-trends" class="hidden">
+                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Live Latency Trends</h2>
                     <div class="bg-muted card-emboss p-4 rounded-lg h-96 relative flex items-center justify-center">
                         <canvas id="trends-chart"></canvas>
                         <div id="trends-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
@@ -256,16 +115,8 @@
                         <button id="clear-trends-filter-btn" class="absolute top-2 right-2 bg-accent hover:bg-opacity-80 text-white text-xs font-bold py-1 px-3 rounded-md hidden">Clear Filter</button>
                     </div>
                 </div>
-                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Uptime Statistics</h2><div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div></div>
-                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="bg-muted card-emboss p-6 rounded-lg text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
-                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div></div>
-                <div><h2 class="text-xl font-semibold text-accent mb-4">Advanced Diagnostics - Network Data Flow</h2><div id="diagnostics-container" class="relative text-muted p-2 min-h-[500px]"></div></div>
             </div>
 
-            <!-- FIX: This view is no longer needed as the chart is on the dashboard -->
-            <div id="view-trends" class="hidden"></div>
-
-            <!-- New Network Neighborhood View -->
             <div id="view-neighborhood" class="hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-accent">Network Neighborhood</h2>
@@ -279,9 +130,7 @@
                 </div>
                 <div id="network-tree-container" class="relative bg-muted card-emboss rounded-lg p-6 max-h-[70vh] overflow-auto">
                     <svg id="network-tree-svg"></svg>
-                    <div id="network-nodes-container" class="relative">
-                        <!-- Network Nodes will be dynamically populated here -->
-                    </div>
+                    <div id="network-nodes-container" class="relative"></div>
                     <div id="nmap-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
                         <p class="animate-pulse text-lg font-semibold text-accent">Scanning the network...</p>
                     </div>
@@ -320,10 +169,31 @@
                     <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Theme Selector</h3><div id="theme-selector-group" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div></div>
                 </div>
             </div>
+            
+            <div id="view-diagnostics" class="hidden">
+                 <div class="bg-muted card-emboss rounded-lg p-6 space-y-6">
+                    <h2 class="text-xl font-semibold text-accent">On-Demand Diagnostics</h2>
+                    <p class="text-sm text-muted">Perform a full diagnostic test on any host, with customizable options. This will return live data directly to the screen and is not logged.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <input type="text" id="diag-target-input" placeholder="e.g., example.com or 192.168.1.1" class="col-span-full md:col-span-1 p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
+                        <div>
+                            <label for="diag-ping-count" class="text-xs text-muted">Ping Count:</label>
+                            <input type="number" id="diag-ping-count" value="4" min="1" max="50" class="w-full p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
+                        </div>
+                        <div>
+                            <label for="diag-ping-size" class="text-xs text-muted">Ping Size (bytes):</label>
+                            <input type="number" id="diag-ping-size" value="56" min="1" max="1472" class="w-full p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
+                        </div>
+                        <button id="run-diag-btn" class="col-span-full md:col-span-1 p-2 rounded-md bg-accent text-white font-semibold hover:bg-opacity-80 transition-colors">Run Diagnostics</button>
+                    </div>
+                    <div id="diag-output-container" class="bg-bg-primary p-4 rounded-md font-mono text-xs overflow-y-auto max-h-[400px] border border-border-primary">
+                        <p class="text-muted">Enter a target and click "Run Diagnostics" to begin.</p>
+                    </div>
+                </div>
+            </div>
         </main>
         <footer class="text-center text-xs text-muted mt-8">
-            <!-- FIX: Added event listeners to open modals instead of linking directly -->
-            <p>A.N.U.S. v1.2.6 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
+            <p>A.N.U.S. v1.3.0 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
         </footer>
     </div>
 
@@ -349,7 +219,7 @@
         let modalUpdateIntervalId = null;
         let networkScanIntervalId = null;
         let isResponsiveScanMode = false;
-        let networkScanData = null; // New state variable for nmap data
+        let networkScanData = null; 
         let themes = {};
 
         const DOMElements = {
@@ -357,13 +227,16 @@
             loadingLogoContainer: document.getElementById('loading-logo-container'),
             loadingErrorContainer: document.getElementById('loading-error-container'),
             loadingErrorMessage: document.getElementById('loading-error-message'),
+            copyErrorBtn: document.getElementById('copy-error-btn'),
+            loadingStatusText: document.getElementById('loading-status-text'),
+            loadingProgressBar: document.getElementById('loading-progress-bar'),
             appContainer: document.getElementById('app-container'),
             statusIndicator: document.getElementById('status-indicator'), statusText: document.getElementById('status-text'), statusTimer: document.getElementById('status-timer'), currentStatusCard: document.getElementById('current-status-card'), uptimeStatsContainer: document.getElementById('uptime-stats-container'), serverHealthContainer: document.getElementById('server-health-container'),
             diagnosticsContainer: document.getElementById('diagnostics-container'), 
             updateIntervalGroup: document.getElementById('update-interval-group'), 
             soundToggle: document.getElementById('sound-toggle'), 
             logTimelineContainer: document.getElementById('log-timeline-container'), logCalendarContainer: document.getElementById('log-calendar-container'), logViewToggle: document.getElementById('log-view-toggle'), clearLogBtn: document.getElementById('clear-log-btn'), tabs: document.querySelectorAll('nav[aria-label="Tabs"] button'),
-            views: { dashboard: document.getElementById('view-dashboard'), trends: document.getElementById('view-trends'), log: document.getElementById('view-log'), settings: document.getElementById('view-settings'), neighborhood: document.getElementById('view-neighborhood') },
+            views: { dashboard: document.getElementById('view-dashboard'), trends: document.getElementById('view-trends'), neighborhood: document.getElementById('view-neighborhood'), log: document.getElementById('view-log'), settings: document.getElementById('view-settings'), diagnostics: document.getElementById('view-diagnostics') },
             confirmModal: document.getElementById('confirm-modal'), modalCancelBtn: document.getElementById('modal-cancel-btn'), modalConfirmBtn: document.getElementById('modal-confirm-btn'), trendsChartCanvas: document.getElementById('trends-chart'),
             nodeDetailsModal: document.getElementById('node-details-modal'), modalTitle: document.getElementById('modal-title'), modalContent: document.getElementById('modal-content'), modalCloseBtn: document.getElementById('modal-close-btn'),
             serverDetailsModal: document.getElementById('server-details-modal'), serverModalCloseBtn: document.getElementById('server-modal-close-btn'),
@@ -374,26 +247,31 @@
             onlineDetectionMethodGroup: document.getElementById('online-detection-method-group'),
             qualityContainer: document.getElementById('quality-container'), qualityText: document.getElementById('quality-text'), qualityScore: document.getElementById('quality-score'),
             calGrid: document.getElementById('cal-grid'), calMonthYear: document.getElementById('cal-month-year'), calPrevMonthBtn: document.getElementById('cal-prev-month'), calNextMonthBtn: document.getElementById('cal-next-month'),
-            licenseModal: document.getElementById('license-modal'), licenseLink: document.querySelector('a[href="./assets/LICENSE"]'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content'),
-            readmeLink: document.querySelector('a[href="./assets/README.md"]'), readmeModal: document.getElementById('readme-modal'), readmeCloseBtn: document.getElementById('readme-close-btn'), readmeContent: document.getElementById('readme-content'),
+            licenseModal: document.getElementById('license-modal'), licenseLink: document.querySelector('#license-link'), readmeLink: document.querySelector('#readme-link'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content'),
+            readmeModal: document.getElementById('readme-modal'), readmeCloseBtn: document.getElementById('readme-close-btn'), readmeContent: document.getElementById('readme-content'),
             faviconLink: document.getElementById('favicon'),
             networkTreeContainer: document.getElementById('network-tree-container'),
             networkTreeSVG: document.getElementById('network-tree-svg'),
             networkNodesContainer: document.getElementById('network-nodes-container'),
             nmapLoadingIndicator: document.getElementById('nmap-loading-indicator'),
             responsiveScanToggle: document.getElementById('responsive-scan-toggle'),
-            trendsLoadingIndicator: document.getElementById('trends-loading-indicator')
+            trendsLoadingIndicator: document.getElementById('trends-loading-indicator'),
+            diagTargetInput: document.getElementById('diag-target-input'),
+            diagPingCount: document.getElementById('diag-ping-count'),
+            diagPingSize: document.getElementById('diag-ping-size'),
+            runDiagBtn: document.getElementById('run-diag-btn'),
+            diagOutputContainer: document.getElementById('diag-output-container')
         };
         
 
         // --- Core Functions ---
-        const apiCall = async (action, payload = {}, timeout = 20000) => { // Increased timeout for heavy requests
+        const apiCall = async (action, payload = {}, timeout = 20000) => {
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), timeout);
 
             const url = new URL(`./ping.php`, window.location.href);
             url.searchParams.append('action', action);
-            url.searchParams.append('t', Date.now()); // Cache-busting parameter
+            url.searchParams.append('t', Date.now());
             if (payload.target) url.searchParams.append('target', payload.target);
 
             try {
@@ -431,6 +309,7 @@
                 throw error;
             }
         };
+
         const measureHttpLatency = async (url) => { if (!url || url.trim() === '' || url.trim() === 'N/A') return null; const testUrl = url.startsWith('http')?url:`http://${url}`; const startTime = performance.now(); try { await fetch(`${testUrl}?t=${Date.now()}`, { mode: 'no-cors', cache: 'no-store', signal: AbortSignal.timeout(1900) }); return performance.now() - startTime; } catch (e) { return null; } };
         const measureServerLatency = async () => { const startTime = performance.now(); const result = await apiCall('pong'); return result ? performance.now() - startTime : null; };
         const formatDuration = (ms) => { if (ms < 0) ms = 0; let s = Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60); s%=60; m%=60; const pad = n => String(n).padStart(2,'0'); return `${pad(h)}:${pad(m)}:${pad(s)}`; };
@@ -443,72 +322,27 @@
         
         async function fetchAndUpdateData() {
             try { 
-                const now = new Date();
-                const interval = parseInt(localStorage.getItem('updateInterval') || '1000', 10);
-                if (lastSuccessfulFetch > 0 && (now.getTime() - lastSuccessfulFetch) > interval * 3) {
-                    const serverLog = await apiCall('get_log');
-                    if (serverLog) { log = serverLog; }
-                }
                 const apiData = await apiCall('get_all_latest_metrics');
                 if (!apiData || !apiData.pings) {
                     throw new Error("Received invalid data structure from 'get_all_latest_metrics'");
                 };
-                lastSuccessfulFetch = now.getTime();
+                lastSuccessfulFetch = Date.now();
                 allPingsData = apiData.pings;
+                
+                const newStatus = apiData.server_status.overall_status;
+                
+                if (lastState !== null && lastState !== newStatus) {
+                    lastStateChangeTime = new Date();
+                    apiCall('get_log').then(serverLog => { if (serverLog) log = serverLog; });
+                } else if (lastState === null) {
+                    lastStateChangeTime = new Date(apiData.server_status.status_start_time);
+                }
+                currentState = newStatus;
+
                 serverGatewayIp = apiData.server_status.server_gateway_ip;
                 clientIp = apiData.server_status.client_ip || 'Unavailable';
                 const [clientToGatewayPing, clientToServerPing] = await Promise.all([ measureHttpLatency(serverGatewayIp), measureServerLatency() ]);
                 
-                const detectionMethod = localStorage.getItem('onlineDetectionMethod') || 'smart_check';
-                let newStatus = 'DOWN';
-                const targets = apiData.pings;
-                const gateway = targets.find(p => p.name === 'Gateway');
-                const dnsTargets = targets.filter(p => p.name.includes('DNS'));
-                const criticalTargets = targets.filter(p => p.critical);
-
-                switch(detectionMethod) {
-                    case 'smart_check': 
-                        const criticalDns = targets.filter(p => p.critical && p.name.includes('DNS'));
-                        const highAvailability = targets.filter(p => ['Google.com', 'Cloudflare.com', 'Microsoft'].includes(p.name));
-                        
-                        if (gateway?.status === 'UP') {
-                            const upCriticalDns = criticalDns.filter(p => p.status === 'UP').length;
-                            const upHighAvailability = highAvailability.filter(p => p.status === 'UP').length;
-                            if (upCriticalDns >= Math.ceil(criticalDns.length / 2) || upHighAvailability >= 2) {
-                                newStatus = 'UP';
-                            }
-                        }
-                        break;
-                    case 'gateway':
-                        newStatus = gateway?.status === 'UP' ? 'UP' : 'DOWN';
-                        break;
-                    case 'majority':
-                        const upCount = targets.filter(p => p.name !== 'Gateway' && p.status === 'UP').length;
-                        newStatus = upCount >= (targets.length - 1) / 2 ? 'UP' : 'DOWN';
-                        break;
-                    case 'dns_resolvers':
-                        const dnsUpCount = dnsTargets.filter(p => p.status === 'UP').length;
-                        newStatus = dnsUpCount > 0 ? 'UP' : 'DOWN';
-                        break;
-                    case 'critical_services':
-                        const criticalUpCount = criticalTargets.filter(p => p.status === 'UP').length;
-                        newStatus = criticalUpCount === criticalTargets.length ? 'UP' : 'DOWN';
-                        break;
-                    case 'google': 
-                        const googlePing = targets.find(p => p.name === 'Google.com');
-                        newStatus = googlePing?.status === 'UP' ? 'UP' : 'DOWN';
-                        break;
-                }
-
-                if (currentState === null) {
-                    currentState = newStatus;
-                    lastStateChangeTime = new Date();
-                } else if (newStatus !== currentState) {
-                    currentState = newStatus;
-                    lastStateChangeTime = new Date();
-                    // Refetch log on status change to ensure it's up to date
-                    apiCall('get_log').then(serverLog => { if (serverLog) log = serverLog; });
-                }
                 updateDashboard(apiData, clientToServerPing, clientToGatewayPing);
             } catch (e) {
                 handleError(e);
@@ -521,7 +355,7 @@
             DOMElements.nmapLoadingIndicator.classList.remove('hidden');
             try {
                 const scanData = await apiCall('get_network_neighborhood');
-                networkScanData = scanData; // Cache the data globally
+                networkScanData = scanData;
                 renderNetworkTree(scanData);
             } catch (e) {
                 console.error("Error fetching network neighborhood:", e);
@@ -535,10 +369,10 @@
             const container = DOMElements.networkTreeContainer;
             const svg = DOMElements.networkTreeSVG;
             const nodesContainer = DOMElements.networkNodesContainer;
-            if (!container || !svg || !nodesContainer) return; // Guard clause
+            if (!container || !svg || !nodesContainer) return;
             const containerRect = container.getBoundingClientRect();
             const width = containerRect.width;
-            const height = 400; // Fixed height for a reasonable layout
+            const height = 400; 
             container.style.height = `${height}px`;
 
             if (!scanData || !scanData.hosts || scanData.hosts.length === 0) {
@@ -549,13 +383,11 @@
             nodesContainer.innerHTML = '';
             svg.innerHTML = '';
             
-            // Filter and categorize hosts
             const gateway = scanData.hosts.find(h => h.ip === serverGatewayIp);
-            const server = scanData.hosts.find(h => h.ip === '127.0.0.1'); // Assuming server IP is localhost
+            const server = scanData.hosts.find(h => h.ip === '127.0.0.1');
             const client = scanData.hosts.find(h => h.ip === clientIp);
             let otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== '127.0.0.1' && h.ip !== clientIp);
             
-            // Fallback for server and client if not found in scan
             if (!server) {
                  const serverDetails = scanData.hosts.find(h => h.ip === scanData.server_ip);
                  if (serverDetails) {
@@ -576,7 +408,6 @@
             const nodeHeight = 120;
             const verticalSpacing = 20;
 
-            // Position nodes
             if (gateway) {
                 positions[gateway.ip] = { x: width / 2 - nodeWidth / 2, y: 10 };
             }
@@ -598,7 +429,6 @@
                 otherX += nodeWidth + 20;
             });
             
-            // Render nodes and draw lines
             const drawLine = (fromIp, toIp) => {
                 if (!positions[fromIp] || !positions[toIp]) return;
                 const fromPos = positions[fromIp];
@@ -614,11 +444,9 @@
                 svg.appendChild(path);
             };
 
-            // Draw connections
             if (gateway && server) drawLine(gateway.ip, server.ip);
             if (gateway && client) drawLine(gateway.ip, client.ip);
             
-            // Dynamically create and position host elements
             const renderHost = (host) => {
                 const pos = positions[host.ip];
                 if (!pos) return '';
@@ -663,11 +491,9 @@
             if (client) renderHost(client);
             otherHosts.forEach(renderHost);
 
-            // Adjust container height to fit all nodes
             const maxNodeY = Math.max(...Object.values(positions).map(p => p.y + nodeHeight));
             DOMElements.networkTreeContainer.style.height = `${Math.max(height, maxNodeY + 20)}px`;
             
-            // Re-render lines after nodes are in place
             svg.innerHTML = '';
             if (gateway && server) drawLine(gateway.ip, server.ip);
             if (gateway && client) drawLine(gateway.ip, client.ip);
@@ -696,21 +522,20 @@
         // --- UI Rendering Functions ---
         function updateDashboard(data, clientToServerPing, clientToGatewayPing) {
             if (!data) return;
-            updateStatusUI(data.server_status.internet_quality_score);
-            updateAllUptimeStats();
-            renderServerHealth(data.server_status);
-            updateClientInfo();
-            updateServerInfo(data.server_status);
-            updateGatewayInfo(data.server_status); 
-            renderInternetNodeCards(data.pings);
-            drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status);
-            if (isTrendsDataLoaded) { updateTrendsChart(data.pings); }
-            if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline();
-            updateFuzzyQualityMetric(data.pings, data.server_status.internet_quality_score);
-            updateLogoColor(data.server_status.internet_quality_score, currentState);
+            try { updateStatusUI(data.server_status.internet_quality_score); } catch(e) { console.error("Failed to update Status UI", e); }
+            try { updateAllUptimeStats(); } catch(e) { console.error("Failed to update Uptime Stats", e); }
+            try { renderServerHealth(data.server_status); } catch(e) { console.error("Failed to render Server Health", e); }
+            try { updateClientInfo(); } catch(e) { console.error("Failed to update Client Info", e); }
+            try { updateServerInfo(data.server_status); } catch(e) { console.error("Failed to update Server Info", e); }
+            try { updateGatewayInfo(data.server_status); } catch(e) { console.error("Failed to update Gateway Info", e); }
+            try { renderInternetNodeCards(data.pings); } catch(e) { console.error("Failed to render Internet Nodes", e); }
+            try { drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status); } catch(e) { console.error("Failed to draw Diagnostic Paths", e); }
+            try { if (isTrendsDataLoaded) { updateTrendsChart(data.pings); } } catch(e) { console.error("Failed to update Trends Chart", e); }
+            try { if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline(); } catch(e) { console.error("Failed to render Log Timeline", e); }
+            try { updateFuzzyQualityMetric(data.pings, data.server_status.internet_quality_score); } catch(e) { console.error("Failed to update Fuzzy Quality Metric", e); }
+            try { updateLogoColor(data.server_status.internet_quality_score, currentState); } catch(e) { console.error("Failed to update Logo Color", e); }
         }
         
-        // FIX: Implement more granular internet status display
         function updateStatusUI(score) {
             const { statusIndicator, statusText, statusTimer, currentStatusCard } = DOMElements;
             let statusClass = 'status-checking';
@@ -747,7 +572,39 @@
         function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatDuration(new Date() - new Date(log[0].startTime)); } }
         function createUptimeCards() { if (!DOMElements.uptimeStatsContainer) return; const wins = [{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; DOMElements.uptimeStatsContainer.innerHTML = wins.map((w,i)=>`<div class="bg-muted card-emboss p-4 rounded-lg text-center"><h3 class="text-sm font-medium text-muted">${w.l}</h3><div id="uptime-chart-${i}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1">--:--:-- downtime</p></div>`).join(''); }
         function updateAllUptimeStats() { const wins=[{l:'Session',d:()=>new Date()-sessionStartTime},{l:'15 Min',d:9e5},{l:'30 Min',d:18e5},{l:'1 Hour',d:36e5}]; const cards=DOMElements.uptimeStatsContainer?.children; if (!cards) return; const now = Date.now(); wins.forEach((w,i)=>{ const dur=w.d.call?w.d():w.d; let downMs=0; let disconnects=0; let lastStatus=null; log.filter(e=>new Date(e.endTime).getTime()>now-dur).forEach(e=>{if(e.status==='DOWN'){downMs+=new Date(e.endTime)-Math.max(new Date(e.startTime),now-dur);if(lastStatus!=='DOWN')disconnects++}lastStatus=e.status}); if(currentState==='DOWN'&&lastStateChangeTime){downMs+=now-Math.max(lastStateChangeTime,now-dur);if(lastStatus!=='DOWN')disconnects++} const upPerc=Math.max(0,(1-downMs/dur)*100); if(cards[i]){ cards[i].querySelector('.downtime-duration').textContent=`${formatDuration(downMs)} downtime`; createOrUpdateUptimeChart(`uptime-chart-${i}`, upPerc, disconnects); } }); }
-        function renderServerHealth(status) { if (!DOMElements.serverHealthContainer) return; const map=[{t:'Python Service',s:status.service_status},{t:'Apache',s:status.apache_status},{t:'PHP',s:status.php_fpm_status},{t:'Database',s:status.db_status}]; DOMElements.serverHealthContainer.innerHTML = map.map(s=>`<div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');}
+        
+        function renderServerHealth(status) {
+            if (!DOMElements.serverHealthContainer) return;
+            const services = [
+                {t:'Python Service',s:status.service_status},
+                {t:'Apache',s:status.apache_status},
+                {t:'PHP',s:status.php_fpm_status},
+            ];
+            let serviceMarkup = services.map(s=>`<div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');
+
+            let sslMarkup = '';
+            if (status.ssl_cert_details) {
+                const details = status.ssl_cert_details;
+                const expiryDate = new Date(details.end_date);
+                const daysLeft = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                let expiryClass = 'text-status-up';
+                if (daysLeft < 14) expiryClass = 'text-status-warn';
+                if (daysLeft < 7) expiryClass = 'text-status-down';
+
+                sslMarkup = `
+                    <div class="bg-muted card-emboss card-emboss-hover p-4 rounded-lg col-span-1 md:col-span-2 lg:col-span-1">
+                        <p class="text-sm text-muted font-semibold mb-2">SSL Certificate</p>
+                        <p class="text-xs text-muted truncate" title="${details.fingerprint}">
+                            <span class="font-bold text-primary">Issuer:</span> ${details.issuer}
+                        </p>
+                        <p class="text-xs mt-1 ${expiryClass}">
+                            <span class="font-bold">Expires in ${daysLeft} days</span> (${details.end_date})
+                        </p>
+                    </div>`;
+            }
+
+            DOMElements.serverHealthContainer.innerHTML = serviceMarkup + sslMarkup;
+        }
 
         function renderInternetNodeCards(pings) {
             const internetNodes = pings.filter(p => p.name !== 'Gateway');
@@ -757,18 +614,22 @@
             const currentTheme = localStorage.getItem('theme') || 'dark';
             const palette = themes[currentTheme].palette;
 
-            // FIX: Use a Set to track existing cards to avoid redundant rendering and flashing
-            const existingCardIds = new Set(Array.from(grid.children).map(c => c.id));
-            const newCardIds = new Set();
-            
+            const existingNodes = new Set(Array.from(grid.children).map(c => c.dataset.nodeName));
+            const newNodes = new Set(internetNodes.map(n => n.name));
+
+            existingNodes.forEach(nodeName => {
+                if (!newNodes.has(nodeName)) {
+                    const card = document.querySelector(`.internet-node-card[data-node-name="${nodeName}"]`);
+                    if (card) {
+                        card.remove();
+                    }
+                }
+            });
+
             internetNodes.forEach((n, index) => {
-                const cardId = `node-card-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
-                newCardIds.add(cardId);
-                let card = document.getElementById(cardId);
+                let card = document.querySelector(`.internet-node-card[data-node-name="${n.name}"]`);
                 if (!card) {
-                    // Create new card if it doesn't exist
                     card = document.createElement('div');
-                    card.id = cardId;
                     card.className = "internet-node-card bg-bg-primary card-emboss card-emboss-hover p-3 rounded-lg border-2 transition-all cursor-pointer";
                     card.dataset.nodeName = n.name;
                     card.addEventListener('click', () => showNodeDetailsModal(n));
@@ -776,37 +637,35 @@
                 }
 
                 const serverGateway = pings.find(p => p.name === 'Gateway');
-                card.style.borderColor = `${serverGateway?.status === 'UP' && n.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
+                const cardStatus = serverGateway?.status === 'UP' && n.status === 'UP';
+                const pingValue = cardStatus && n.ping !== null ? Math.round(n.ping) + 'ms' : '---';
+                const jitterValue = n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A';
+                const lossValue = n.packet_loss_15m !== null && typeof n.packet_loss_15m !== 'undefined' ? n.packet_loss_15m + '%' : 'N/A';
+                const lossClass = getUptimeStatusClass(100 - (n.packet_loss_15m || 0));
                 
-                // Update inner HTML of existing cards to prevent re-creating them
-                card.innerHTML = `
+                card.style.borderColor = `${cardStatus ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
+
+                let innerContent = `
                     <div class="flex justify-between items-start">
                         <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}">${n.name}</p>
-                        <p class="text-xs font-bold node-ping ${getPingStatusClass(serverGateway?.status === 'UP' && n.status === 'UP' ? n.ping : null)}">
-                            ${serverGateway?.status === 'UP' && n.status === 'UP' && n.ping !== null ? Math.round(n.ping) + 'ms' : '---'}
-                        </p>
+                        <p class="text-xs font-bold node-ping ${getPingStatusClass(n.ping)}">${pingValue}</p>
                     </div>
                     <div class="h-16 w-full my-2"><canvas id="mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}"></canvas></div>
                     <div class="text-xs text-muted flex justify-between">
-                        <span class="node-jitter">Jitter: ${n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A'}</span>
-                        <span class="node-loss">Loss (15m): <span class="${getUptimeStatusClass(100 - (n.packet_loss_15m || 0))}">${n.packet_loss_15m !== null ? n.packet_loss_15m + '%' : 'N/A'}</span></span>
+                        <span class="node-jitter">Jitter: ${jitterValue}</span>
+                        <span class="node-loss">Loss (15m): <span class="${lossClass}">${lossValue}</span></span>
                     </div>`;
+
+                if (card.innerHTML !== innerContent) {
+                    card.innerHTML = innerContent;
+                }
 
                 const canvasId = `mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
                 const color = palette[index % palette.length];
-                // FIX: Ensure canvas element exists before creating chart
-                if (document.getElementById(canvasId)) {
+                
+                const chartCanvas = document.getElementById(canvasId);
+                if (chartCanvas) {
                     createOrUpdateMiniChart(canvasId, n, color);
-                }
-            });
-
-            // Remove cards that are no longer in the list of targets
-            existingCardIds.forEach(id => {
-                if (!newCardIds.has(id)) {
-                    const cardToRemove = document.getElementById(id);
-                    if (cardToRemove) {
-                        cardToRemove.remove();
-                    }
                 }
             });
         }
@@ -907,7 +766,7 @@
                             <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
                             <p><span class="font-medium text-muted">Ping:</span> <span id="gateway-ping-value" class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
                             <p><span class="font-medium text-muted">Jitter:</span> <span id="gateway-jitter-value">${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
-                            <p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0))}">${gatewayPingData.packet_loss_15m !== null ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}</span></p>
+                            <p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0))}">${gatewayPingData.packet_loss_15m !== null && typeof gatewayPingData.packet_loss_15m !== 'undefined' ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}</span></p>
                         </div>
                     </div>
                 `;
@@ -919,12 +778,12 @@
             } else {
                  document.getElementById('gateway-ping-value').textContent = gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A';
                  document.getElementById('gateway-jitter-value').textContent = gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A';
-                 document.getElementById('gateway-loss-value').innerHTML = `${gatewayPingData.packet_loss_15m !== null ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}`;
+                 const lossValue = gatewayPingData.packet_loss_15m !== null && typeof gatewayPingData.packet_loss_15m !== 'undefined' ? gatewayPingData.packet_loss_15m + '%' : 'N/A';
+                 document.getElementById('gateway-loss-value').innerHTML = lossValue;
                  document.getElementById('gateway-loss-value').className = getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0));
             }
 
             gatewayCard.style.borderColor = `${gatewayPingData.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
-            // FIX: Ensure canvas element exists before creating chart
             if (document.getElementById('gateway-ping-chart')) {
                 createOrUpdateMiniChart('gateway-ping-chart', gatewayPingData, 'var(--accent-primary)');
             }
@@ -935,13 +794,16 @@
             const dnsList = (data.dns_info && Array.isArray(data.dns_info) && data.dns_info.length > 0) ? data.dns_info.map(ip => `<li>${ip}</li>`).join('') : '<li>No DNS data available</li>';
             const traceList = (data.traceroute_info && Array.isArray(data.traceroute_info) && data.traceroute_info.length > 0) ? data.traceroute_info.map(hop => `<li>${hop}</li>`).join('') : '<li>No traceroute data available</li>';
             
+            const packetLoss15m = data.packet_loss_15m !== null && typeof data.packet_loss_15m !== 'undefined' ? `${data.packet_loss_15m}%` : 'N/A';
+            const minMaxPing = data.min_ping_15m !== null && typeof data.min_ping_15m !== 'undefined' ? `${data.min_ping_15m}ms / ${data.max_ping_15m}ms` : 'N/A';
+
             DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div><p class="text-muted text-xs">Status</p><p class="font-semibold" style="color:${data.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${data.status}</p></div>
                     <div><p class="text-muted text-xs">Ping</p><p class="font-semibold">${data.ping ? Math.round(data.ping) + ' ms' : 'N/A'}</p></div>
                     <div><p class="text-muted text-xs">Jitter</p><p class="font-semibold">${data.jitter ? data.jitter.toFixed(2) + ' ms' : 'N/A'}</p></div>
                     <div><p class="text-muted text-xs">Current Packet Loss</p><p class="font-semibold">${data.packet_loss !== null ? data.packet_loss + '%' : 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">Packet Loss (15m)</p><p class="font-semibold">${data.packet_loss_15m !== null ? data.packet_loss_15m + '%' : 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">Min/Max Ping (15m)</p><p class="font-semibold">${data.min_ping_15m !== null && data.max_ping_15m !== null ? data.min_ping_15m+'ms / '+data.max_ping_15m+'ms' : 'N/A'}</p></div>
+                    <div><p class="text-muted text-xs">Packet Loss (15m)</p><p class="font-semibold">${packetLoss15m}</p></div>
+                    <div><p class="text-muted text-xs">Min/Max Ping (15m)</p><p class="font-semibold">${minMaxPing}</p></div>
                 </div>
                 <div class="mb-4"><p class="text-muted text-xs">Last Checked</p><p class="font-semibold" id="modal-last-checked-time"></p></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -966,66 +828,71 @@
         async function initializeTrendsChart() {
             if (isTrendsDataLoaded) return;
             DOMElements.trendsLoadingIndicator.classList.remove('hidden');
-            try {
-                const historicalData = await apiCall('get_historical_data');
-                if (!historicalData || Object.keys(historicalData).length === 0) {
-                    const ctx = DOMElements.trendsChartCanvas.getContext('2d');
-                    ctx.fillStyle = 'var(--text-secondary)';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('No historical data available yet.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2);
-                    return;
-                };
-                const currentTheme = localStorage.getItem('theme') || 'dark';
-                const palette = themes[currentTheme].palette;
-                const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
-                    if (!Array.isArray(historicalData[targetName])) return [];
-                    const color = palette[index % palette.length];
-                    return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2, };
-                });
-                let isFiltered = false;
-                trendsChart = new Chart(DOMElements.trendsChartCanvas, {
-                    type: 'line', data: { datasets },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } },
-                        plugins: {
-                            legend: {
-                                labels: { color: 'var(--text-primary)' },
-                                onClick: (e, legendItem, legend) => {
-                                    const index = legendItem.datasetIndex;
-                                    const ci = legend.chart;
-                                    const meta = ci.getDatasetMeta(index);
-                                    if (!isFiltered) {
-                                        ci.data.datasets.forEach((ds, i) => { if (i !== index) ci.hide(i); });
-                                        isFiltered = true;
-                                    } else {
-                                        meta.hidden = !meta.hidden;
+            
+            const fetchAndRender = async (start, end) => {
+                try {
+                    const historicalData = await apiCall('get_historical_data', {start: start, end: end});
+                    if (!historicalData || Object.keys(historicalData).length === 0) {
+                        if(trendsChart) trendsChart.clear();
+                        const ctx = DOMElements.trendsChartCanvas.getContext('2d');
+                        ctx.fillStyle = 'var(--text-secondary)';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('No historical data available for this range.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2);
+                        return;
+                    };
+                    const currentTheme = localStorage.getItem('theme') || 'dark';
+                    const palette = themes[currentTheme].palette;
+                    const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
+                        if (!Array.isArray(historicalData[targetName])) return [];
+                        const color = palette[index % palette.length];
+                        return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2, };
+                    });
+                    
+                    if (trendsChart) {
+                        trendsChart.data.datasets = datasets;
+                        trendsChart.options.scales.x.min = start * 1000;
+                        trendsChart.options.scales.x.max = end * 1000;
+                        trendsChart.update('none');
+                    } else {
+                         trendsChart = new Chart(DOMElements.trendsChartCanvas, {
+                            type: 'line', data: { datasets },
+                            options: { 
+                                responsive: true, maintainAspectRatio: false, 
+                                scales: { 
+                                    x: { type: 'time', time: { unit: 'minute' }, min: start * 1000, max: end * 1000, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, 
+                                    y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } 
+                                },
+                                plugins: {
+                                    legend: { labels: { color: 'var(--text-primary)' } },
+                                    zoom: { 
+                                        pan: { enabled: true, mode: 'x' }, 
+                                        zoom: { 
+                                            wheel: { enabled: true }, 
+                                            pinch: { enabled: true }, 
+                                            mode: 'x',
+                                            onZoomComplete: ({chart}) => {
+                                                const {min, max} = chart.scales.x;
+                                                fetchAndRender(Math.floor(min / 1000), Math.ceil(max / 1000));
+                                            }
+                                        } 
                                     }
-                                    DOMElements.clearTrendsFilterBtn.style.display = 'block';
-                                    legend.legendItems.forEach((item, i) => { item.hidden = !ci.isDatasetVisible(i); });
-                                    ci.update();
                                 }
-                            },
-                            zoom: { pan: { enabled: true, mode: 'x' }, zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' } }
-                        }
+                            }
+                        });
                     }
-                });
-                DOMElements.clearTrendsFilterBtn?.addEventListener('click', () => {
-                    trendsChart.data.datasets.forEach((ds, i) => trendsChart.show(i));
-                    isFiltered = false;
-                    if (DOMElements.clearTrendsFilterBtn) DOMElements.clearTrendsFilterBtn.style.display = 'none';
-                });
-                isTrendsDataLoaded = true;
-            } catch(e) {
-                console.error("Error initializing trends chart:", e);
-                const ctx = DOMElements.trendsChartCanvas.getContext('2d');
-                ctx.fillStyle = 'var(--text-secondary)';
-                ctx.textAlign = 'center';
-                ctx.fillText('Failed to load chart data.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2);
-            } finally {
-                DOMElements.trendsLoadingIndicator.classList.add('hidden');
-            }
+                    isTrendsDataLoaded = true;
+                } catch(e) {
+                    console.error("Error fetching/rendering trends chart:", e);
+                } finally {
+                    DOMElements.trendsLoadingIndicator.classList.add('hidden');
+                }
+            };
+            
+            const endTime = Math.floor(Date.now() / 1000);
+            const startTime = endTime - 86400; // Default to last 24 hours
+            fetchAndRender(startTime, endTime);
         }
         
-        // FIX: Function to update trends chart with live data
         function updateTrendsChart(pings) {
             if (!trendsChart || !isTrendsDataLoaded) return;
 
@@ -1033,11 +900,6 @@
                 const dataset = trendsChart.data.datasets.find(ds => ds.label === ping.name);
                 if (dataset) {
                     dataset.data.push({ x: ping.timestamp * 1000, y: ping.ping });
-                    // Keep the chart from getting too crowded, show ~last 24h
-                    const oneDayAgo = Date.now() - 86400000;
-                    if (dataset.data.length > 1 && dataset.data[0].x < oneDayAgo) {
-                        dataset.data.shift();
-                    }
                 }
             });
             trendsChart.update('quiet');
@@ -1061,7 +923,7 @@
                             }
                         });
                     }
-                    if (view === 'dashboard') initializeTrendsChart(); // Initialize chart when dashboard is viewed
+                    if (view === 'trends' && !isTrendsDataLoaded) initializeTrendsChart();
                     if (view === 'neighborhood') fetchNetworkNeighborhood();
                 });
             });
@@ -1083,6 +945,22 @@
             DOMElements.serverModalCloseBtn?.addEventListener('click', () => closeModal(DOMElements.serverDetailsModal));
             DOMElements.licenseCloseBtn?.addEventListener('click', () => closeModal(DOMElements.licenseModal));
             DOMElements.readmeCloseBtn?.addEventListener('click', () => closeModal(DOMElements.readmeModal));
+            
+            DOMElements.copyErrorBtn?.addEventListener('click', () => {
+                const errorText = DOMElements.loadingErrorMessage.textContent;
+                const textArea = document.createElement("textarea");
+                textArea.value = errorText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    DOMElements.copyErrorBtn.textContent = 'Copied!';
+                    setTimeout(() => { DOMElements.copyErrorBtn.textContent = 'Copy Error'; }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                }
+                document.body.removeChild(textArea);
+            });
 
             DOMElements.logoContainer?.addEventListener('click', () => playSound(bruhPlayer, true));
             DOMElements.logViewToggle?.addEventListener('click', (e) => {
@@ -1109,9 +987,51 @@
                 startNetworkScanPolling();
             });
 
-            // FIX: Add event listeners to open the License and README modals
             DOMElements.licenseLink?.addEventListener('click', (e) => { e.preventDefault(); showLicenseModal(); });
             DOMElements.readmeLink?.addEventListener('click', (e) => { e.preventDefault(); showReadmeModal(); });
+
+            DOMElements.runDiagBtn?.addEventListener('click', async () => {
+                const target = DOMElements.diagTargetInput.value.trim();
+                const pingCount = parseInt(DOMElements.diagPingCount.value, 10);
+                const pingSize = parseInt(DOMElements.diagPingSize.value, 10);
+                
+                if (!target) {
+                    DOMElements.diagOutputContainer.textContent = 'Please enter a target.';
+                    return;
+                }
+                if (isNaN(pingCount) || isNaN(pingSize) || pingCount <= 0 || pingSize <= 0) {
+                     DOMElements.diagOutputContainer.textContent = 'Invalid ping count or size.';
+                     return;
+                }
+
+                DOMElements.diagOutputContainer.textContent = `Running diagnostics for ${target}...`;
+
+                try {
+                    const result = await apiCall('on_demand_diagnostic', { target, count: pingCount, size: pingSize });
+                    let output = '';
+                    if (result.error) {
+                        output = `ERROR: ${result.error}`;
+                    } else {
+                        output = `--- Ping Output ---\n`
+                        + `Status: ${result.status}\n`
+                        + `Ping: ${result.ping !== null ? `${result.ping}ms` : 'N/A'}\n`
+                        + `Jitter: ${result.jitter !== null ? `${result.jitter}ms` : 'N/A'}\n`
+                        + `Packet Loss: ${result.packet_loss !== null ? `${result.packet_loss}%` : 'N/A'}\n\n`
+                        + `--- Host Info ---\n`
+                        + `Hostname: ${result.hostname || 'N/A'}\n`
+                        + `MAC Address: ${result.mac_address || 'N/A'}\n`
+                        + `Vendor: ${result.vendor || 'N/A'}\n\n`
+                        + `--- DNS Info ---\n`
+                        + `${(result.dns_info && result.dns_info.length > 0) ? result.dns_info.join('\n') : 'N/A'}\n\n`
+                        + `--- Traceroute ---\n`
+                        + `${(result.traceroute_info && result.traceroute_info.length > 0) ? result.traceroute_info.join('\n') : 'N/A'}`;
+                    }
+                    DOMElements.diagOutputContainer.textContent = output;
+                } catch (error) {
+                    console.error("On-demand diagnostic failed:", error);
+                    DOMElements.diagOutputContainer.textContent = `Failed to run diagnostics: ${error.message}`;
+                }
+            });
         }
 
         async function loadThemes() {
@@ -1125,8 +1045,9 @@
 
         function applySettings() {
             let theme = localStorage.getItem('theme') || 'dark';
-            if (!themes[theme]) {
-                console.error(`Theme '${theme}' not found. Defaulting to 'dark'.`);
+            
+            if (!themes || !themes[theme]) {
+                console.error(`Theme '${theme}' not found or themes.json failed to load. Defaulting to 'dark'.`);
                 theme = 'dark';
                 localStorage.setItem('theme', theme);
             }
@@ -1136,23 +1057,32 @@
             
             document.documentElement.className = `theme-${theme}`;
 
-            const themeProperties = themes[theme].properties;
-            for (const [key, value] of Object.entries(themeProperties)) {
-                document.documentElement.style.setProperty(key, value);
+            if (themes && themes[theme] && themes[theme].properties) {
+                const themeProperties = themes[theme].properties;
+                for (const [key, value] of Object.entries(themeProperties)) {
+                    document.documentElement.style.setProperty(key, value);
+                }
+                
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
+                document.documentElement.style.setProperty('--accent-primary-trans-1', `${accentColor}33`);
+                document.documentElement.style.setProperty('--accent-primary-trans-2', `${accentColor}55`);
+            } else {
+                console.error(`Could not apply properties for theme '${theme}'. The theme data might be missing or malformed.`);
             }
             
-            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
-            document.documentElement.style.setProperty('--accent-primary-trans-1', `${accentColor}33`);
-            document.documentElement.style.setProperty('--accent-primary-trans-2', `${accentColor}55`);
-            
-            if (isTrendsDataLoaded && trendsChart) {
+            if (isTrendsDataLoaded && trendsChart && themes && themes[theme] && themes[theme].palette) {
                 const palette = themes[theme].palette;
                 trendsChart.data.datasets.forEach((dataset, index) => {
                     const color = palette[index % palette.length];
                     dataset.borderColor = color;
                     dataset.backgroundColor = `${color}33`;
                 });
-                trendsChart.options.scales.x.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary'); trendsChart.options.scales.y.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary'); trendsChart.options.scales.x.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); trendsChart.options.scales.y.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); trendsChart.options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary'); trendsChart.update();
+                trendsChart.options.scales.x.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary');
+                trendsChart.options.scales.y.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary');
+                trendsChart.options.scales.x.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+                trendsChart.options.scales.y.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+                trendsChart.options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+                trendsChart.update();
             }
 
             isResponsiveScanMode = localStorage.getItem('responsiveScanMode') === 'true';
@@ -1187,7 +1117,11 @@
                 'dns_resolvers': 'Any DNS Resolver', 'critical_services': 'All Critical Services',
                 'google': 'Google Ping'
             };
-            const themeOptions = Object.fromEntries(Object.entries(themes).map(([key, val]) => [key, val.name]));
+            
+            let themeOptions = {'dark': 'Default Dark'}; // Fallback
+            if (themes && Object.keys(themes).length > 0) {
+                themeOptions = Object.fromEntries(Object.entries(themes).map(([key, val]) => [key, val.name]));
+            }
 
             createRadioGroup(DOMElements.updateIntervalGroup, 'update-interval', intervalOptions, localStorage.getItem('updateInterval') || '1000', (e) => {
                 localStorage.setItem('updateInterval', e.target.value);
@@ -1215,7 +1149,7 @@
 
         function startNetworkScanPolling() {
             if (networkScanIntervalId) clearInterval(networkScanIntervalId);
-            const interval = isResponsiveScanMode ? parseInt(localStorage.getItem('updateInterval'), 10) : 300000; // 5 minutes
+            const interval = isResponsiveScanMode ? parseInt(localStorage.getItem('updateInterval'), 10) : 60000; // 60 seconds default
             if (!DOMElements.views.neighborhood.classList.contains('hidden')) {
                 fetchNetworkNeighborhood();
             }
@@ -1236,7 +1170,6 @@
             }
         }
         
-        // FIX: Update logo and favicon color based on internet quality score
         function updateLogoColor(score, status) {
             const logo = DOMElements.logoContainer;
             const title = DOMElements.appTitle;
@@ -1256,7 +1189,6 @@
             logo.style.color = colorVar;
             title.style.color = colorVar;
 
-            // Update favicon dynamically
             const faviconSVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:${colorVar};stroke-width:4;stroke-miterlimit:10;}.st1{fill:${colorVar};stroke:${colorVar};stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:${colorVar};stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>`;
             const faviconDataURI = `data:image/svg+xml,${encodeURIComponent(faviconSVG)}`;
             DOMElements.faviconLink.href = faviconDataURI;
@@ -1302,14 +1234,21 @@
                 const chart = miniChartInstances[canvasId];
                 chart.data.labels.push(nodeData.timestamp * 1000);
                 chart.data.datasets[0].data.push(nodeData.ping);
-                if (chart.data.labels.length > 30) { // Keep the chart to 30 data points
+                if (chart.data.labels.length > 30) {
                     chart.data.labels.shift();
                     chart.data.datasets[0].data.shift();
                 }
                 chart.update('none');
             } else {
                 const recentData = await apiCall('get_recent_history', { target: nodeData.name });
-                if (!recentData || recentData.length === 0) return;
+                if (!recentData || recentData.length === 0) {
+                    const context = ctx.getContext('2d');
+                    context.fillStyle = 'var(--text-secondary)';
+                    context.textAlign = 'center';
+                    context.font = '10px Inter';
+                    context.fillText('No recent data.', ctx.width / 2, ctx.height / 2);
+                    return;
+                }
                 const data = {
                     labels: recentData.map(d => d.timestamp * 1000),
                     datasets: [{
@@ -1549,9 +1488,8 @@
 
         async function showLicenseModal() {
             try {
-                const response = await fetch('./assets/LICENSE');
+                const response = await fetch('../LICENSE');
                 const text = await response.text();
-                // FIX: Use <pre> to display pre-formatted text correctly
                 DOMElements.licenseContent.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`;
                 DOMElements.licenseModal.classList.remove('hidden');
             } catch (error) {
@@ -1562,9 +1500,8 @@
         
         async function showReadmeModal() {
             try {
-                const response = await fetch('./assets/README.md');
+                const response = await fetch('../README.md');
                 const text = await response.text();
-                // FIX: Use <pre> to display pre-formatted text correctly
                 DOMElements.readmeContent.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`;
                 DOMElements.readmeModal.classList.remove('hidden');
             } catch (error) {
@@ -1575,7 +1512,7 @@
         
         function handleError(error) {
             console.error("Caught error:", error);
-            if (DOMElements.appContainer?.classList.contains('hidden-on-load')) {
+            if (!DOMElements.appContainer?.classList.contains('visible')) {
                 DOMElements.loadingOverlay?.classList.add('loading-error');
                 if (DOMElements.loadingErrorMessage) DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
                 DOMElements.loadingErrorContainer?.classList.remove('hidden');
@@ -1585,35 +1522,49 @@
             }
         }
 
+        function updateLoadingStatus(message, percentage) {
+            if (DOMElements.loadingStatusText) {
+                DOMElements.loadingStatusText.textContent = message;
+            }
+            if (DOMElements.loadingProgressBar) {
+                DOMElements.loadingProgressBar.style.width = `${percentage}%`;
+            }
+        }
+
         async function initializeApp() {
             try {
-                // Ensure themes are loaded before anything else
-                await loadThemes();
+                updateLoadingStatus("Initializing...", 0);
                 
-                // Now load all settings and other assets
+                await new Promise(resolve => setTimeout(resolve, 200));
+                updateLoadingStatus("Loading themes...", 10);
+                await loadThemes();
+
+                updateLoadingStatus("Configuring UI components...", 20);
                 createUptimeCards();
                 setupEventListeners();
                 loadSettings();
                 renderDiagnostics();
                 
-                // Load assets and initial data in parallel
-                await Promise.all([
-                    new Promise(resolve => { bruhPlayer = new Tone.Player("./assets/bruh.mp3", resolve).toDestination(); }),
-                    new Promise(resolve => { upPlayer = new Tone.Player("./assets/up.mp3", resolve).toDestination(); }),
-                    loadFuzzySayings(),
-                    apiCall('get_log').then(serverLog => {
-                        if (serverLog && serverLog.length > 0) {
-                            log = serverLog;
-                            currentState = log[0].status;
-                            lastStateChangeTime = new Date(log[0].startTime);
-                        }
-                    })
-                ]);
+                updateLoadingStatus("Loading sound effects...", 30);
+                bruhPlayer = await new Promise(resolve => new Tone.Player("./assets/bruh.mp3", resolve).toDestination());
+                upPlayer = await new Promise(resolve => new Tone.Player("./assets/up.mp3", resolve).toDestination());
 
-                // Initialize the main trends chart now that the dashboard is the default view
-                initializeTrendsChart();
+                updateLoadingStatus("Loading fuzzy sayings...", 40);
+                await loadFuzzySayings();
 
-                // Trigger the success animation
+                updateLoadingStatus("Fetching initial log data...", 50);
+                const serverLog = await apiCall('get_log');
+                if (serverLog && serverLog.length > 0) {
+                    log = serverLog;
+                    lastStateChangeTime = new Date(log[0].startTime);
+                }
+
+                updateLoadingStatus("Fetching initial metrics...", 70);
+                await fetchAndUpdateData();
+
+                updateLoadingStatus("Ready to display...", 100);
+                await new Promise(resolve => setTimeout(resolve, 300));
+
                 DOMElements.loadingOverlay?.classList.add('loading-success');
                 DOMElements.loadingLogoContainer?.addEventListener('animationend', () => {
                     if(DOMElements.loadingOverlay) DOMElements.loadingOverlay.style.display = 'none';
@@ -1648,11 +1599,10 @@
                 handleError(e);
             }
         }
-        // Helper function for network tree layout
+
         function getHostType(ip) {
             if (ip === serverGatewayIp) return 'Gateway';
             if (ip === clientIp) return 'Client';
-            // Could add more logic here to identify servers, etc.
             return 'Device';
         }
 
