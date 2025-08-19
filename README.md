@@ -96,11 +96,12 @@ You must start with a working and secured Apache setup before running this scrip
 
 ---
 
-### 🧪 Hardware & Testing Notice
+## 🧪 Hardware & Testing Notice
+This project has only been formally developed and tested on the following hardware and software configurations. While it may work on other Debian-based systems, your mileage may vary.
 
-Heads up! So far, this project has **only** been developed and tested on the following hardware:
+### 🍓 Raspberry Pi 4: Tested on Raspbian OS (64-bit), providing a lightweight and efficient hosting option.
 
-* 🍓 **Raspberry Pi 4**
+### 🐧 Ubuntu Server: Tested on version 25 (64-bit), ideal for more robust server environments.
 
 While it may work on other Debian-based systems (like Ubuntu), your mileage may vary. Proceed with caution and be prepared for some tinkering if you are using an untested platform.
 
