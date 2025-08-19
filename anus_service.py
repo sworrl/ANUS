@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A.N.U.S. v1.3.3
+# A.N.U.S. v1.3.6
 
 import subprocess
 import os

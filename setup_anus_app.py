@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A.N.U.S. v1.3.3
+# A.N.U.S. v1.3.6
 
 import subprocess
 import os
@@ -32,7 +32,7 @@ CLIENT_IP_FILE = os.path.join(DB_DIR, "anus_client_ip.txt")
 SERVICE_NAME = "anus_service"
 PYTHON_SERVICE_FILE = "anus_service.py"
 SYSTEMD_SERVICE_PATH = f"/etc/systemd/system/{SERVICE_NAME}.service"
-VERSION = "v1.3.3"
+VERSION = "v1.3.6"
 SSL_INFO_CONFIG_FILE = os.path.join(ASSETS_DIR, "ssl_info.json")
 VERBOSE_MODE = any(arg in ['-verbose', '--verbose', '/verbose'] for arg in sys.argv)
 

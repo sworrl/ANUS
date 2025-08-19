@@ -1,4 +1,4 @@
-/* A.N.U.S. v1.3.3 */
+/* A.N.U.S. v1.3.6 */
 :root {
     --bg-primary: #0f172a;
     --bg-secondary: #1e293b;
@@ -19,13 +19,6 @@
 }
 
 /* --- Base Styles & Fonts --- */
-@font-face {
-    font-family: 'Inter';
-    src: url('inter.css') format('woff2');
-    font-weight: 100 900;
-    font-display: swap;
-    font-style: normal;
-}
 body {
     background-color: var(--bg-primary);
     background-image: var(--body-bg-image);
@@ -180,10 +173,103 @@ body {
 /* --- Chart Styles --- */
 #history-chart-container { height: 400px; } /* Set a fixed height */
 
+.chart-container-blur {
+    position: relative;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chart-container-blur::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 0;
+}
+
+.chart-container-blur canvas {
+    position: relative;
+    z-index: 1;
+}
+
+
 /* --- Logo Animation --- */
 .logo-spin-outer { animation: spin 40s linear infinite; transform-origin: center center; }
 .logo-spin-inner { animation: spin 25s linear infinite reverse; transform-origin: center center; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* --- Added Animations --- */
+.card, .tab-active, .log-view-btn, button {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.tab-active {
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+}
+
+.blinking-dot {
+    animation: blink 1.5s infinite ease-in-out;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+#loading-overlay:not(.loading-error) #loading-logo-container {
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--accent-primary)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--accent-secondary)); }
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-left: 2px solid var(--border-primary);
+    margin-left: 0.5rem;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -0.5rem;
+    top: 0;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+}
+.timeline-dot.up { background-color: var(--color-status-up); }
+.timeline-dot.down { background-color: var(--color-status-down); }
+
+/* --- Network Neighborhood Map Styles --- */
+#network-tree-container {
+    cursor: grab;
+}
+#network-tree-container:active {
+    cursor: grabbing;
+}
+#network-nodes-container, #network-tree-svg {
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+}
+.network-node {
+    position: absolute;
+}
+
 
 /* --- Responsive Design --- */
 @media (max-width: 900px) {

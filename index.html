@@ -1,10 +1,10 @@
-<!-- A.N.U.S. v1.3.3 -->
+<!-- A.N.U.S. v1.3.6 -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.N.U.S. v1.3.3 - Automated Network Utility System</title>
+    <title>A.N.U.S. v1.3.6 - Automated Network Utility System</title>
     <script src="./assets/tailwindcss.js"></script>
     <script src="./assets/tone.js"></script>
     <script src="./assets/chart.js"></script>
@@ -20,14 +20,14 @@
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-bg-primary z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div id="loading-logo-container" class="text-accent">
-             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-32 h-32">
                 <defs><filter id="glow-loader" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>
-                <g style="transform-origin: center center; animation: spin 40s linear infinite;"><circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/></g>
-                <g style="transform-origin: center center; animation: spin 25s linear infinite reverse;"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
+                <g class="logo-spin-outer"><circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/></g>
+                <g class="logo-spin-inner"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 1.3.6 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 1.3.6 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
                 <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow-loader)"/>
                 <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
                 <g class="spokes">
-                    <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                    <path d="M50 22.5V1.3.6 M50 85v-7.5M77.5 50H85M1.3.6 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
                 </g>
             </svg>
         </div>
@@ -63,17 +63,17 @@
                     </g>
                     <g class="logo-spin-inner">
                         <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
-                        <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
-                        <path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
+                        <path d="M 50 1.3.6 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
+                        <path d="M 50 85 A 35 35 0 0 1 1.3.6 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
                     </g>
                     <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow)"/>
                     <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
                     <g class="spokes">
-                        <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M50 22.5V1.3.6 M50 85v-7.5M77.5 50H85M1.3.6 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
                     </g>
                 </svg>
                 <div>
-                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.3.3</h1>
+                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.3.5</h1>
                     <p class="text-muted text-center">Automated Network Utility System</p>
                 </div>
             </div>
@@ -107,7 +107,7 @@
 
             <div id="view-trends" class="hidden">
                  <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Live Latency Trends</h2>
-                    <div class="card chart-card p-4 h-96 relative flex items-center justify-center">
+                    <div class="card chart-card chart-container-blur p-4 h-96 relative flex items-center justify-center">
                         <canvas id="trends-chart"></canvas>
                         <div id="trends-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
                             <p class="animate-pulse text-lg font-semibold text-accent">Loading historical data...</p>
@@ -128,9 +128,9 @@
                         </div>
                     </div>
                 </div>
-                <div id="network-tree-container" class="card relative p-6 max-h-[70vh] overflow-auto">
-                    <svg id="network-tree-svg"></svg>
-                    <div id="network-nodes-container" class="relative"></div>
+                <div id="network-tree-container" class="card relative p-0 h-[70vh] overflow-hidden">
+                    <svg id="network-tree-svg" class="absolute top-0 left-0 w-full h-full" style="transform-origin: 0 0;"></svg>
+                    <div id="network-nodes-container" class="relative w-full h-full" style="transform-origin: 0 0;"></div>
                     <div id="nmap-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
                         <p class="animate-pulse text-lg font-semibold text-accent">Scanning the network...</p>
                     </div>
@@ -193,7 +193,7 @@
             </div>
         </main>
         <footer class="text-center text-xs text-muted mt-8">
-            <p>A.N.U.S. v1.3.3 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
+            <p>A.N.U.S. v1.3.6 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
         </footer>
     </div>
 
@@ -221,6 +221,10 @@
         let isResponsiveScanMode = false;
         let networkScanData = null; 
         let themes = {};
+        let pan = { x: 0, y: 0 };
+        let scale = 1;
+        let isDragging = false;
+        let startPos = { x: 0, y: 0 };
 
         const DOMElements = {
             loadingOverlay: document.getElementById('loading-overlay'),
@@ -372,8 +376,6 @@
             if (!container || !svg || !nodesContainer) return;
             const containerRect = container.getBoundingClientRect();
             const width = containerRect.width;
-            let height = 400; 
-            container.style.height = `${height}px`;
 
             if (!scanData || !scanData.hosts || scanData.hosts.length === 0) {
                 nodesContainer.innerHTML = `<p class="text-center text-muted p-8">No devices found on the network.</p>`;
@@ -384,53 +386,37 @@
             svg.innerHTML = '';
             
             const gateway = scanData.hosts.find(h => h.ip === serverGatewayIp);
-            let server = scanData.hosts.find(h => h.ip === '127.0.0.1');
+            let server = scanData.hosts.find(h => h.ip === '127.0.0.1' || h.ip === scanData.server_ip);
             let client = scanData.hosts.find(h => h.ip === clientIp);
-            let otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== '127.0.0.1' && h.ip !== clientIp);
+            let otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== scanData.server_ip && h.ip !== '127.0.0.1' && h.ip !== clientIp);
             
-            if (!server) {
-                 const serverDetails = scanData.hosts.find(h => h.ip === scanData.server_ip);
-                 if (serverDetails) {
-                    server = serverDetails;
-                    otherHosts = otherHosts.filter(h => h.ip !== server.ip);
-                 }
-            }
-             if (!client) {
-                 const clientDetails = scanData.hosts.find(h => h.ip === scanData.client_ip);
-                 if (clientDetails) {
-                    client = clientDetails;
-                    otherHosts = otherHosts.filter(h => h.ip !== client.ip);
-                 }
-            }
-
             const positions = {};
             const nodeWidth = 250;
             const nodeHeight = 120;
-            const verticalSpacing = 20;
+            const horizontalSpacing = 40;
+            const verticalSpacing = 100;
+
+            const childNodes = [server, client, ...otherHosts].filter(Boolean);
 
             if (gateway) {
-                positions[gateway.ip] = { x: width / 2 - nodeWidth / 2, y: 10 };
+                positions[gateway.ip] = { x: width / 2 - nodeWidth / 2, y: 30 };
             }
-            if (server) {
-                positions[server.ip] = { x: width / 4 - nodeWidth / 2, y: 10 + nodeHeight + verticalSpacing };
+
+            if (childNodes.length > 0) {
+                const totalChildWidth = (childNodes.length * nodeWidth) + ((childNodes.length - 1) * horizontalSpacing);
+                let startX = (width / 2) - (totalChildWidth / 2);
+                const childY = 30 + nodeHeight + verticalSpacing;
+
+                childNodes.forEach((node, index) => {
+                    if (node) {
+                        const nodeX = startX + index * (nodeWidth + horizontalSpacing);
+                        positions[node.ip] = { x: nodeX, y: childY };
+                    }
+                });
             }
-            if (client) {
-                positions[client.ip] = { x: 3 * width / 4 - nodeWidth / 2, y: 10 + nodeHeight + verticalSpacing };
-            }
-            
-            let otherX = 10;
-            let otherY = 10 + 2 * (nodeHeight + verticalSpacing);
-            otherHosts.forEach(host => {
-                if (otherX + nodeWidth > width - 10) {
-                    otherX = 10;
-                    otherY += nodeHeight + verticalSpacing;
-                }
-                positions[host.ip] = { x: otherX, y: otherY };
-                otherX += nodeWidth + 20;
-            });
             
             const drawLine = (fromIp, toIp) => {
-                if (!positions[fromIp] || !positions[toIp]) return;
+                if (!fromIp || !toIp || !positions[fromIp] || !positions[toIp]) return;
                 const fromPos = positions[fromIp];
                 const toPos = positions[toIp];
                 const x1 = fromPos.x + nodeWidth / 2;
@@ -443,13 +429,10 @@
                 path.setAttribute('stroke-width', '2');
                 svg.appendChild(path);
             };
-
-            if (gateway && server) drawLine(gateway.ip, server.ip);
-            if (gateway && client) drawLine(gateway.ip, client.ip);
             
             const renderHost = (host) => {
                 const pos = positions[host.ip];
-                if (!pos) return '';
+                if (!pos) return;
                 const hostType = getHostType(host.ip);
                 const hostName = host.hostname || 'Unknown';
                 const icon = hostType === 'Gateway' ? '&#x1F6A7;' : hostType === 'Client' ? '&#x1F4BB;' : '&#x1F5A5;';
@@ -487,17 +470,16 @@
             };
 
             if (gateway) renderHost(gateway);
-            if (server) renderHost(server);
-            if (client) renderHost(client);
-            otherHosts.forEach(renderHost);
+            childNodes.forEach(node => { if(node) renderHost(node); });
 
-            const maxNodeY = Math.max(...Object.values(positions).map(p => p.y + nodeHeight));
-            DOMElements.networkTreeContainer.style.height = `${Math.max(height, maxNodeY + 20)}px`;
-            
             svg.innerHTML = '';
-            if (gateway && server) drawLine(gateway.ip, server.ip);
-            if (gateway && client) drawLine(gateway.ip, client.ip);
-            otherHosts.forEach(host => drawLine(gateway.ip, host.ip));
+            if (gateway) {
+                childNodes.forEach(node => {
+                    if (node) {
+                        drawLine(gateway.ip, node.ip);
+                    }
+                });
+            }
         }
 
         function showNmapNodeDetailsModal(data) {
@@ -619,19 +601,36 @@
 
             existingNodes.forEach(nodeName => {
                 if (!newNodes.has(nodeName)) {
-                    const card = document.querySelector(`.internet-node-card[data-node-name="${nodeName}"]`);
+                    const card = grid.querySelector(`.internet-node-card[data-node-name="${nodeName}"]`);
                     if (card) {
+                        const canvasId = `mini-chart-${nodeName.replace(/[^a-zA-Z0-9]/g, '')}`;
+                        if (miniChartInstances[canvasId]) {
+                            miniChartInstances[canvasId].destroy();
+                            delete miniChartInstances[canvasId];
+                        }
                         card.remove();
                     }
                 }
             });
 
             internetNodes.forEach((n, index) => {
-                let card = document.querySelector(`.internet-node-card[data-node-name="${n.name}"]`);
+                const canvasId = `mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
+                let card = grid.querySelector(`.internet-node-card[data-node-name="${n.name}"]`);
+
                 if (!card) {
                     card = document.createElement('div');
                     card.className = "internet-node-card bg-bg-primary card p-3 border-2 transition-all cursor-pointer";
                     card.dataset.nodeName = n.name;
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}"></p>
+                            <p class="text-xs font-bold node-ping"></p>
+                        </div>
+                        <div class="h-16 w-full my-2 chart-container-blur"><canvas id="${canvasId}"></canvas></div>
+                        <div class="text-xs text-muted flex justify-between">
+                            <span class="node-jitter"></span>
+                            <span class="node-loss"></span>
+                        </div>`;
                     card.addEventListener('click', () => showNodeDetailsModal(n));
                     grid.appendChild(card);
                 }
@@ -642,31 +641,21 @@
                 const jitterValue = n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A';
                 const lossValue = n.packet_loss_15m !== null && typeof n.packet_loss_15m !== 'undefined' ? n.packet_loss_15m + '%' : 'N/A';
                 const lossClass = getUptimeStatusClass(100 - (n.packet_loss_15m || 0));
-                
+
                 card.style.borderColor = `${cardStatus ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
 
-                let innerContent = `
-                    <div class="flex justify-between items-start">
-                        <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}">${n.name}</p>
-                        <p class="text-xs font-bold node-ping ${getPingStatusClass(n.ping)}">${pingValue}</p>
-                    </div>
-                    <div class="h-16 w-full my-2"><canvas id="mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}"></canvas></div>
-                    <div class="text-xs text-muted flex justify-between">
-                        <span class="node-jitter">Jitter: ${jitterValue}</span>
-                        <span class="node-loss">Loss (15m): <span class="${lossClass}">${lossValue}</span></span>
-                    </div>`;
+                card.querySelector('.node-name').textContent = n.name;
+                card.querySelector('.node-name').title = n.name;
+                const pingEl = card.querySelector('.node-ping');
+                pingEl.textContent = pingValue;
+                pingEl.className = `text-xs font-bold node-ping ${getPingStatusClass(n.ping)}`;
 
-                if (card.innerHTML !== innerContent) {
-                    card.innerHTML = innerContent;
-                }
+                card.querySelector('.node-jitter').textContent = `Jitter: ${jitterValue}`;
+                const lossEl = card.querySelector('.node-loss');
+                lossEl.innerHTML = `Loss (15m): <span class="${lossClass}">${lossValue}</span>`;
 
-                const canvasId = `mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
                 const color = palette[index % palette.length];
-                
-                const chartCanvas = document.getElementById(canvasId);
-                if (chartCanvas) {
-                    createOrUpdateMiniChart(canvasId, n, color);
-                }
+                createOrUpdateMiniChart(canvasId, n, color);
             });
         }
         
@@ -676,11 +665,11 @@
                 container.innerHTML = `
                     <div id="diag-layout" class="relative w-full max-w-5xl mx-auto">
                         <svg id="diagnostics-svg-container"></svg>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-8 relative">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-4 relative">
                             <div id="diag-client" class="text-center flex-shrink-0 card card-muted p-4 node-glow min-h-[160px]"></div>
                             <div id="diag-server" class="text-center flex-shrink-0 card card-muted p-4 node-glow cursor-pointer min-h-[160px]"></div>
-                            <div id="diag-ping-cs" class="absolute text-center text-xs p-1 rounded bg-bg-primary/80 backdrop-blur-sm"></div>
                         </div>
+                        <div id="diag-ping-cs-container" class="mb-4"></div>
                         <div class="mb-8" id="diag-gateway-wrapper">
                             <div id="diag-gateway" class="card card-muted p-4 border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
                                 <!-- Gateway content will be dynamically inserted here -->
@@ -704,8 +693,13 @@
             const server = document.getElementById('diag-server');
             const gateway = document.getElementById('diag-gateway');
             const internet = document.getElementById('diag-internet');
+            const pingCSContainer = document.getElementById('diag-ping-cs-container');
+            if (!client || !server || !gateway || !internet || !pingCSContainer) return;
+            
+            if (!pingCSContainer.innerHTML) {
+                 pingCSContainer.innerHTML = `<div id="diag-ping-cs" class="card card-muted p-3 text-center text-sm w-full max-w-xs mx-auto"></div>`;
+            }
             const pingCS = document.getElementById('diag-ping-cs');
-            if (!client || !server || !gateway || !internet || !pingCS) return;
 
             const serverGateway = pings.find(p => p.name === 'Gateway');
             const internetNodes = pings.filter(p => p.name !== 'Gateway');
@@ -722,7 +716,7 @@
             const internetCoords = getCoords(internet);
 
             const paths = [
-                { id: 'path-cs', d: `M ${clientCoords.cx} ${clientCoords.y} C ${clientCoords.cx} ${clientCoords.y - 60}, ${serverCoords.cx} ${serverCoords.y - 60}, ${serverCoords.cx} ${serverCoords.y}`, status: clientToServerStatus, duration: '3s' },
+                { id: 'path-cs', d: `M ${clientCoords.cx} ${clientCoords.cy} L ${serverCoords.cx} ${serverCoords.cy}`, status: clientToServerStatus, duration: '3s' },
                 { id: 'path-sg', d: `M ${serverCoords.cx} ${serverCoords.y + serverCoords.height} L ${gatewayCoords.cx} ${gatewayCoords.y}`, status: serverToGatewayStatus, duration: '2s' },
                 { id: 'path-cg', d: `M ${clientCoords.cx} ${clientCoords.y + clientCoords.height} L ${gatewayCoords.cx} ${gatewayCoords.y}`, status: 'up', duration: '2s' },
                 { id: 'path-gi', d: `M ${gatewayCoords.cx} ${gatewayCoords.y + gatewayCoords.height} L ${internetCoords.cx} ${internetCoords.y}`, status: gatewayToInternetStatus, duration: '2.5s' }
@@ -735,13 +729,6 @@
             svg.innerHTML = svgMarkup;
             
             pingCS.innerHTML = `Client ↔ Server: <span class="font-bold ${getPingStatusClass(clientToServerPing)}">${clientToServerPing ? Math.round(clientToServerPing)+'ms' : 'N/A'}</span>`;
-            
-            const csPath = document.getElementById('path-cs');
-            if(csPath) {
-                const pt = csPath.getPointAtLength(csPath.getTotalLength() / 2);
-                pingCS.style.left = `${pt.x - pingCS.offsetWidth / 2}px`;
-                pingCS.style.top = `${pt.y - pingCS.offsetHeight / 2}px`;
-            }
         }
 
         function updateGatewayInfo(serverStatus) {
@@ -907,6 +894,10 @@
 
         // --- Initialization and Event Listeners ---
         function setupEventListeners() {
+            document.body.addEventListener('click', async () => {
+                await Tone.start();
+            }, { once: true });
+
             DOMElements.tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     DOMElements.tabs.forEach(t => t.classList.remove('tab-active'));
@@ -1032,6 +1023,62 @@
                     DOMElements.diagOutputContainer.textContent = `Failed to run diagnostics: ${error.message}`;
                 }
             });
+            
+            const treeContainer = DOMElements.networkTreeContainer;
+            if (treeContainer) {
+                treeContainer.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startPos.x = e.clientX - pan.x;
+                    startPos.y = e.clientY - pan.y;
+                    treeContainer.style.cursor = 'grabbing';
+                });
+
+                treeContainer.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    pan.x = e.clientX - startPos.x;
+                    pan.y = e.clientY - startPos.y;
+                    applyTransform();
+                });
+
+                treeContainer.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    treeContainer.style.cursor = 'grab';
+                });
+
+                treeContainer.addEventListener('mouseleave', () => {
+                    isDragging = false;
+                    treeContainer.style.cursor = 'grab';
+                });
+
+                treeContainer.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const scaleAmount = 0.1;
+                    const rect = treeContainer.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+
+                    const oldScale = scale;
+                    scale -= e.deltaY * 0.001 * scale;
+                    scale = Math.min(Math.max(0.1, scale), 5); // Clamp scale
+
+                    // Adjust pan to zoom towards the mouse pointer
+                    pan.x = mouseX - (mouseX - pan.x) * (scale / oldScale);
+                    pan.y = mouseY - (mouseY - pan.y) * (scale / oldScale);
+                    
+                    applyTransform();
+                });
+            }
+        }
+
+        function applyTransform() {
+            const nodesContainer = DOMElements.networkNodesContainer;
+            const svgContainer = DOMElements.networkTreeSVG;
+            if (nodesContainer && svgContainer) {
+                const transformValue = `translate(${pan.x}px, ${pan.y}px) scale(${scale})`;
+                nodesContainer.style.transform = transformValue;
+                svgContainer.style.transform = transformValue;
+            }
         }
 
         async function loadThemes() {
@@ -1180,7 +1227,7 @@
                 colorVar = 'var(--color-status-down)';
             } else if (status === 'UP') {
                 if (score > 300) { colorVar = 'var(--color-status-up)'; }
-                else if (score < 150) { colorVar = 'var(--color-status-warn)'; }
+                else if (score > 150) { colorVar = 'var(--color-status-warn)'; }
                 else { colorVar = 'var(--color-status-down)'; }
             } else {
                 colorVar = 'var(--accent-primary)';
@@ -1289,7 +1336,7 @@
                 container.innerHTML = `
                     <svg viewBox="0 0 ${size} ${size}">
                         <circle class="background" stroke="var(--border-primary)" stroke-width="${strokeWidth}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}"/>
-                        <circle class="progress" stroke="${colorVar})" stroke-width="${strokeWidth}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}" style="stroke-linecap: round; transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;"/>
+                        <circle class="progress" stroke="${colorVar}" stroke-width="${strokeWidth}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}" style="stroke-linecap: round; transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;"/>
                     </svg>
                     <div class="disconnect-count">
                         <span class="font-bold text-2xl ${colorClass}">${disconnects}</span>
@@ -1301,13 +1348,15 @@
                     disconnects: container.querySelector('.disconnect-count .font-bold')
                 };
                 setTimeout(() => {
-                    uptimeChartInstances[containerId].circle.style.strokeDashoffset = offset;
+                    if (uptimeChartInstances[containerId] && uptimeChartInstances[containerId].circle) {
+                        uptimeChartInstances[containerId].circle.style.strokeDashoffset = offset;
+                    }
                 }, 100);
             } else {
                 const { circle, disconnects: disconnectsEl } = uptimeChartInstances[containerId];
                 if (circle) {
                     circle.style.strokeDashoffset = offset;
-                    circle.setAttribute('stroke', `${colorVar})`);
+                    circle.setAttribute('stroke', colorVar);
                 }
                 if (disconnectsEl) {
                     disconnectsEl.textContent = disconnects;
@@ -1326,7 +1375,7 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
             const eventsByDay = {};
-            const serverLog = await apiCall('get_log');
+            const serverLog = log; // Use existing global log variable
             if (serverLog) {
                 serverLog.forEach(event => {
                     const start = new Date(event.startTime);
@@ -1564,19 +1613,18 @@
 
                 updateLoadingStatus("Ready to display...", 100);
                 await new Promise(resolve => setTimeout(resolve, 300));
+                
+                if (DOMElements.loadingOverlay) DOMElements.loadingOverlay.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    if (DOMElements.loadingOverlay) DOMElements.loadingOverlay.style.display = 'none';
+                    if (DOMElements.appContainer) DOMElements.appContainer.classList.remove('opacity-0');
+                }, 500);
 
-                DOMElements.loadingOverlay?.classList.add('loading-success');
-                DOMElements.loadingLogoContainer?.addEventListener('animationend', () => {
-                    if(DOMElements.loadingOverlay) DOMElements.loadingOverlay.style.display = 'none';
-                    if(DOMElements.appContainer) {
-                        DOMElements.appContainer.classList.remove('opacity-0');
-                        DOMElements.appContainer.classList.add('visible');
-                    }
-                    
-                    const updateInterval = localStorage.getItem('updateInterval') || 1000;
-                    startPolling(updateInterval);
-                }, { once: true });
 
+                const updateInterval = localStorage.getItem('updateInterval') || 1000;
+                startPolling(updateInterval);
+                
                 if (DOMElements.diagnosticsContainer) {
                     new ResizeObserver(() => {
                         if (!DOMElements.views.dashboard?.classList.contains('hidden') && allPingsData.length > 0) {
