@@ -1,0 +1,28 @@
+
+<VirtualHost *:80>
+    ServerName jengus.wifi.local.falcontechnix.com
+    Redirect permanent "/" "https://jengus.wifi.local.falcontechnix.com/anus/"
+</VirtualHost>
+<VirtualHost *:443>
+    ServerName jengus.wifi.local.falcontechnix.com
+    DocumentRoot /var/www/html
+    AliasMatch "^/anus(.*)" "/var/www/html/anus$1"
+    <Directory "/var/www/html/anus">
+        Options -Indexes
+        AllowOverride None
+        Require all granted
+        DirectoryIndex index.html
+    </Directory>
+    # FIX: Allow access to the web root for the README and LICENSE files
+    <Directory "/var/www/html">
+        Require all granted
+    </Directory>
+    <Directory "/var/db">
+        Require all denied
+    </Directory>
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/jengus.wifi.local.falcontechnix.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/jengus.wifi.local.falcontechnix.com/privkey.pem
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

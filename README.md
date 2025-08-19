@@ -3,56 +3,43 @@
 
 A.N.U.S. (Automated Network Utility System) is a comprehensive, self-hosted network monitoring dashboard. This tool continuously tracks key internet health metrics like latency, jitter, and packet loss for custom targets, while also monitoring host server resources like CPU, memory, and network throughput. Features a sleek, modern web UI with real-time stats and historical trend charts.
 
-<p align="center">
-<strong>A comprehensive, self-hosted network monitoring dashboard.</strong>
-<br><br>
-<a href="#-installation">
-<img src="https://img.shields.io/badge/install-scripted-brightgreen?style=for-the-badge" alt="Install Script">
-</a>
-<a href="#-license">
-<img src="https://img.shields.io/badge/license-GPLv3-blue?style=for-the-badge" alt="GPLv3 License">
-</a>
-</p>
-
 ## ✨ Features
 
-* **Comprehensive Monitoring**: Tracks Ping, Jitter, and Packet Loss for multiple user-defined targets.
-* **Real-time Dashboard**: A sleek, modern UI provides an at-a-glance overview of your entire network's health.
-* **Server Health**: Monitors the host server's CPU usage, memory usage, and network throughput in real-time.
-* **Historical Trends**: An interactive chart displays historical latency data, allowing you to zoom and pan through time to identify patterns.
-* **Event Logging**: Automatically logs network status changes (UP/DOWN) with duration, viewable in both a timeline and a monthly calendar format.
-* **Advanced Diagnostics**: A visual representation of the data flow from your client to the A.N.U.S. server, the network gateway, and out to the internet nodes.
-* **Customizable Themes**: Comes with multiple built-in themes to personalize your dashboard's appearance.
-* **Self-Hosted**: Runs on your own hardware with a simple setup script for easy installation.
+  * **Comprehensive Monitoring**: Tracks Ping, Jitter, and Packet Loss for multiple user-defined targets.
+  * **Real-time Dashboard**: A sleek, modern UI provides an at-a-glance overview of your entire network's health.
+  * **Server Health**: Monitors the host server's CPU usage, memory usage, and network throughput in real-time.
+  * **Historical Trends**: An interactive chart displays historical latency data, allowing you to zoom and pan through time to identify patterns.
+  * **Event Logging**: Automatically logs network status changes (UP/DOWN) with duration, viewable in both a timeline and a monthly calendar format.
+  * **Advanced Diagnostics**: A visual representation of the data flow from your client to the A.N.U.S. server, the network gateway, and out to the internet nodes.
+  * **Customizable Themes**: Comes with multiple built-in themes to personalize your dashboard's appearance.
+  * **Self-Hosted**: Runs on your own hardware with a simple setup script for easy installation.
 
 ## 🖼️ Screenshots
 
 <p align="center">
-<img src="./assets/dashboard-view.png" alt="Main Dashboard View Screenshot" width="700">
-<br>
-<strong>Main Dashboard View</strong>
+  <img src="./assets/dashboard-view.png" alt="Main Dashboard View Screenshot" width="700">
+  <br>
+  <strong>Main Dashboard View</strong>
 </p>
 
 <p align="center">
-<img src="./assets/trends-view.png" alt="Historical Trends View Screenshot" width="700">
-<br>
-<strong>Historical Trends View</strong>
+  <img src="./assets/trends-view.png" alt="Historical Trends View Screenshot" width="700">
+  <br>
+  <strong>Historical Trends View</strong>
 </p>
 
 <p align="center">
-<img src="./assets/calendar-view.png" alt="Event Log Calendar View Screenshot" width="700">
-<br>
-<strong>Event Log (Calendar View)</strong>
+  <img src="./assets/calendar-view.png" alt="Event Log Calendar View Screenshot" width="700">
+  <br>
+  <strong>Event Log (Calendar View)</strong>
 </p>
 
 ## 🛠️ Tech Stack
 
-* **Backend Service**: Python 3
-* **Web Server / API**: Apache2 & PHP
-* **Database**: SQLite
-* **Frontend**: HTML, Tailwind CSS, Chart.js, Tone.js
-
-
+  * **Backend Service**: Python 3
+  * **Web Server / API**: Apache2 & PHP
+  * **Database**: SQLite
+  * **Frontend**: HTML, Tailwind CSS, Chart.js, Tone.js
 
 ## 🚀 Installation
 
@@ -96,12 +83,11 @@ You must start with a working and secured Apache setup before running this scrip
 
 ---
 
-## 🧪 Hardware & Testing Notice
-This project has only been formally developed and tested on the following hardware and software configurations. While it may work on other Debian-based systems, your mileage may vary.
+### 🧪 Hardware & Testing Notice
 
-### 🍓 Raspberry Pi 4: Tested on Raspbian OS (64-bit), providing a lightweight and efficient hosting option.
+Heads up! So far, this project has **only** been developed and tested on the following hardware:
 
-### 🐧 Ubuntu Server: Tested on version 25 (64-bit), ideal for more robust server environments.
+* 🍓 **Raspberry Pi 4**
 
 While it may work on other Debian-based systems (like Ubuntu), your mileage may vary. Proceed with caution and be prepared for some tinkering if you are using an untested platform.
 
@@ -116,7 +102,7 @@ The new installation method below downloads the entire project first, making it 
 This command will clone the repository into a folder named `ANUS`, change into that directory, and then run the fully automated installation.
 
 ```bash
-git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py
+git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 ANUS/setup_anus_app.py
 ```
 
 ### Interactive Menu Install
@@ -124,8 +110,7 @@ git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app
 For more options, including uninstalling or managing the service, use the following command to run the setup script with the interactive menu.
 
 ```bash
-git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py -menu
-
+git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo python3 ANUS/setup_anus_app.py -menu
 ```
 
 ### Manual Install (Safest Method)
@@ -133,22 +118,21 @@ git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app
 For maximum security, you should manually review the code before running it.
 
 1.  **Clone the repository:**
-```bash
-git clone https://github.com/sworrl/ANUS.git
-```
+    ```bash
+    git clone https://github.com/sworrl/ANUS.git
+    ```
 2.  **Navigate into the project directory:**
-```bash
-   cd ANUS
-   ```
+    ```bash
+    cd ANUS
+    ```
 3.  **Inspect the script's contents** using a text editor or a command like `less`:
-   ```bash
-    less sudo ./setup_anus_app.py
+    ```bash
     less ANUS/setup_anus_app.py
-   ```
+    ```
 4.  **If you trust the code**, run the installer:
-   ```bash
-   sudo python3 ANUS/setup_anus_app.py
-   ```
+    ```bash
+    sudo python3 ANUS/setup_anus_app.py
+    ```
 ### Interactive Menu Install
 
 For more options, including uninstalling or managing the service, run the setup script with the `-menu` flag.
@@ -159,8 +143,8 @@ wget https://raw.githubusercontent.com/sworrl/ANUS/main/ANUS/setup_anus_app.py &
 
 ## ⚙️ Configuration
 
- * **Targets**: To change the hosts that A.N.U.S. monitors, you can edit the `targets.json` file located in the web directory (`/var/www/html/anus/targets.json` by default). The Python service will automatically pick up the changes on its next cycle.
- * **Dashboard Settings**: The update interval, sound effects, theme, and online detection method can all be configured directly from the "Settings" tab in the web interface.
+  * **Targets**: To change the hosts that A.N.U.S. monitors, you can edit the `targets.json` file located in the web directory (`/var/www/html/anus/targets.json` by default). The Python service will automatically pick up the changes on its next cycle.
+  * **Dashboard Settings**: The update interval, sound effects, theme, and online detection method can all be configured directly from the "Settings" tab in the web interface.
 
 ## ⚖️ License
 

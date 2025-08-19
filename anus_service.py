@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# A.N.U.S. v1.3.6
 
 import subprocess
 import os
@@ -12,7 +11,6 @@ import threading
 import signal
 import socket
 import xml.etree.ElementTree as ET
-import shutil
 
 # --- Configuration ---
 DB_PATH = '/var/db/anus_metrics.db'
@@ -20,7 +18,7 @@ CLIENT_IP_FILE = '/var/db/anus_client_ip.txt'
 TARGETS_CONFIG_FILE = '/var/www/html/anus/assets/targets.json'
 FUZZY_SAYINGS_FILE = '/var/www/html/anus/assets/fuzzy_sayings.json'
 NET_STATS_CACHE = '/var/tmp/anus_net_stats.json'
-SOCKET_PATH = '/var/tmp/anus_service_cmd.sock'
+SOCKET_PATH = '/var/run/anus_service_cmd.sock'
 try:
     output = subprocess.check_output("ip route | grep default | awk '{print $5}' | head -n 1", shell=True, text=True).strip()
     NETWORK_INTERFACE = output.splitlines()[0]
@@ -36,7 +34,8 @@ DEFAULT_TARGETS = [
     {"name": "Google.com", "url": "google.com"},
     {"name": "Cloudflare.com", "url": "cloudflare.com"}
 ]
-MAX_WORKERS = 60
+# FIX: Increased max workers
+MAX_WORKERS = 100
 stop_event = threading.Event()
 GATEWAY_DETAILS = {'ip': 'N/A', 'mac': 'N/A', 'vendor': 'N/A'}
 
@@ -73,16 +72,6 @@ def setup_database():
         """)
         cursor.execute("CREATE TABLE IF NOT EXISTS client_pings (ip TEXT PRIMARY KEY, ping REAL, timestamp INTEGER)")
         cursor.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS event_log (
-                id INTEGER PRIMARY KEY,
-                status TEXT,
-                startTime TEXT,
-                endTime TEXT,
-                quality_score INTEGER,
-                timestamp INTEGER
-            )
-        """)
         conn.commit()
 
 def log_metric(metric):
@@ -222,20 +211,17 @@ def scan_network():
     while not stop_event.is_set():
         try:
             network_range = get_network_cidr()
-            nmap_path = shutil.which("nmap")
-            if not nmap_path:
-                print("nmap executable not found!")
-                stop_event.wait(300)
-                continue
-
             print(f"Starting nmap scan of {network_range}...")
-            nmap_command = f"sudo {nmap_path} -sS -sV -O -oX - {network_range}"
+            # FIX: Try privileged scan first, fall back to TCP connect scan on error
+            nmap_command = f"nmap -sS -sV -O -oX - {network_range}"
             try:
                 nmap_output = subprocess.check_output(nmap_command, shell=True, text=True, stderr=subprocess.PIPE)
+                if "requires root privileges" in nmap_output.lower() or "permission denied" in nmap_output.lower():
+                    raise subprocess.CalledProcessError(1, nmap_command, stderr="Requires root privileges")
             except subprocess.CalledProcessError as e:
-                print(f"Nmap scan failed: {e.stderr.strip()}. This may happen if the sudoers rule is not set up correctly.")
-                stop_event.wait(60)
-                continue
+                print(f"Privileged nmap scan failed: {e.stderr.strip()}. Falling back to TCP connect scan.")
+                nmap_command = f"nmap -sT -sV -O -oX - {network_range}"
+                nmap_output = subprocess.check_output(nmap_command, shell=True, text=True)
 
             root = ET.fromstring(nmap_output)
             
@@ -294,7 +280,7 @@ def scan_network():
         except Exception as e:
             print(f"Error in scan_network: {e}")
         
-        stop_event.wait(60)
+        stop_event.wait(300)
 
 def get_diagnostics(target, server_gateway_ip):
     """Periodically runs traceroute and DNS lookups for a target."""
@@ -315,14 +301,10 @@ def get_diagnostics(target, server_gateway_ip):
                 dns_info = [f"DNS lookup failed: {e.stderr.strip() if e.stderr else str(e)}"]
             
             try:
-                traceroute_path = shutil.which("traceroute")
-                if traceroute_path:
-                    traceroute_output = subprocess.check_output(f"sudo {traceroute_path} -n -q 1 -w 1 -m 15 {clean_host}", shell=True, timeout=30, text=True, stderr=subprocess.PIPE)
-                    traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
-                    if not traceroute_info:
-                        traceroute_info = ["Traceroute returned no hops."]
-                else:
-                    traceroute_info = ["Traceroute command not found."]
+                traceroute_output = subprocess.check_output(f"traceroute -n -q 1 -w 1 -m 15 {clean_host}", shell=True, timeout=30, text=True, stderr=subprocess.PIPE)
+                traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
+                if not traceroute_info:
+                    traceroute_info = ["Traceroute returned no hops."]
             except Exception as e:
                 traceroute_info = [f"Traceroute failed: {e.stderr.strip() if e.stderr else str(e)}"]
             
@@ -330,7 +312,7 @@ def get_diagnostics(target, server_gateway_ip):
         except Exception as e:
             print(f"Error in get_diagnostics for {target['name']}: {e}")
         
-        stop_event.wait(60)
+        stop_event.wait(300)
 
 def continuous_ping_target(target, server_gateway_ip):
     while not stop_event.is_set():
@@ -378,122 +360,38 @@ def continuous_ping_target(target, server_gateway_ip):
             print(f"Error in continuous_ping_target for {target['name']}, restarting in 5s. Error: {e}")
             time.sleep(5)
 
-def analyze_and_update_status():
-    """Analyzes recent metrics to determine overall status and quality."""
-    while not stop_event.is_set():
-        try:
-            with sqlite3.connect(DB_PATH) as conn:
-                cursor = conn.cursor()
-                ten_seconds_ago = int(time.time()) - 10
-                
-                cursor.execute("SELECT name, status, ping, jitter, packet_loss FROM metrics WHERE timestamp >= ?", (ten_seconds_ago,))
-                recent_pings = cursor.fetchall()
-                
-                targets_by_name = {}
-                for name, status, ping, jitter, loss in recent_pings:
-                    if name not in targets_by_name:
-                        targets_by_name[name] = []
-                    targets_by_name[name].append({'status': status, 'ping': ping, 'jitter': jitter, 'packet_loss': loss})
-
-                gateway_pings = targets_by_name.get('Gateway', [])
-                is_up = any(p['status'] == 'UP' for p in gateway_pings)
-                overall_status = 'UP' if is_up else 'DOWN'
-                
-                quality_score = 0
-                if is_up:
-                    critical_pings = []
-                    for name, pings in targets_by_name.items():
-                        if name in ["Gateway", "Google DNS", "Cloudflare DNS", "OpenDNS Primary"]:
-                            critical_pings.extend(p for p in pings if p['status'] == 'UP')
-                    
-                    if critical_pings:
-                        avg_ping = sum(p['ping'] for p in critical_pings if p['ping'] is not None) / len(critical_pings)
-                        avg_jitter = sum(p['jitter'] for p in critical_pings if p['jitter'] is not None) / len(critical_pings)
-                        avg_loss = sum(p['packet_loss'] for p in critical_pings if p['packet_loss'] is not None) / len(critical_pings)
-                        
-                        score = 500
-                        score -= avg_ping * 2
-                        score -= avg_jitter * 10
-                        score -= avg_loss * 20
-                        quality_score = max(0, int(score))
-
-                cursor.execute("SELECT status FROM event_log ORDER BY id DESC LIMIT 1")
-                last_log_status = cursor.fetchone()
-                if not last_log_status or last_log_status[0] != overall_status:
-                    now_iso = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-                    now_unix = int(time.time())
-                    cursor.execute("UPDATE event_log SET endTime = ? WHERE id = (SELECT MAX(id) FROM event_log)", (now_iso,))
-                    cursor.execute("INSERT INTO event_log (status, startTime, endTime, quality_score, timestamp) VALUES (?, ?, ?, ?, ?)", (overall_status, now_iso, now_iso, quality_score, now_unix))
-
-                conn.commit()
-
-        except Exception as e:
-            print(f"Error in analyze_and_update_status: {e}")
-        
-        stop_event.wait(10)
-
-
 def on_demand_diagnostic(payload):
-    """Performs a single diagnostic test and returns structured results."""
+    """Performs a single diagnostic test on a user-provided target."""
     target = payload.get('target')
     ping_count = payload.get('count', 4)
     ping_size = payload.get('size', 56)
+    ping_msg = payload.get('message', '')
 
     if not target:
         return {"error": "Target not specified."}
     
     host = target.replace("https://", "").replace("http://", "").split('/')[0]
-    
-    results = {
-        "status": "DOWN", "ping": None, "jitter": None, "packet_loss": 100.0,
-        "hostname": None, "mac_address": None, "vendor": None,
-        "dns_info": [], "traceroute_info": []
-    }
 
     try:
         ping_command = f"ping -c {ping_count} -s {ping_size} {host}"
         ping_output = subprocess.check_output(ping_command, shell=True, text=True, stderr=subprocess.STDOUT)
         
-        latencies = [float(f) for f in re.findall(r'time=([\d\.]+)', ping_output)]
-        if latencies:
-            results['status'] = "UP"
-            results['ping'] = round(sum(latencies) / len(latencies), 2)
-            results['jitter'] = round((sum((x - results['ping']) ** 2 for x in latencies) / (len(latencies) - 1)) ** 0.5, 2) if len(latencies) > 1 else 0.0
+        dns_output = subprocess.check_output(f"dig +short {host}", shell=True, text=True, stderr=subprocess.STDOUT)
+        dns_info = [line for line in dns_output.strip().split('\n') if line]
         
-        loss_match = re.search(r'(\d+)% packet loss', ping_output)
-        if loss_match:
-            results['packet_loss'] = float(loss_match.group(1))
+        traceroute_output = subprocess.check_output(f"traceroute -n -q 1 -w 1 -m 15 {host}", shell=True, text=True, stderr=subprocess.STDOUT)
+        traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
 
-        arp_output = subprocess.check_output(f"ip neigh show {host}", shell=True, text=True, stderr=subprocess.DEVNULL)
-        mac_match = re.search(r'lladdr ([0-9a-f:]+)', arp_output)
-        if mac_match:
-            results['mac_address'] = mac_match.group(1)
-            try:
-                vendor_output = subprocess.check_output(f"curl -s https://api.macvendors.com/{results['mac_address']}", shell=True, text=True, timeout=5)
-                results['vendor'] = vendor_output.strip() if "Not Found" not in vendor_output else "Unknown"
-            except:
-                results['vendor'] = "Lookup Failed"
-        
-        try:
-            dns_output = subprocess.check_output(f"dig +short {host}", shell=True, text=True, stderr=subprocess.STDOUT)
-            results['dns_info'] = [line for line in dns_output.strip().split('\n') if line]
-            results['hostname'] = socket.gethostbyaddr(host)[0]
-        except Exception:
-            results['dns_info'] = ["DNS lookup failed"]
-            results['hostname'] = "N/A"
-
-        try:
-            traceroute_output = subprocess.check_output(f"sudo traceroute -n -q 1 -w 1 -m 15 {host}", shell=True, text=True, stderr=subprocess.STDOUT)
-            results['traceroute_info'] = [line for line in traceroute_output.strip().split('\n') if line]
-        except Exception:
-            results['traceroute_info'] = ["Traceroute failed"]
-
+        return {
+            "status": "success",
+            "ping": ping_output,
+            "dns": dns_info,
+            "traceroute": traceroute_info
+        }
     except subprocess.CalledProcessError as e:
-        results['error'] = f"Command failed: {e.output}"
+        return {"error": f"Command failed: {e.output}"}
     except Exception as e:
-        results['error'] = str(e)
-        
-    return results
+        return {"error": str(e)}
 
 def command_server():
     """Starts a local Unix domain socket server to handle on-demand commands."""
@@ -502,7 +400,7 @@ def command_server():
     
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     server.bind(SOCKET_PATH)
-    os.chmod(SOCKET_PATH, 0o777) # Allow web user to connect
+    server.listen(1)
     
     print(f"Command server listening on {SOCKET_PATH}")
     
@@ -550,11 +448,11 @@ if __name__ == "__main__":
             with open(TARGETS_CONFIG_FILE, 'r') as f: targets = json.load(f)
         except (json.JSONDecodeError): pass
     
+    # FIX: Use the MAX_WORKERS variable for the thread pool
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.submit(get_resource_usage)
         executor.submit(scan_network)
         executor.submit(command_server)
-        executor.submit(analyze_and_update_status)
         for target in targets:
             executor.submit(continuous_ping_target, target, server_gateway_ip)
             executor.submit(get_diagnostics, target, server_gateway_ip)

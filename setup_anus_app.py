@@ -95,6 +95,9 @@ def simple_run_command(command, ignore_errors=False, show_output=True):
         return False
 
 # --- Core Logic Functions (used by both UIs) ---
+def get_user():
+    """Get the username of the user who invoked sudo."""
+    return os.getenv("SUDO_USER", os.getenv("USER"))
 
 def get_file_version(filepath):
     """Reads the first line of a file to get its version string."""
@@ -179,7 +182,8 @@ def install_prerequisites(run_cmd_func, print_header_func, print_success_func):
     packages = [
         "python3", "python3-pip", "apache2", 
         "php", "libapache2-mod-php", "php-sqlite3", 
-        "traceroute", "dnsutils", "iproute2", "wget", "sqlite3", "nmap", "libcap2-bin", "iputils-ping"
+        "traceroute", "dnsutils", "iproute2", "wget", "sqlite3", "nmap", "libcap2-bin", "iputils-ping",
+        "libncursesw5-dev" # Added for curses support
     ]
     if not run_cmd_func("sudo apt-get update") or \
        not run_cmd_func(f"sudo apt-get install -y {' '.join(packages)}"):
@@ -214,7 +218,7 @@ def setup_directories_and_files(run_cmd_func, print_header_func, print_success_f
     if not os.path.exists(DB_FILE):
         if not run_cmd_func(f"sudo touch {DB_FILE}"): return False
     if not os.path.exists(os.path.join(ASSETS_DIR, 'style.css')):
-      if not run_cmd_func(f"sudo touch {os.path.join(ASSETS_DIR, 'style.css')}"): return False
+        if not run_cmd_func(f"sudo touch {os.path.join(ASSETS_DIR, 'style.css')}"): return False
     print_success_func("Directories and files created.")
     return True
 
@@ -420,7 +424,7 @@ class CursesUI:
         curses.start_color()
         curses.use_default_colors()
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Selected
-        curses.init_pair(2, curses.COLOR_RED, -1)      # Error
+        curses.init_pair(2, curses.COLOR_RED, -1)     # Error
         curses.init_pair(3, curses.COLOR_YELLOW, -1)   # Header/Title
         curses.init_pair(4, curses.COLOR_CYAN, -1)     # Info
         curses.init_pair(5, curses.COLOR_GREEN, -1)    # Success
@@ -765,58 +769,62 @@ def main():
     os.system('cls' if os.name == 'nt' else 'clear')
 
     if CURSES_AVAILABLE:
-        is_menu_mode = 'menu' in args
-        
-        def curses_main_loop(stdscr):
-            ui = CursesUI(stdscr)
-            return ui.run()
-
-        if is_menu_mode:
-            action_on_exit = curses.wrapper(curses_main_loop)
-            # After curses has exited, perform the requested action
-            if action_on_exit == "uninstall":
-                simple_uninstall()
-                print("\nUninstallation complete. Press Enter to exit.")
-                input()
-            elif action_on_exit == "re_install":
-                simple_uninstall(confirm=False)
-                simple_install_or_update()
-                input("\nRe-installation complete. Press Enter to continue.")
-            elif action_on_exit == "clear_database":
-                 simple_clear_database()
-                 input("\nDatabase cleared. Press Enter to return to the menu...")
-
-        else: # Default action: direct install
-            def direct_install_wrapper(stdscr):
+        try:
+            is_menu_mode = 'menu' in args
+            
+            def curses_main_loop(stdscr):
                 ui = CursesUI(stdscr)
-                
-                def install_action(win):
-                    funcs = ui.create_action_funcs(win)
-                    install_steps = [
-                        ("Installing prerequisites", lambda: install_prerequisites(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Setting up directories", lambda: setup_directories_and_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Downloading assets", lambda: download_assets(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_error"])),
-                        ("Copying application files", lambda: copy_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                        ("Setting permissions", lambda: set_permissions(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Configuring Apache", lambda: configure_apache(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_warning"], funcs["p_error"])),
-                        ("Applying system tweaks", lambda: apply_system_tweaks(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                        ("Setting up systemd service", lambda: setup_systemd_service(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                        ("Finalizing setup", lambda: funcs["run_cmd"]("sudo systemctl restart apache2", ignore_errors=True))
-                    ]
+                return ui.run()
+
+            if is_menu_mode:
+                action_on_exit = curses.wrapper(curses_main_loop)
+                # After curses has exited, perform the requested action
+                if action_on_exit == "uninstall":
+                    simple_uninstall()
+                    print("\nUninstallation complete. Press Enter to exit.")
+                    input()
+                elif action_on_exit == "re_install":
+                    simple_uninstall(confirm=False)
+                    simple_install_or_update()
+                    input("\nRe-installation complete. Press Enter to continue.")
+                elif action_on_exit == "clear_database":
+                    simple_clear_database()
+                    input("\nDatabase cleared. Press Enter to return to the menu...")
+
+            else: # Default action: direct install
+                def direct_install_wrapper(stdscr):
+                    ui = CursesUI(stdscr)
                     
-                    for i, (msg, step_func) in enumerate(install_steps):
-                        ui.update_progress_bar(i, len(install_steps), msg)
-                        if not step_func():
-                            funcs["p_error"](f"\n--- Step '{msg}' failed. Aborting installation. ---")
-                            break
-                    else:
-                        ui.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
-                        funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
-                
-                ui.show_output_window("Install / Update", install_action, menu_visible=False)
+                    def install_action(win):
+                        funcs = ui.create_action_funcs(win)
+                        install_steps = [
+                            ("Installing prerequisites", lambda: install_prerequisites(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Setting up directories", lambda: setup_directories_and_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Downloading assets", lambda: download_assets(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_error"])),
+                            ("Copying application files", lambda: copy_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
+                            ("Setting permissions", lambda: set_permissions(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Configuring Apache", lambda: configure_apache(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_warning"], funcs["p_error"])),
+                            ("Applying system tweaks", lambda: apply_system_tweaks(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
+                            ("Setting up systemd service", lambda: setup_systemd_service(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
+                            ("Finalizing setup", lambda: funcs["run_cmd"]("sudo systemctl restart apache2", ignore_errors=True))
+                        ]
+                        
+                        for i, (msg, step_func) in enumerate(install_steps):
+                            ui.update_progress_bar(i, len(install_steps), msg)
+                            if not step_func():
+                                funcs["p_error"](f"\n--- Step '{msg}' failed. Aborting installation. ---")
+                                break
+                        else:
+                            ui.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
+                            funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
+                    
+                    ui.show_output_window("Install / Update", install_action, menu_visible=False)
 
-            curses.wrapper(direct_install_wrapper)
-
+                curses.wrapper(direct_install_wrapper)
+        except curses.error as e:
+            simple_print_warning("Curses UI failed to initialize. Falling back to simple text interface.")
+            simple_print_error(f"Error details: {e}")
+            simple_install_or_update()
     else:
         print(f"{colors.YELLOW}Curses library not found. Falling back to simple text interface.{colors.ENDC}")
         simple_install_or_update()
