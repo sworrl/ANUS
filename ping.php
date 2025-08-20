@@ -136,7 +136,7 @@ function format_long_duration($seconds) {
     $hours = floor($seconds / 3600);
     $seconds %= 3600;
     $minutes = floor($seconds / 60);
-    $seconds %= 60;
+    $seconds = floor($seconds % 60);
 
     $parts = [];
     if ($days > 0) $parts[] = $days . " Day" . ($days > 1 ? "s" : "");
@@ -175,6 +175,16 @@ switch ($action) {
             // Update the event log with the new status
             update_event_log($db, $overall_status);
             
+            // Check for current packet loss
+            $is_packet_loss_happening = false;
+            $packet_loss_details = [];
+            foreach ($latest_metrics as $metric) {
+                if (isset($metric['packet_loss']) && $metric['packet_loss'] > 0) {
+                    $is_packet_loss_happening = true;
+                    $packet_loss_details[] = ['name' => $metric['name'], 'loss' => $metric['packet_loss']];
+                }
+            }
+
             // Fetch other details
             $stmt_resource = $db->query("SELECT cpu_usage, mem_usage, net_down_kbps, net_up_kbps FROM resource_metrics ORDER BY timestamp DESC LIMIT 1");
             $resource_usage = $stmt_resource->fetch(PDO::FETCH_ASSOC) ?: ['cpu_usage' => 0, 'mem_usage' => 0, 'net_down_kbps' => 0, 'net_up_kbps' => 0];
@@ -194,7 +204,9 @@ switch ($action) {
                 'gateway_details' => $gateway_details,
                 'resource_usage' => $resource_usage,
                 'overall_status' => $overall_status,
-                'status_start_time' => date('c', $status_start_time)
+                'status_start_time' => date('c', $status_start_time),
+                'is_packet_loss_happening' => $is_packet_loss_happening,
+                'packet_loss_details' => $packet_loss_details
             ];
 
             foreach ($latest_metrics as &$metric_data) {
@@ -214,6 +226,10 @@ switch ($action) {
         try {
             $now = time();
             $periods = [
+                '15m' => $now - 900,
+                '30m' => $now - 1800,
+                '1h' => $now - 3600,
+                '6h' => $now - 21600,
                 '24h' => $now - 86400,
                 '7d' => $now - 604800,
                 '30d' => $now - 2592000
@@ -259,7 +275,6 @@ switch ($action) {
         }
         break;
 
-    // Keep other cases the same as the original file, but use get_db_connection()
     case 'on_demand_ping':
         try {
             $command = json_encode(['action' => 'on_demand_ping', 'target' => $data['target'], 'count' => $data['count'], 'size' => $data['size']]);
@@ -385,7 +400,6 @@ switch ($action) {
         }
         break;
         
-    // *** ADDED THIS CASE TO FIX THE BUG ***
     case 'get_settings':
         try {
             echo json_encode(get_settings($db));
