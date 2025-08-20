@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# A.N.U.S. v1.3.9
+# A.N.U.S. v1.3.9 - Service Update
 
 import subprocess
 import os
@@ -17,33 +17,33 @@ import xml.etree.ElementTree as ET
 DB_PATH = '/var/db/anus_metrics.db'
 CLIENT_IP_FILE = '/var/db/anus_client_ip.txt'
 TARGETS_CONFIG_FILE = '/var/www/html/anus/assets/targets.json'
-FUZZY_SAYINGS_FILE = '/var/www/html/anus/assets/fuzzy_sayings.json'
 NET_STATS_CACHE = '/var/tmp/anus_net_stats.json'
 SOCKET_PATH = '/var/run/anus_service_cmd.sock'
 try:
+    # Attempt to dynamically find the default network interface
     output = subprocess.check_output("ip route | grep default | awk '{print $5}' | head -n 1", shell=True, text=True).strip()
     NETWORK_INTERFACE = output.splitlines()[0]
 except Exception:
-    NETWORK_INTERFACE = 'eth0'
+    NETWORK_INTERFACE = 'eth0' # Fallback to a common default
 
-DEFAULT_TARGETS = [
-    {"name": "Gateway", "url": "DETECT_GATEWAY", "critical": True},
-    {"name": "OpenDNS Primary", "url": "208.67.222.222", "critical": True},
-    {"name": "Google DNS", "url": "8.8.8.8", "critical": True},
-    {"name": "Cloudflare DNS", "url": "1.1.1.1", "critical": True},
-    {"name": "NextDNS", "url": "dns.nextdns.io", "critical": True},
-    {"name": "Google.com", "url": "google.com"},
-    {"name": "Cloudflare.com", "url": "cloudflare.com"}
-]
-MAX_WORKERS = 100
+# --- Global State ---
 stop_event = threading.Event()
 GATEWAY_DETAILS = {'ip': 'N/A', 'mac': 'N/A', 'vendor': 'N/A'}
-SETTINGS = {'updateInterval': 2000} # Default to 2 seconds
+# Default settings, will be overwritten by DB
+SETTINGS = {
+    'updateInterval': 2000,
+    'onlineDetectionMethod': 'smart_check',
+    'smartCheckThreshold': 3,
+    'criticalServices': 'Gateway,OpenDNS Primary,Google DNS,Cloudflare DNS'
+}
+MAX_WORKERS = 100
 
 # --- Database Functions ---
 def setup_database():
+    """Initializes the database schema if tables don't exist."""
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
+        # Metrics for individual targets
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS metrics (
                 id INTEGER PRIMARY KEY, name TEXT, ping REAL, jitter REAL,
@@ -52,18 +52,21 @@ def setup_database():
             )
         """)
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_metrics_name_timestamp ON metrics (name, timestamp DESC)")
+        # Server resource usage metrics
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS resource_metrics (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp INTEGER NOT NULL,
                 cpu_usage REAL, mem_usage REAL, net_down_kbps REAL, net_up_kbps REAL
             )
         """)
+        # Cached network info
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS local_network_info (
                 id INTEGER PRIMARY KEY, gateway_ip TEXT UNIQUE, gateway_mac TEXT,
                 gateway_vendor TEXT, last_updated INTEGER
             )
         """)
+        # Nmap scan results
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS nmap_scan_results (
                 id INTEGER PRIMARY KEY, ip TEXT UNIQUE, mac_address TEXT,
@@ -71,11 +74,21 @@ def setup_database():
                 services TEXT, os TEXT, last_scanned INTEGER
             )
         """)
-        cursor.execute("CREATE TABLE IF NOT EXISTS client_pings (ip TEXT PRIMARY KEY, ping REAL, timestamp INTEGER)")
+        # Application settings table
         cursor.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
+        # NEW: Event log for overall UP/DOWN status changes
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS event_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                status TEXT NOT NULL,
+                startTime INTEGER NOT NULL,
+                endTime INTEGER
+            )
+        """)
         conn.commit()
 
 def log_metric(metric):
+    """Logs a single ping result to the metrics table."""
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -89,6 +102,7 @@ def log_metric(metric):
         conn.commit()
 
 def log_resource_usage(usage_data):
+    """Logs CPU, memory, and network usage to the database."""
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -100,28 +114,83 @@ def log_resource_usage(usage_data):
         ))
         conn.commit()
 
-def update_diagnostics(name, dns_info, traceroute_info):
-    """Updates the most recent metric record with new diagnostic info."""
+def update_event_log(current_status):
+    """Logs a change in the overall internet status to the event_log table."""
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE metrics
-            SET dns_info = ?, traceroute_info = ?
-            WHERE id = (SELECT id FROM metrics WHERE name = ? AND is_on_demand = 0 ORDER BY timestamp DESC LIMIT 1)
-        """, (json.dumps(dns_info), json.dumps(traceroute_info), name))
+        cursor.execute("SELECT id, status FROM event_log ORDER BY startTime DESC LIMIT 1")
+        last_event = cursor.fetchone()
+
+        if not last_event:
+            # First ever event, log the startup status
+            print(f"Logging initial status: {current_status}")
+            cursor.execute("INSERT INTO event_log (status, startTime) VALUES (?, ?)", (current_status, int(time.time())))
+        elif last_event[1] != current_status:
+            # Status has changed, end the last event and start a new one
+            print(f"Status changed from {last_event[1]} to {current_status}. Logging event.")
+            cursor.execute("UPDATE event_log SET endTime = ? WHERE id = ?", (int(time.time()), last_event[0]))
+            cursor.execute("INSERT INTO event_log (status, startTime) VALUES (?, ?)", (current_status, int(time.time())))
         conn.commit()
+
+# --- Status Calculation ---
+def calculate_internet_status(latest_metrics, settings):
+    """
+    Determines the overall internet status based on the configured detection method.
+    This logic is mirrored from ping.php to ensure consistency.
+    """
+    method = settings.get('onlineDetectionMethod', 'smart_check')
+    critical_services_str = settings.get('criticalServices', '')
+    critical_services = [s.strip() for s in critical_services_str.split(',') if s.strip()]
+
+    up_count = 0
+    down_count = 0
+    critical_up_count = 0
+    critical_down_count = 0
+    gateway_status = 'DOWN'
+
+    for metric in latest_metrics:
+        is_critical = metric['name'] in critical_services
+        if metric['status'] == 'UP':
+            up_count += 1
+            if is_critical:
+                critical_up_count += 1
+        else:
+            down_count += 1
+            if is_critical:
+                critical_down_count += 1
+        if metric['name'] == 'Gateway':
+            gateway_status = metric['status']
+
+    if method == 'gateway':
+        return gateway_status
+    elif method == 'majority':
+        return 'UP' if up_count >= down_count else 'DOWN'
+    elif method == 'critical_services':
+        return 'UP' if critical_down_count == 0 and critical_services else 'DOWN'
+    else:  # smart_check is the default
+        if gateway_status == 'DOWN':
+            return 'DOWN'
+        smart_threshold = int(settings.get('smartCheckThreshold', 3))
+        if critical_down_count >= smart_threshold:
+            return 'DOWN'
+        return 'UP'
 
 # --- System & Network Diagnostics ---
 def get_resource_usage():
+    """Continuously monitors and logs server resource usage."""
     while not stop_event.is_set():
         try:
+            # CPU Usage
             load_avg = os.getloadavg()[0]
-            cpu_count = os.cpu_count()
-            cpu_usage = (load_avg / cpu_count) * 100 if cpu_count else 0
+            cpu_count = os.cpu_count() or 1
+            cpu_usage = (load_avg / cpu_count) * 100
+            
+            # Memory Usage
             mem_info = subprocess.check_output("free -m", shell=True, text=True).splitlines()[1].split()
             mem_total, mem_used = int(mem_info[1]), int(mem_info[2])
             mem_usage = (mem_used / mem_total) * 100 if mem_total else 0
             
+            # Network Usage
             rx_rate, tx_rate = 0, 0
             now = time.time()
             try:
@@ -131,10 +200,10 @@ def get_resource_usage():
                 if os.path.exists(NET_STATS_CACHE):
                     with open(NET_STATS_CACHE, 'r') as f: last_stats = json.load(f)
                 if 'timestamp' in last_stats and (time_diff := now - last_stats['timestamp']) > 0:
-                    rx_rate = ((rx_bytes - last_stats['rx']) * 8) / time_diff / 1024
-                    tx_rate = ((tx_bytes - last_stats['tx']) * 8) / time_diff / 1024
+                    rx_rate = ((rx_bytes - last_stats['rx']) * 8) / time_diff / 1024 # Kbps
+                    tx_rate = ((tx_bytes - last_stats['tx']) * 8) / time_diff / 1024 # Kbps
                 with open(NET_STATS_CACHE, 'w') as f: json.dump({'rx': rx_bytes, 'tx': tx_bytes, 'timestamp': now}, f)
-            except (IOError, ValueError): pass
+            except (IOError, ValueError, FileNotFoundError): pass
 
             log_resource_usage({
                 'cpu': round(cpu_usage, 2), 'mem': round(mem_usage, 2),
@@ -144,255 +213,90 @@ def get_resource_usage():
             print(f"Error in get_resource_usage: {e}")
         stop_event.wait(5)
 
-def get_network_details():
-    """Fetches gateway IP, MAC, and vendor, with database caching."""
-    global GATEWAY_DETAILS
-    
-    with sqlite3.connect(DB_PATH) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info LIMIT 1")
-        db_details = cursor.fetchone()
-
-        current_gateway_ip = get_server_gateway_ip()
-        
-        if db_details and db_details[0] == current_gateway_ip and db_details[1] != 'N/A':
-            print("Gateway details found in database, using cached data.")
-            GATEWAY_DETAILS = { 'ip': db_details[0], 'mac': db_details[1], 'vendor': db_details[2] }
-        else:
-            print("Gateway details not found or changed, fetching new data...")
-            current_gateway_mac, current_gateway_vendor = 'N/A', 'N/A'
-
-            if current_gateway_ip:
-                try:
-                    arp_output = subprocess.check_output(f"ip neigh show {current_gateway_ip}", shell=True, text=True, stderr=subprocess.DEVNULL)
-                    match = re.search(r'lladdr ([0-9a-f:]+)', arp_output)
-                    if match:
-                        current_gateway_mac = match.group(1)
-                        try:
-                            vendor_output = subprocess.check_output(f"curl -s https://api.macvendors.com/{current_gateway_mac}", shell=True, text=True, timeout=10)
-                            current_gateway_vendor = vendor_output.strip() if vendor_output and "Not Found" not in vendor_output else "Unknown Vendor"
-                        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
-                            current_gateway_vendor = "Vendor lookup failed"
-                except subprocess.CalledProcessError:
-                     pass # IP might not be in ARP cache yet
-            
-            GATEWAY_DETAILS = { 'ip': current_gateway_ip, 'mac': current_gateway_mac, 'vendor': current_gateway_vendor }
-            cursor.execute("REPLACE INTO local_network_info (id, gateway_ip, gateway_mac, gateway_vendor, last_updated) VALUES (?, ?, ?, ?, ?)",
-                           (1, GATEWAY_DETAILS['ip'], GATEWAY_DETAILS['mac'], GATEWAY_DETAILS['vendor'], int(time.time())))
-            conn.commit()
-    
-    return GATEWAY_DETAILS
-
 def get_server_gateway_ip():
+    """Finds the default gateway IP for the server."""
     try:
         output = subprocess.check_output("ip route | grep default | awk '{print $3}' | head -n 1", shell=True, text=True).strip()
         return output.splitlines()[0]
     except Exception: return None
 
-def get_network_cidr():
-    """Determines the local network CIDR (e.g., 192.168.1.0/24)."""
-    try:
-        ip_output = subprocess.check_output(f"ip addr show {NETWORK_INTERFACE} | grep 'inet ' | awk '{{print $2}}'", shell=True, text=True).strip()
-        return ip_output.splitlines()[0]
-    except Exception:
-        return '192.168.1.0/24'
-
-def scan_network():
-    """Performs an nmap scan and updates the database."""
-    while not stop_event.is_set():
-        try:
-            network_range = get_network_cidr()
-            print(f"Starting nmap scan of {network_range}...")
-            nmap_command = f"sudo nmap -sS -sV -O -oX - {network_range}"
-            try:
-                nmap_output = subprocess.check_output(nmap_command, shell=True, text=True, stderr=subprocess.PIPE)
-            except subprocess.CalledProcessError as e:
-                print(f"Privileged nmap scan failed: {e.stderr.strip()}. Falling back to TCP connect scan.")
-                nmap_command = f"sudo nmap -sT -sV -O -oX - {network_range}"
-                nmap_output = subprocess.check_output(nmap_command, shell=True, text=True)
-
-            root = ET.fromstring(nmap_output)
-            
-            scanned_hosts = []
-            for host in root.findall('host'):
-                ip = host.find('address[@addrtype="ipv4"]').get('addr')
-                mac_element = host.find('address[@addrtype="mac"]')
-                hostname_element = host.find('hostnames/hostname')
-                
-                host_info = {
-                    'ip': ip,
-                    'mac_address': mac_element.get('addr') if mac_element is not None else 'N/A',
-                    'vendor': mac_element.get('vendor') if mac_element is not None else 'N/A',
-                    'hostname': hostname_element.get('name') if hostname_element is not None else 'N/A',
-                    'is_up': host.find('status').get('state') == 'up',
-                    'os': host.find('os/osmatch').get('name') if host.find('os/osmatch') is not None else 'N/A',
-                    'services': [{'port': p.get('portid'), 'protocol': p.get('protocol'), 'name': p.find('service').get('name')} for p in host.findall('ports/port') if p.find('state') is not None and p.find('state').get('state') == 'open' and p.find('service') is not None]
-                }
-                scanned_hosts.append(host_info)
-            
-            with sqlite3.connect(DB_PATH) as conn:
-                cursor = conn.cursor()
-                cursor.execute("UPDATE nmap_scan_results SET is_up = 0")
-                for host in scanned_hosts:
-                    cursor.execute("""
-                        INSERT INTO nmap_scan_results (ip, mac_address, vendor, hostname, is_up, services, os, last_scanned)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                        ON CONFLICT(ip) DO UPDATE SET
-                        mac_address=excluded.mac_address, vendor=excluded.vendor, hostname=excluded.hostname,
-                        is_up=excluded.is_up, services=excluded.services, os=excluded.os, last_scanned=excluded.last_scanned
-                    """, (host['ip'], host['mac_address'], host['vendor'], host['hostname'], host['is_up'], json.dumps(host['services']), host['os'], int(time.time())))
-                conn.commit()
-            print("Nmap scan complete and database updated.")
-        except Exception as e:
-            print(f"Error in scan_network: {e}")
-        
-        stop_event.wait(900) # Scan every 15 minutes
-
-def get_diagnostics(target, server_gateway_ip):
-    """Periodically runs traceroute and DNS lookups for a target."""
+def ping_target_once(target, server_gateway_ip):
+    """Performs a single ping test against a target and returns the result dictionary."""
     is_gateway = target.get('url') == 'DETECT_GATEWAY'
     host_url = server_gateway_ip if is_gateway else target['url']
     clean_host = host_url.replace("https://", "").replace("http://", "").split('/')[0] if host_url else None
-    if not clean_host: return
-
-    while not stop_event.is_set():
-        try:
-            dns_info, traceroute_info = [], []
-            try:
-                dig_output = subprocess.check_output(f"dig +short {clean_host}", shell=True, timeout=10, text=True, stderr=subprocess.PIPE)
-                dns_info = [line for line in dig_output.strip().split('\n') if line] or ["DNS lookup returned no records."]
-            except Exception as e:
-                dns_info = [f"DNS lookup failed: {e.stderr.strip() if hasattr(e, 'stderr') and e.stderr else str(e)}"]
-            
-            try:
-                traceroute_output = subprocess.check_output(f"sudo traceroute -n -q 1 -w 1 -m 15 {clean_host}", shell=True, timeout=30, text=True, stderr=subprocess.PIPE)
-                traceroute_info = [line for line in traceroute_output.strip().split('\n') if line] or ["Traceroute returned no hops."]
-            except Exception as e:
-                traceroute_info = [f"Traceroute failed: {e.stderr.strip() if hasattr(e, 'stderr') and e.stderr else str(e)}"]
-            
-            update_diagnostics(target['name'], dns_info, traceroute_info)
-        except Exception as e:
-            print(f"Error in get_diagnostics for {target['name']}: {e}")
-        
-        stop_event.wait(300) # Update diagnostics every 5 minutes
-
-def continuous_ping_target(target, server_gateway_ip):
-    while not stop_event.is_set():
-        try:
-            is_gateway = target.get('url') == 'DETECT_GATEWAY'
-            host_url = server_gateway_ip if is_gateway else target['url']
-            clean_host = host_url.replace("https://", "").replace("http://", "").split('/')[0] if host_url else None
-            
-            if not clean_host: 
-                stop_event.wait(5)
-                continue
-
-            interval_ms = int(SETTINGS.get('updateInterval', 2000))
-            interval_s = interval_ms / 1000.0
-            ping_count = 5
-
-            command = f"ping -c {ping_count} -W 1 {clean_host}"
-            ping_output = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
-            
-            latencies = [float(t) for t in re.findall(r'time=([\d\.]+)', ping_output)]
-            loss_match = re.search(r'(\d+)% packet loss', ping_output)
-            packet_loss = float(loss_match.group(1)) if loss_match else 100.0
-
-            if latencies:
-                avg_ping = sum(latencies) / len(latencies)
-                jitter = (sum((x - avg_ping) ** 2 for x in latencies) / (len(latencies) - 1)) ** 0.5 if len(latencies) > 1 else 0
-                log_metric({"name": target["name"], "ping": avg_ping, "jitter": jitter, "status": "UP", "packet_loss": packet_loss})
-            else:
-                log_metric({"name": target["name"], "status": "DOWN", "packet_loss": 100.0})
-
-        except subprocess.CalledProcessError:
-             log_metric({"name": target["name"], "status": "DOWN", "packet_loss": 100.0})
-        except Exception as e:
-            print(f"Error in continuous_ping_target for {target['name']}: {e}")
-        
-        stop_event.wait(interval_s)
-
-def on_demand_diagnostic(payload):
-    """Performs a single diagnostic test on a user-provided target."""
-    target = payload.get('target')
-    ping_count = payload.get('count', 4)
-    ping_size = payload.get('size', 56)
-
-    if not target:
-        return {"error": "Target not specified."}
     
-    host = target.replace("https://", "").replace("http://", "").split('/')[0]
+    if not clean_host: 
+        return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
 
     try:
-        ping_command = f"ping -c {ping_count} -s {ping_size} {host}"
-        ping_output = subprocess.check_output(ping_command, shell=True, text=True, stderr=subprocess.STDOUT)
+        ping_count = 5
+        command = f"ping -c {ping_count} -W 1 {clean_host}"
+        ping_output = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
         
-        dns_output = subprocess.check_output(f"dig +short {host}", shell=True, text=True, stderr=subprocess.STDOUT)
-        dns_info = [line for line in dns_output.strip().split('\n') if line]
-        
-        traceroute_output = subprocess.check_output(f"sudo traceroute -n -q 1 -w 1 -m 15 {host}", shell=True, text=True, stderr=subprocess.STDOUT)
-        traceroute_info = [line for line in traceroute_output.strip().split('\n') if line]
+        latencies = [float(t) for t in re.findall(r'time=([\d\.]+)', ping_output)]
+        loss_match = re.search(r'(\d+)% packet loss', ping_output)
+        packet_loss = float(loss_match.group(1)) if loss_match else 100.0
 
-        return { "status": "success", "ping": ping_output, "dns": dns_info, "traceroute": traceroute_info }
-    except subprocess.CalledProcessError as e:
-        return {"error": f"Command failed: {e.output}"}
+        if latencies:
+            avg_ping = sum(latencies) / len(latencies)
+            jitter = (sum((x - avg_ping) ** 2 for x in latencies) / (len(latencies) - 1)) ** 0.5 if len(latencies) > 1 else 0
+            return {"name": target["name"], "ping": avg_ping, "jitter": jitter, "status": "UP", "packet_loss": packet_loss}
+        else:
+            return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
+
+    except subprocess.CalledProcessError:
+         return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
     except Exception as e:
-        return {"error": str(e)}
+        print(f"Error pinging {target['name']}: {e}")
+        return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
+
+def continuous_ping_target(target, server_gateway_ip):
+    """Continuously pings a target based on the update interval from settings."""
+    while not stop_event.is_set():
+        try:
+            result = ping_target_once(target, server_gateway_ip)
+            log_metric(result)
+        except Exception as e:
+            print(f"Unhandled error in continuous_ping_target for {target['name']}: {e}")
+        
+        # Use interval from global settings, which is updated periodically
+        interval_ms = int(SETTINGS.get('updateInterval', 2000))
+        interval_s = max(1.0, interval_ms / 1000.0) # Ensure at least 1s wait
+        stop_event.wait(interval_s)
 
 def get_settings_from_db():
+    """Reads settings from the database and updates the global SETTINGS dictionary."""
     global SETTINGS
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT key, value FROM settings")
             rows = cursor.fetchall()
+            # Create a temporary dictionary to hold new settings
+            new_settings = SETTINGS.copy()
             for row in rows:
-                SETTINGS[row[0]] = row[1]
+                new_settings[row[0]] = row[1]
+            # Atomically update the global settings
+            SETTINGS = new_settings
     except Exception as e:
-        print(f"Could not read settings from DB, using defaults. Error: {e}")
+        print(f"Could not read settings from DB, using existing defaults. Error: {e}")
 
 def monitor_settings():
+    """Periodically checks the database for settings changes."""
     while not stop_event.is_set():
         get_settings_from_db()
-        stop_event.wait(10)
-
-def command_server():
-    """Starts a local Unix domain socket server to handle on-demand commands."""
-    if os.path.exists(SOCKET_PATH):
-        os.remove(SOCKET_PATH)
-    
-    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    server.bind(SOCKET_PATH)
-    server.listen(1)
-    
-    print(f"Command server listening on {SOCKET_PATH}")
-    
-    while not stop_event.is_set():
-        try:
-            conn, _ = server.accept()
-            data = conn.recv(4096)
-            if data:
-                payload = json.loads(data.decode('utf-8'))
-                action = payload.get('action')
-                result = None
-                if action == 'on_demand_ping':
-                    result = on_demand_diagnostic(payload)
-                
-                if result:
-                    conn.sendall(json.dumps(result).encode('utf-8'))
-            conn.close()
-        except socket.timeout:
-            continue
-        except Exception as e:
-            print(f"Error in command server: {e}")
-            
-    server.close()
+        stop_event.wait(10) # Check for new settings every 10 seconds
 
 def signal_handler(sig, frame):
+    """Handles termination signals to shut down gracefully."""
     print("Signal received, shutting down.")
     stop_event.set()
     if os.path.exists(SOCKET_PATH):
-        os.remove(SOCKET_PATH)
+        try:
+            os.remove(SOCKET_PATH)
+        except OSError as e:
+            print(f"Error removing socket file: {e}")
 
 # --- Main Execution ---
 if __name__ == "__main__":
@@ -401,24 +305,43 @@ if __name__ == "__main__":
     
     print("Starting A.N.U.S. Python Service...")
     setup_database()
-    get_settings_from_db()
-    get_network_details()
-    server_gateway_ip = GATEWAY_DETAILS['ip']
+    
+    # --- Initial Startup Status Check ---
+    print("Performing initial status check...")
+    get_settings_from_db() # Get latest settings first
+    server_gateway_ip = get_server_gateway_ip()
     print(f"Detected Server Gateway: {server_gateway_ip} on interface {NETWORK_INTERFACE}")
     
-    targets = DEFAULT_TARGETS
+    targets = []
     if os.path.exists(TARGETS_CONFIG_FILE):
         try:
-            with open(TARGETS_CONFIG_FILE, 'r') as f: targets = json.load(f)
-        except (json.JSONDecodeError): pass
+            with open(TARGETS_CONFIG_FILE, 'r') as f: 
+                targets = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Warning: Could not parse {TARGETS_CONFIG_FILE}. Using empty target list for startup check.")
     
+    initial_metrics = []
+    with ThreadPoolExecutor(max_workers=len(targets) or 1) as executor:
+        future_to_target = {executor.submit(ping_target_once, target, server_gateway_ip): target for target in targets}
+        for future in future_to_target:
+            try:
+                result = future.result()
+                initial_metrics.append(result)
+            except Exception as exc:
+                print(f'{future_to_target[future]["name"]} generated an exception: {exc}')
+
+    initial_status = calculate_internet_status(initial_metrics, SETTINGS)
+    update_event_log(initial_status)
+    print(f"Startup complete. Initial status '{initial_status}' has been logged.")
+    # --- End of Initial Check ---
+
+    # --- Start Continuous Monitoring Threads ---
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.submit(get_resource_usage)
-        executor.submit(scan_network)
-        executor.submit(command_server)
-        executor.submit(monitor_settings)
+        executor.submit(monitor_settings) # Thread to keep settings up-to-date
+        
+        # Start continuous pinging for all targets
         for target in targets:
             executor.submit(continuous_ping_target, target, server_gateway_ip)
-            executor.submit(get_diagnostics, target, server_gateway_ip)
     
     print("A.N.U.S. Service has shut down.")

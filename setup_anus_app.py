@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# A.N.U.S. v1.3.9
+# A.N.U.S. v1.3.9 - Installer Update
 
 import subprocess
 import os
@@ -266,8 +266,8 @@ def get_ssl_cert_details(cert_path):
     return details
 
 def setup_database(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
-    """Creates the database and tables if they don't exist."""
-    print_info_func("Setting up database...")
+    """Creates the database and tables if they don't exist. This is safe for updates."""
+    print_info_func("Setting up/updating database schema...")
     try:
         if not os.path.exists(DB_DIR):
             os.makedirs(DB_DIR)
@@ -305,6 +305,8 @@ def setup_database(run_command_func, print_info_func, print_success_func, print_
             """)
             cursor.execute("CREATE TABLE IF NOT EXISTS client_pings (ip TEXT PRIMARY KEY, ping REAL, timestamp INTEGER)")
             cursor.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
+            # ADDED: event_log table for status change tracking.
+            # This will be created if it doesn't exist, making updates safe.
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS event_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -320,7 +322,7 @@ def setup_database(run_command_func, print_info_func, print_success_func, print_
         print_success_func("Database setup complete.")
         return True
     except Exception as e:
-        print_error_func(f"Failed to create database schema: {e}")
+        print_error_func(f"Failed to create/update database schema: {e}")
         return False
 
 # --- Installation Step Functions (UI Agnostic) ---

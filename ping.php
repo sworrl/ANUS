@@ -13,22 +13,46 @@ $client_ip_file = '/var/db/anus_client_ip.txt';
 $targets_config_file = '/var/www/html/anus/assets/targets.json';
 $socket_path = '/var/run/anus_service_cmd.sock';
 
-// --- Database Setup ---
-try {
-    $db = new PDO("sqlite:{$db_path}");
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
-    exit;
+// --- Database Setup & Helper Functions ---
+function get_db_connection() {
+    global $db_path;
+    try {
+        $db = new PDO("sqlite:{$db_path}");
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // Create event_log table if it doesn't exist
+        $db->exec("CREATE TABLE IF NOT EXISTS event_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            status TEXT NOT NULL,
+            startTime INTEGER NOT NULL,
+            endTime INTEGER
+        )");
+        return $db;
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
+        exit;
+    }
 }
 
-// --- Helper Functions ---
+function get_settings($db) {
+    $settings = [
+        'onlineDetectionMethod' => 'smart_check',
+        'smartCheckThreshold' => 3,
+        'criticalServices' => 'Gateway,OpenDNS Primary,Google DNS,Cloudflare DNS'
+    ];
+    $stmt = $db->query("SELECT key, value FROM settings");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $settings[$row['key']] = $row['value'];
+    }
+    return $settings;
+}
+
 function get_data_from_socket($command) {
     global $socket_path;
-    $client = stream_socket_client("unix://{$socket_path}", $errno, $errstr, 30);
+    $client = @stream_socket_client("unix://{$socket_path}", $errno, $errstr, 5);
     if (!$client) {
-        throw new Exception("Socket connection failed: {$errstr} ({$errno})");
+        // Don't throw an exception, just return an error state
+        return ['error' => "Socket connection failed: {$errstr} ({$errno})"];
     }
     fwrite($client, $command);
     $response = '';
@@ -44,41 +68,122 @@ function get_gateway_details_from_db($db) {
     return $stmt_gateway->fetch(PDO::FETCH_ASSOC) ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
 }
 
+function calculate_internet_status($latest_metrics, $settings) {
+    $method = $settings['onlineDetectionMethod'] ?? 'smart_check';
+    $critical_services = array_map('trim', explode(',', $settings['criticalServices'] ?? ''));
+
+    $up_count = 0;
+    $down_count = 0;
+    $critical_up_count = 0;
+    $critical_down_count = 0;
+    $gateway_status = 'DOWN';
+
+    foreach ($latest_metrics as $metric) {
+        $is_critical = in_array($metric['name'], $critical_services);
+        if ($metric['status'] === 'UP') {
+            $up_count++;
+            if ($is_critical) $critical_up_count++;
+        } else {
+            $down_count++;
+            if ($is_critical) $critical_down_count++;
+        }
+        if ($metric['name'] === 'Gateway') {
+            $gateway_status = $metric['status'];
+        }
+    }
+
+    switch ($method) {
+        case 'gateway':
+            return $gateway_status;
+        case 'majority':
+            return ($up_count >= $down_count) ? 'UP' : 'DOWN';
+        case 'critical_services':
+            return ($critical_down_count === 0 && count($critical_services) > 0) ? 'UP' : 'DOWN';
+        case 'smart_check':
+        default:
+            if ($gateway_status === 'DOWN') return 'DOWN';
+            $smart_threshold = (int)($settings['smartCheckThreshold'] ?? 3);
+            if ($critical_down_count >= $smart_threshold) return 'DOWN';
+            return 'UP';
+    }
+}
+
+function update_event_log($db, $current_status) {
+    $stmt = $db->query("SELECT id, status FROM event_log ORDER BY startTime DESC LIMIT 1");
+    $last_event = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$last_event) {
+        // First run, log startup status
+        $insert_stmt = $db->prepare("INSERT INTO event_log (status, startTime) VALUES (?, ?)");
+        $insert_stmt->execute([$current_status, time()]);
+        return;
+    }
+
+    if ($last_event['status'] !== $current_status) {
+        // Status has changed, end the last event and start a new one
+        $update_stmt = $db->prepare("UPDATE event_log SET endTime = ? WHERE id = ?");
+        $update_stmt->execute([time(), $last_event['id']]);
+
+        $insert_stmt = $db->prepare("INSERT INTO event_log (status, startTime) VALUES (?, ?)");
+        $insert_stmt->execute([$current_status, time()]);
+    }
+}
+
+function format_long_duration($seconds) {
+    if ($seconds <= 0) return "0 Seconds";
+    $days = floor($seconds / 86400);
+    $seconds %= 86400;
+    $hours = floor($seconds / 3600);
+    $seconds %= 3600;
+    $minutes = floor($seconds / 60);
+    $seconds %= 60;
+
+    $parts = [];
+    if ($days > 0) $parts[] = $days . " Day" . ($days > 1 ? "s" : "");
+    if ($hours > 0) $parts[] = $hours . " Hour" . ($hours > 1 ? "s" : "");
+    if ($minutes > 0) $parts[] = $minutes . " Minute" . ($minutes > 1 ? "s" : "");
+    if ($seconds > 0) $parts[] = $seconds . " Second" . ($seconds > 1 ? "s" : "");
+
+    return implode(", ", $parts);
+}
+
+
 // --- API Endpoint Logic ---
+$db = get_db_connection();
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 $action = $data['action'] ?? $_GET['action'] ?? '';
 
 $client_ip = $_SERVER['REMOTE_ADDR'] ?? null;
-if ($client_ip && $action !== 'get_targets' && $action !== 'save_targets') {
+if ($client_ip && !in_array($action, ['get_targets', 'save_targets'])) {
     @file_put_contents($client_ip_file, $client_ip);
 }
 
 switch ($action) {
     case 'get_all_latest_metrics':
         try {
-            $stmt = $db->query("SELECT name, ping, jitter, status, dns_info, traceroute_info, timestamp, packet_loss FROM metrics WHERE is_on_demand = 0 ORDER BY timestamp DESC");
+            // Fetch latest metrics
+            $stmt = $db->query("SELECT name, ping, jitter, status, dns_info, traceroute_info, timestamp, packet_loss FROM metrics WHERE is_on_demand = 0 AND timestamp > (strftime('%s', 'now') - 900) GROUP BY name ORDER BY timestamp DESC");
             $latest_metrics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Reorganize to get only the latest unique metric for each target
-            $unique_metrics = [];
-            foreach ($latest_metrics as $metric) {
-                if (!isset($unique_metrics[$metric['name']])) {
-                    $unique_metrics[$metric['name']] = $metric;
-                }
-            }
-            $latest_metrics = array_values($unique_metrics);
+            // Fetch settings
+            $settings = get_settings($db);
 
-            foreach ($latest_metrics as &$metric_data) {
-                $metric_data['dns_info'] = json_decode($metric_data['dns_info'], true);
-                $metric_data['traceroute_info'] = json_decode($metric_data['traceroute_info'], true);
-            }
-            unset($metric_data);
-
+            // Calculate overall status
+            $overall_status = calculate_internet_status($latest_metrics, $settings);
+            
+            // Update the event log with the new status
+            update_event_log($db, $overall_status);
+            
+            // Fetch other details
             $stmt_resource = $db->query("SELECT cpu_usage, mem_usage, net_down_kbps, net_up_kbps FROM resource_metrics ORDER BY timestamp DESC LIMIT 1");
             $resource_usage = $stmt_resource->fetch(PDO::FETCH_ASSOC) ?: ['cpu_usage' => 0, 'mem_usage' => 0, 'net_down_kbps' => 0, 'net_up_kbps' => 0];
-
             $gateway_details = get_gateway_details_from_db($db);
+            
+            // Get status start time from the latest event log entry
+            $stmt_log_start = $db->query("SELECT startTime FROM event_log ORDER BY startTime DESC LIMIT 1");
+            $status_start_time = $stmt_log_start->fetchColumn() ?: time();
+
 
             $server_status = [
                 'service_status' => trim(@shell_exec('systemctl is-active anus_service.service')) === 'active',
@@ -88,8 +193,16 @@ switch ($action) {
                 'server_gateway_ip' => $gateway_details['ip'],
                 'gateway_details' => $gateway_details,
                 'resource_usage' => $resource_usage,
-                'internet_quality_score' => 0 // This will be calculated on the client side
+                'overall_status' => $overall_status,
+                'status_start_time' => date('c', $status_start_time)
             ];
+
+            foreach ($latest_metrics as &$metric_data) {
+                $metric_data['dns_info'] = json_decode($metric_data['dns_info'], true);
+                $metric_data['traceroute_info'] = json_decode($metric_data['traceroute_info'], true);
+            }
+            unset($metric_data);
+
             echo json_encode(['pings' => $latest_metrics, 'server_status' => $server_status]);
         } catch (Exception $e) {
             http_response_code(500);
@@ -97,6 +210,56 @@ switch ($action) {
         }
         break;
 
+    case 'get_uptime_stats':
+        try {
+            $now = time();
+            $periods = [
+                '24h' => $now - 86400,
+                '7d' => $now - 604800,
+                '30d' => $now - 2592000
+            ];
+            $stats = [];
+
+            foreach ($periods as $label => $start_time) {
+                $stmt = $db->prepare("SELECT status, startTime, endTime FROM event_log WHERE endTime >= ? OR (endTime IS NULL AND startTime >= ?)");
+                $stmt->execute([$start_time, $start_time]);
+                $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $total_downtime = 0;
+                foreach ($events as $event) {
+                    if ($event['status'] === 'DOWN') {
+                        $event_start = max($event['startTime'], $start_time);
+                        $event_end = $event['endTime'] ? min($event['endTime'], $now) : $now;
+                        $total_downtime += ($event_end - $event_start);
+                    }
+                }
+                $total_period_seconds = $now - $start_time;
+                $uptime_percentage = (($total_period_seconds - $total_downtime) / $total_period_seconds) * 100;
+                $stats[$label] = [
+                    'uptime_percentage' => round($uptime_percentage, 2),
+                    'total_downtime_seconds' => $total_downtime
+                ];
+            }
+            
+            // Longest continuous status
+            $stmt_longest_online = $db->query("SELECT MAX(endTime - startTime) FROM event_log WHERE status = 'UP' AND endTime IS NOT NULL");
+            $longest_online = $stmt_longest_online->fetchColumn() ?: 0;
+            
+            $stmt_longest_offline = $db->query("SELECT MAX(endTime - startTime) FROM event_log WHERE status = 'DOWN' AND endTime IS NOT NULL");
+            $longest_offline = $stmt_longest_offline->fetchColumn() ?: 0;
+
+            $stats['longest_online_formatted'] = format_long_duration($longest_online);
+            $stats['longest_offline_formatted'] = format_long_duration($longest_offline);
+
+            echo json_encode($stats);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error fetching uptime stats: ' . $e->getMessage()]);
+        }
+        break;
+
+    // Keep other cases the same as the original file, but use get_db_connection()
     case 'on_demand_ping':
         try {
             $command = json_encode(['action' => 'on_demand_ping', 'target' => $data['target'], 'count' => $data['count'], 'size' => $data['size']]);
@@ -222,16 +385,34 @@ switch ($action) {
         }
         break;
         
+    // *** ADDED THIS CASE TO FIX THE BUG ***
+    case 'get_settings':
+        try {
+            echo json_encode(get_settings($db));
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error fetching settings: ' . $e->getMessage()]);
+        }
+        break;
+
     case 'save_settings':
         try {
-            if (isset($data['settings'])) {
+            if (isset($data['settings']) && is_array($data['settings'])) {
+                $db->beginTransaction();
+                $stmt = $db->prepare("REPLACE INTO settings (key, value) VALUES (?, ?)");
                 foreach ($data['settings'] as $key => $value) {
-                    $stmt = $db->prepare("REPLACE INTO settings (key, value) VALUES (?, ?)");
                     $stmt->execute([$key, $value]);
                 }
+                $db->commit();
+                echo json_encode(['status' => 'success']);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid or missing settings data.']);
             }
-            echo json_encode(['status' => 'success']);
         } catch (Exception $e) { 
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
             http_response_code(500); 
             echo json_encode(['error' => 'Error saving settings: ' . $e->getMessage()]); 
         }
