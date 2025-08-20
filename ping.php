@@ -11,7 +11,7 @@ set_time_limit(60);
 $db_path = '/var/db/anus_metrics.db';
 $client_ip_file = '/var/db/anus_client_ip.txt';
 $targets_config_file = '/var/www/html/anus/assets/targets.json';
-$socket_path = '/var/run/anus_service.sock';
+$socket_path = '/var/run/anus_service_cmd.sock';
 
 // --- Database Setup ---
 try {
@@ -37,6 +37,11 @@ function get_data_from_socket($command) {
     }
     fclose($client);
     return json_decode($response, true);
+}
+
+function get_gateway_details_from_db($db) {
+    $stmt_gateway = $db->query("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info ORDER BY last_updated DESC LIMIT 1");
+    return $stmt_gateway->fetch(PDO::FETCH_ASSOC) ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
 }
 
 // --- API Endpoint Logic ---
@@ -73,8 +78,7 @@ switch ($action) {
             $stmt_resource = $db->query("SELECT cpu_usage, mem_usage, net_down_kbps, net_up_kbps FROM resource_metrics ORDER BY timestamp DESC LIMIT 1");
             $resource_usage = $stmt_resource->fetch(PDO::FETCH_ASSOC) ?: ['cpu_usage' => 0, 'mem_usage' => 0, 'net_down_kbps' => 0, 'net_up_kbps' => 0];
 
-            $stmt_gateway = $db->query("SELECT gateway_ip, gateway_mac, gateway_vendor FROM local_network_info ORDER BY last_updated DESC LIMIT 1");
-            $gateway_details = $stmt_gateway->fetch(PDO::FETCH_ASSOC) ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
+            $gateway_details = get_gateway_details_from_db($db);
 
             $server_status = [
                 'service_status' => trim(@shell_exec('systemctl is-active anus_service.service')) === 'active',
@@ -95,7 +99,7 @@ switch ($action) {
 
     case 'on_demand_ping':
         try {
-            $command = json_encode(['action' => 'on_demand_ping', 'target' => $data['target']]);
+            $command = json_encode(['action' => 'on_demand_ping', 'target' => $data['target'], 'count' => $data['count'], 'size' => $data['size']]);
             $response = get_data_from_socket($command);
             echo json_encode($response);
         } catch (Exception $e) {
@@ -143,7 +147,7 @@ switch ($action) {
     case 'get_recent_history':
         $target_name = $data['target'] ?? $_GET['target'] ?? null;
         if (!$target_name) { http_response_code(400); echo json_encode(['error' => 'Target name not provided.']); break; }
-        $stmt = $db->prepare("SELECT timestamp, ping FROM (SELECT timestamp, ping FROM metrics WHERE name = ? ORDER BY timestamp DESC LIMIT 30) sub ORDER BY timestamp ASC");
+        $stmt = $db->prepare("SELECT timestamp, ping FROM (SELECT timestamp, ping FROM metrics WHERE name = ? AND is_on_demand = 0 ORDER BY timestamp DESC LIMIT 30) sub ORDER BY timestamp ASC");
         $stmt->execute([$target_name]);
         echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         break;
@@ -174,9 +178,10 @@ switch ($action) {
 
     case 'get_historical_data':
         try {
-            $time_24h_ago = time() - 86400;
-            $stmt = $db->prepare("SELECT name, ping, jitter, status, timestamp FROM metrics WHERE timestamp >= ? ORDER BY timestamp ASC");
-            $stmt->execute([$time_24h_ago]);
+            $start = $data['start'] ?? time() - 86400;
+            $end = $data['end'] ?? time();
+            $stmt = $db->prepare("SELECT name, ping, jitter, status, timestamp FROM metrics WHERE timestamp >= ? AND timestamp <= ? AND is_on_demand = 0 ORDER BY timestamp ASC");
+            $stmt->execute([$start, $end]);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC | PDO::FETCH_GROUP);
             echo json_encode($results);
         } catch (Exception $e) { 
@@ -187,40 +192,34 @@ switch ($action) {
 
     case 'get_log':
         try {
-            $stmt = $db->prepare("SELECT status, timestamp FROM metrics WHERE name = 'Google.com' ORDER BY timestamp ASC");
-            $stmt->execute();
-            $pings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $event_log = [];
-            if (count($pings) > 0) {
-                $last_status = $pings[0]['status'];
-                $event_start_time = $pings[0]['timestamp'];
-                
-                for ($i = 1; $i < count($pings); $i++) {
-                    if ($pings[$i]['status'] !== $last_status) {
-                        $event_log[] = [
-                            'status' => $last_status,
-                            'startTime' => date('c', $event_start_time),
-                            'endTime' => date('c', $pings[$i]['timestamp'])
-                        ];
-                        $last_status = $pings[$i]['status'];
-                        $event_start_time = $pings[$i]['timestamp'];
-                    }
+            $stmt = $db->query("SELECT status, startTime, endTime FROM event_log ORDER BY startTime DESC");
+            $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($events as &$event) {
+                $event['startTime'] = date('c', $event['startTime']);
+                if ($event['endTime']) {
+                    $event['endTime'] = date('c', $event['endTime']);
+                } else {
+                    $event['endTime'] = date('c', time());
                 }
-                $event_log[] = [
-                    'status' => $last_status,
-                    'startTime' => date('c', $event_start_time),
-                    'endTime' => date('c', time())
-                ];
             }
-            echo json_encode(array_reverse($event_log));
-        } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error generating log: ' . $e->getMessage()]); }
+            echo json_encode($events);
+        } catch (Exception $e) { 
+            http_response_code(500); 
+            echo json_encode(['error' => 'Error generating log: ' . $e->getMessage()]); 
+        }
         break;
 
     case 'clear_log':
         try {
-            $db->exec("DELETE FROM metrics"); $db->exec("DELETE FROM client_pings"); $db->exec("DELETE FROM resource_metrics");
+            $db->exec("DELETE FROM metrics"); 
+            $db->exec("DELETE FROM client_pings"); 
+            $db->exec("DELETE FROM resource_metrics");
+            $db->exec("DELETE FROM event_log");
             echo json_encode(['status' => 'success, all metrics cleared.']);
-        } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error clearing log: ' . $e->getMessage()]); }
+        } catch (Exception $e) { 
+            http_response_code(500); 
+            echo json_encode(['error' => 'Error clearing log: ' . $e->getMessage()]); 
+        }
         break;
         
     case 'save_settings':
@@ -232,7 +231,10 @@ switch ($action) {
                 }
             }
             echo json_encode(['status' => 'success']);
-        } catch (Exception $e) { http_response_code(500); echo json_encode(['error' => 'Error saving settings: ' . $e->getMessage()]); }
+        } catch (Exception $e) { 
+            http_response_code(500); 
+            echo json_encode(['error' => 'Error saving settings: ' . $e->getMessage()]); 
+        }
         break;
 
     default:

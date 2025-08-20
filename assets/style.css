@@ -9,15 +9,15 @@
     --muted-bg-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20-5-5-5 5L11 0zM21 25l5 20-5-5-5 5L21 25zM31 50l5 20-5-5-5 5L31 50zM41 75l5 20-5-5-5 5L41 75zM51 0l5 20-5-5-5 5L51 0zM61 25l5 20-5-5-5 5L61 25zM71 50l5 20-5-5-5 5L71 50z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(to bottom right, var(--bg-tertiary), color-mix(in srgb, var(--bg-tertiary) 85%, black));
 }
 
-body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); transition: background-color 0.3s; background-image: var(--body-bg-image); }
-.bg-main { background-color: var(--bg-secondary); border-color: var(--border-primary); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); background-image: var(--main-bg-image); }
+body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; background: var(--body-bg-image) var(--bg-primary); color: var(--text-primary); }
+.bg-main { border-color: var(--border-primary); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); background: var(--main-bg-image) var(--bg-secondary); }
 .border-main { border-color: var(--border-primary); }
 .text-accent { color: var(--accent-primary); }
 .text-accent-secondary { color: var(--accent-secondary); }
 .bg-accent { background-color: var(--accent-primary); }
 .border-accent { border-color: var(--accent-primary); }
 .text-muted { color: var(--text-secondary); }
-.bg-muted { background-color: var(--bg-tertiary); background-image: var(--muted-bg-image); }
+.bg-muted { background: var(--muted-bg-image) var(--bg-tertiary); }
 
 .card-emboss { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transition: box-shadow 0.3s ease-in-out; }
 .card-emboss-hover:hover { box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); }

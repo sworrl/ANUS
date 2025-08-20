@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# A.N.U.S. v1.3.6
+#!/usr/bin/python3
+# A.N.U.S. v1.3.9
 
 import subprocess
 import os
@@ -7,7 +7,6 @@ import sys
 import sqlite3
 import time
 import socket
-import xml.etree.ElementTree as ET
 import shutil
 import re
 from datetime import datetime
@@ -32,7 +31,8 @@ CLIENT_IP_FILE = os.path.join(DB_DIR, "anus_client_ip.txt")
 SERVICE_NAME = "anus_service"
 PYTHON_SERVICE_FILE = "anus_service.py"
 SYSTEMD_SERVICE_PATH = f"/etc/systemd/system/{SERVICE_NAME}.service"
-VERSION = "v1.3.6"
+SUDOERS_FILE = "/etc/sudoers.d/anus-permissions"
+VERSION = "v1.3.9"
 SSL_INFO_CONFIG_FILE = os.path.join(ASSETS_DIR, "ssl_info.json")
 VERBOSE_MODE = any(arg in ['-verbose', '--verbose', '/verbose'] for arg in sys.argv)
 
@@ -57,10 +57,12 @@ class colors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
 
-# --- Simple Text-Based Functions (Fallback) ---
+# --- Simple Text-Based Functions ---
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def simple_print_header(message):
-    if VERBOSE_MODE:
-        print(f"\n{colors.BOLD}{colors.HEADER}--- {message} ---{colors.ENDC}")
+    print(f"\n{colors.BOLD}{colors.HEADER}--- {message} ---{colors.ENDC}")
 
 def simple_print_success(message):
     print(f"{colors.GREEN}✔ {message}{colors.ENDC}")
@@ -72,16 +74,16 @@ def simple_print_error(message):
     print(f"{colors.RED}✖ {message}{colors.ENDC}", file=sys.stderr)
 
 def simple_print_info(message):
-    if VERBOSE_MODE:
-        print(f"{colors.BLUE}{message}{colors.ENDC}")
+    print(f"{colors.BLUE}{message}{colors.ENDC}")
 
 def simple_run_command(command, ignore_errors=False, show_output=True):
     if VERBOSE_MODE:
         simple_print_info(f"Executing: {command}")
     try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-        if VERBOSE_MODE and show_output and result.stdout: print(result.stdout)
-        if VERBOSE_MODE and show_output and result.stderr: print(result.stderr, file=sys.stderr)
+        if show_output:
+            process = subprocess.run(command, shell=True, check=True)
+        else:
+            process = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
         return True
     except subprocess.CalledProcessError as e:
         if ignore_errors:
@@ -89,18 +91,96 @@ def simple_run_command(command, ignore_errors=False, show_output=True):
             return True
         simple_print_error(f"Error executing command: {command}")
         simple_print_error(f"Return Code: {e.returncode}")
-        if show_output:
+        if not show_output and hasattr(e, 'stdout') and e.stdout:
             simple_print_error(f"Output:\n{e.stdout}")
+        if not show_output and hasattr(e, 'stderr') and e.stderr:
             simple_print_error(f"Error Output:\n{e.stderr}")
         return False
+    except KeyboardInterrupt:
+        simple_print_warning("\nCommand interrupted by user.")
+        raise
 
-# --- Core Logic Functions (used by both UIs) ---
+# --- Placeholder Functions for CLI flags ---
+def show_help():
+    simple_print_header("A.N.U.S. Installer Help")
+    simple_print_info("Usage: sudo python3 setup_anus_app.py [flag]")
+    simple_print_info("Flags:")
+    simple_print_info("  -menu            : Launch the interactive curses menu.")
+    simple_print_info("  -uninstall       : Uninstall the application.")
+    simple_print_info("  -reinstall       : Uninstall and then reinstall the application.")
+    simple_print_info("  -clear-database  : Clear the application database.")
+    simple_print_info("  -status          : Check the status of the background service.")
+    simple_print_info("  -logs            : View the latest logs from the background service.")
+    simple_print_info("  -verbose         : Show detailed command output during installation.")
+    simple_print_info("  (no flags)       : Run a standard installation or update.")
+
+def simple_uninstall(confirm=True):
+    simple_print_header("Uninstalling A.N.U.S.")
+    if confirm:
+        simple_print_warning("This will permanently remove the A.N.U.S. application, configurations, and all data.")
+        response = input("Are you sure you want to continue? (y/N): ").lower()
+        if response != 'y':
+            simple_print_info("Uninstall cancelled.")
+            return
+
+    simple_print_info("Stopping and disabling services...")
+    simple_run_command(f"sudo systemctl stop {SERVICE_NAME}", ignore_errors=True, show_output=False)
+    simple_run_command(f"sudo systemctl disable {SERVICE_NAME}", ignore_errors=True, show_output=False)
+
+    simple_print_info("Removing systemd service file...")
+    if os.path.exists(SYSTEMD_SERVICE_PATH):
+        simple_run_command(f"sudo rm {SYSTEMD_SERVICE_PATH}", ignore_errors=True)
+    simple_run_command("sudo systemctl daemon-reload", show_output=False)
+
+    simple_print_info("Disabling Apache site...")
+    simple_run_command(f"sudo a2dissite anus.conf", ignore_errors=True, show_output=False)
+    if os.path.exists(APACHE_CONF_PATH):
+        simple_run_command(f"sudo rm {APACHE_CONF_PATH}", ignore_errors=True)
+    simple_run_command("sudo systemctl reload apache2", show_output=False)
+
+    simple_print_info("Removing application and data directories...")
+    if os.path.isdir(APP_DIR):
+        simple_run_command(f"sudo rm -rf {APP_DIR}", ignore_errors=True)
+    if os.path.isdir(DB_DIR):
+        simple_run_command(f"sudo rm -rf {DB_DIR}", ignore_errors=True)
+
+    simple_print_info("Removing sudoers permission file...")
+    if os.path.exists(SUDOERS_FILE):
+        simple_run_command(f"sudo rm {SUDOERS_FILE}", ignore_errors=True)
+    
+    simple_print_success("\nA.N.U.S. has been successfully uninstalled.")
+
+def simple_clear_database():
+    simple_print_header("Clearing A.N.U.S. Database")
+    simple_print_warning("This will permanently delete all collected metrics and data.")
+    response = input("Are you sure you want to continue? (y/N): ").lower()
+    if response != 'y':
+        simple_print_info("Database clear cancelled.")
+        return
+
+    simple_print_info("Stopping service to release database file...")
+    simple_run_command(f"sudo systemctl stop {SERVICE_NAME}", ignore_errors=True, show_output=False)
+
+    simple_print_info("Deleting database file...")
+    if os.path.exists(DB_FILE):
+        simple_run_command(f"sudo rm {DB_FILE}", ignore_errors=True)
+    
+    simple_print_info("Re-initializing database schema...")
+    if setup_database(simple_run_command, simple_print_info, simple_print_success, simple_print_error, simple_print_warning):
+        simple_print_success("Database schema re-initialized successfully.")
+    else:
+        simple_print_error("Failed to re-initialize the database.")
+
+    simple_print_info("Restarting service...")
+    simple_run_command(f"sudo systemctl start {SERVICE_NAME}", show_output=False)
+    simple_print_success("\nDatabase has been cleared and service is running.")
+
+# --- Core Logic Functions ---
 def get_user():
-    """Get the username of the user who invoked sudo."""
+    # This function is critical for finding the original user who ran 'sudo'
     return os.getenv("SUDO_USER", os.getenv("USER"))
 
 def get_file_version(filepath):
-    """Reads the first line of a file to get its version string."""
     if not os.path.exists(filepath):
         return None
     try:
@@ -113,21 +193,32 @@ def get_file_version(filepath):
         return None
     return None
 
-def detect_hostname():
-    """Detects the fully qualified domain name of the server."""
+def get_fqdn():
+    """Gets the fully qualified domain name using the hostname -f command."""
+    try:
+        # The 'hostname -f' command is generally more reliable than socket.getfqdn()
+        fqdn = subprocess.check_output(['hostname', '-f'], text=True).strip()
+        if fqdn:
+            return fqdn
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        # Fallback if 'hostname -f' fails
+        return socket.getfqdn()
+    # Fallback if command returns empty string or for other issues
     return socket.getfqdn()
 
+def detect_hostname():
+    """Detects hostname using the more reliable get_fqdn method."""
+    return get_fqdn()
+
 def detect_ssl_certs(print_info_func, print_warning_func):
-    """Detects Let's Encrypt SSL certificate paths with smarter matching."""
     short_hostname = socket.gethostname()
-    fqdn = socket.getfqdn()
+    fqdn = get_fqdn() # Use the new reliable function
     print_info_func(f"Detected hostname: {short_hostname} (FQDN: {fqdn})")
     letsencrypt_dir = "/etc/letsencrypt/live"
     
     if not os.path.isdir(letsencrypt_dir):
         return fqdn, None, None
 
-    # 1. Try for an exact match with the FQDN
     potential_path = os.path.join(letsencrypt_dir, fqdn)
     if os.path.isdir(potential_path):
         cert_path = os.path.join(potential_path, "fullchain.pem")
@@ -136,7 +227,6 @@ def detect_ssl_certs(print_info_func, print_warning_func):
             print_info_func(f"Found exact SSL cert match for FQDN: {fqdn}")
             return fqdn, cert_path, key_path
 
-    # 2. Try for a partial match where the cert name starts with the short hostname
     subdirs = [d for d in os.listdir(letsencrypt_dir) if os.path.isdir(os.path.join(letsencrypt_dir, d))]
     for dir_name in subdirs:
         if dir_name.startswith(short_hostname + '.'):
@@ -146,7 +236,6 @@ def detect_ssl_certs(print_info_func, print_warning_func):
                 print_warning_func(f"No exact FQDN match found. Found partial match for '{short_hostname}': {dir_name}")
                 return dir_name, cert_path, key_path
 
-    # 3. Fallback to the first available certificate as a last resort
     if subdirs:
         first_dir = subdirs[0]
         cert_path = os.path.join(letsencrypt_dir, first_dir, "fullchain.pem")
@@ -157,79 +246,140 @@ def detect_ssl_certs(print_info_func, print_warning_func):
     
     return fqdn, None, None
 
-
 def get_ssl_cert_details(cert_path):
-    """Gets details from an SSL certificate file using openssl."""
     if not cert_path or not os.path.exists(cert_path):
         return None
     details = {}
     try:
+        issuer_line = subprocess.check_output(f"openssl x509 -in {cert_path} -noout -issuer", shell=True, text=True).strip()
+        issuer_match = re.search(r'CN\s?=\s?([^,]+)', issuer_line)
+        details['issuer'] = issuer_match.group(1) if issuer_match else "Unknown"
+
         details['start_date'] = subprocess.check_output(f"openssl x509 -in {cert_path} -noout -startdate", shell=True, text=True).split('=')[1].strip()
         details['end_date'] = subprocess.check_output(f"openssl x509 -in {cert_path} -noout -enddate", shell=True, text=True).split('=')[1].strip()
         details['fingerprint'] = subprocess.check_output(f"openssl x509 -in {cert_path} -noout -fingerprint -sha256", shell=True, text=True).split('=')[1].strip()
-        details['issuer'] = subprocess.check_output(f"openssl x509 -in {cert_path} -noout -issuer", shell=True, text=True).split('CN=')[1].strip()
-        
         for key in ['start_date', 'end_date']:
             dt_obj = datetime.strptime(details[key], '%b %d %H:%M:%S %Y %Z')
             details[key] = dt_obj.strftime('%Y-%m-%d %H:%M:%S')
-
     except Exception:
         return None
     return details
 
-def install_prerequisites(run_cmd_func, print_header_func, print_success_func):
-    print_header_func("Installing prerequisites")
+def setup_database(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
+    """Creates the database and tables if they don't exist."""
+    print_info_func("Setting up database...")
+    try:
+        if not os.path.exists(DB_DIR):
+            os.makedirs(DB_DIR)
+            run_command_func(f"sudo chown www-data:www-data {DB_DIR}", show_output=False)
+            run_command_func(f"sudo chmod 775 {DB_DIR}", show_output=False)
+
+        with sqlite3.connect(DB_FILE) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS metrics (
+                    id INTEGER PRIMARY KEY, name TEXT, ping REAL, jitter REAL,
+                    status TEXT, dns_info TEXT, traceroute_info TEXT,
+                    timestamp INTEGER, packet_loss REAL, is_on_demand BOOLEAN DEFAULT 0
+                )
+            """)
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_metrics_name_timestamp ON metrics (name, timestamp DESC)")
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS resource_metrics (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp INTEGER NOT NULL,
+                    cpu_usage REAL, mem_usage REAL, net_down_kbps REAL, net_up_kbps REAL
+                )
+            """)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS local_network_info (
+                    id INTEGER PRIMARY KEY, gateway_ip TEXT UNIQUE, gateway_mac TEXT,
+                    gateway_vendor TEXT, last_updated INTEGER
+                )
+            """)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS nmap_scan_results (
+                    id INTEGER PRIMARY KEY, ip TEXT UNIQUE, mac_address TEXT,
+                    vendor TEXT, hostname TEXT, is_up BOOLEAN,
+                    services TEXT, os TEXT, last_scanned INTEGER
+                )
+            """)
+            cursor.execute("CREATE TABLE IF NOT EXISTS client_pings (ip TEXT PRIMARY KEY, ping REAL, timestamp INTEGER)")
+            cursor.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS event_log (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    status TEXT NOT NULL,
+                    startTime INTEGER NOT NULL,
+                    endTime INTEGER
+                )
+            """)
+            conn.commit()
+        
+        run_command_func(f"sudo chown www-data:www-data {DB_FILE}", show_output=False)
+        run_command_func(f"sudo chmod 664 {DB_FILE}", show_output=False)
+        print_success_func("Database setup complete.")
+        return True
+    except Exception as e:
+        print_error_func(f"Failed to create database schema: {e}")
+        return False
+
+# --- Installation Step Functions (UI Agnostic) ---
+def install_prerequisites(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
+    print_info_func("Installing prerequisites...")
     packages = [
         "python3", "python3-pip", "apache2", 
         "php", "libapache2-mod-php", "php-sqlite3", 
         "traceroute", "dnsutils", "iproute2", "wget", "sqlite3", "nmap", "libcap2-bin", "iputils-ping",
-        "libncursesw5-dev" # Added for curses support
+        "libncursesw5-dev", "screen" 
     ]
-    if not run_cmd_func("sudo apt-get update") or \
-       not run_cmd_func(f"sudo apt-get install -y {' '.join(packages)}"):
+    if not run_command_func("sudo apt-get update") or \
+       not run_command_func(f"sudo apt-get install -y {' '.join(packages)}"):
+        print_error_func("Failed to install one or more prerequisites.")
         return False
     print_success_func("Prerequisites installed successfully.")
     return True
 
-def download_assets(run_cmd_func, print_header_func, print_success_func, print_info_func, print_error_func):
-    print_header_func("Downloading self-hosted assets")
-    if not run_cmd_func(f"sudo mkdir -p {ASSETS_DIR}"): return False
+def download_assets(run_command_func, print_info_func, print_error_func, print_success_func, print_warning_func):
+    print_info_func("Downloading self-hosted assets...")
+    if not run_command_func(f"sudo mkdir -p {ASSETS_DIR}", show_output=False): return False
     
     for filename, url in ASSETS.items():
         local_path = os.path.join(ASSETS_DIR, filename)
         if not os.path.exists(local_path):
-            print_info_func(f"Downloading {filename}...")
+            print_info_func(f"  Downloading {filename}...")
             user_agent_flag = "-U 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'" if "googleapis" in url else ""
-            if not run_cmd_func(f"sudo wget -q -o /dev/null {user_agent_flag} -O {local_path} '{url}'"):
+            if not run_command_func(f"sudo wget -q -o /dev/null {user_agent_flag} -O {local_path} '{url}'", show_output=False):
                 print_error_func(f"Failed to download {filename}. Please check your internet connection.")
                 return False
         else:
-            print_info_func(f"{filename} already exists. Skipping download.")
+            print_info_func(f"  {filename} already exists. Skipping download.")
     print_success_func("All assets downloaded successfully.")
     return True
 
-def setup_directories_and_files(run_cmd_func, print_header_func, print_success_func):
-    print_header_func("Setting up directories and files")
-    if not run_cmd_func(f"sudo mkdir -p {APP_DIR}"): return False
-    if not run_cmd_func(f"sudo mkdir -p {ASSETS_DIR}"): return False
-    if not run_cmd_func(f"sudo mkdir -p {DB_DIR}"): return False
+def setup_directories_and_files(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
+    print_info_func("Setting up directories...")
+    run_command_func(f"sudo mkdir -p {APP_DIR}", show_output=False)
+    run_command_func(f"sudo mkdir -p {ASSETS_DIR}", show_output=False)
+    run_command_func(f"sudo mkdir -p {DB_DIR}", show_output=False)
     if not os.path.exists(CLIENT_IP_FILE):
-        if not run_cmd_func(f"sudo touch {CLIENT_IP_FILE}"): return False
+        run_command_func(f"sudo touch {CLIENT_IP_FILE}", show_output=False)
     if not os.path.exists(DB_FILE):
-        if not run_cmd_func(f"sudo touch {DB_FILE}"): return False
+        run_command_func(f"sudo touch {DB_FILE}", show_output=False)
     if not os.path.exists(os.path.join(ASSETS_DIR, 'style.css')):
-        if not run_cmd_func(f"sudo touch {os.path.join(ASSETS_DIR, 'style.css')}"): return False
+        run_command_func(f"sudo touch {os.path.join(ASSETS_DIR, 'style.css')}", show_output=False)
     print_success_func("Directories and files created.")
     return True
 
-def copy_files(run_cmd_func, print_header_func, print_success_func, print_warning_func, print_error_func, print_info_func):
-    print_header_func("Copying application files")
+def copy_files(run_command_func, print_info_func, print_warning_func, print_error_func, print_success_func):
+    print_info_func("Copying application files...")
     current_dir = os.path.dirname(os.path.realpath(__file__))
+    # These explicit lists ensure that the 'support' directory and its contents
+    # are NOT copied to the web application directory.
     app_files = ["index.html", "ping.php", PYTHON_SERVICE_FILE]
     web_root_files = ["README.md", "LICENSE"]
     asset_files = ["bruh.mp3", "up.mp3", "targets.json", "fuzzy_sayings.json", "themes.json", "animated-logo.svg", "anus.conf", "style.css"]
 
-    print_info_func("Checking versions of existing files...")
+    print_info_func("  Checking versions of existing files...")
     for file_name in app_files:
         installed_path = os.path.join(APP_DIR, file_name)
         installed_version = get_file_version(installed_path)
@@ -241,14 +391,12 @@ def copy_files(run_cmd_func, print_header_func, print_success_func, print_warnin
         else:
             print_info_func(f"  - {file_name} will be installed ({VERSION}).")
 
-
     for file_name in app_files:
         source_path = os.path.join(current_dir, file_name)
         if not os.path.exists(source_path):
             print_error_func(f"Required file '{file_name}' not found at {source_path}.")
             return False
-        if not run_cmd_func(f"sudo cp {source_path} {APP_DIR}/"):
-            return False
+        if not run_command_func(f"sudo cp {source_path} {APP_DIR}/", show_output=False): return False
             
     web_root = os.path.join(APP_DIR, "..")
     for file_name in web_root_files:
@@ -256,43 +404,39 @@ def copy_files(run_cmd_func, print_header_func, print_success_func, print_warnin
         if not os.path.exists(source_path):
             print_error_func(f"Required file '{file_name}' not found at {source_path}.")
             return False
-        if not run_cmd_func(f"sudo cp {source_path} {web_root}/"):
-            return False
+        if not run_command_func(f"sudo cp {source_path} {web_root}/", show_output=False): return False
             
     for file_name in asset_files:
         source_path = os.path.join(current_dir, "assets", file_name)
         if not os.path.exists(source_path):
             print_warning_func(f"File '{file_name}' not found at {source_path}. Skipping.")
             continue
-        if not run_cmd_func(f"sudo cp {source_path} {ASSETS_DIR}/"):
-            return False
+        if not run_command_func(f"sudo cp {source_path} {ASSETS_DIR}/", show_output=False): return False
 
-    if not run_cmd_func(f"sudo chmod +x {APP_DIR}/{PYTHON_SERVICE_FILE}"):
-        return False
+    if not run_command_func(f"sudo chmod +x {APP_DIR}/{PYTHON_SERVICE_FILE}", show_output=False): return False
     print_success_func("Application files copied.")
     return True
 
-def set_permissions(run_cmd_func, print_header_func, print_success_func):
-    print_header_func("Setting final file permissions")
-    if not run_cmd_func(f"sudo chown -R www-data:www-data {DB_DIR}"): return False
-    if not run_cmd_func(f"sudo chmod -R 775 {DB_DIR}"): return False
-    if not run_cmd_func(f"sudo chown -R www-data:www-data {APP_DIR}"): return False
-    if not run_cmd_func(f"sudo chmod -R 755 {APP_DIR}"): return False
+def set_permissions(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
+    print_info_func("Setting final file permissions...")
+    if not run_command_func(f"sudo chown -R www-data:www-data {DB_DIR}", show_output=False): return False
+    if not run_command_func(f"sudo chmod -R 775 {DB_DIR}", show_output=False): return False
+    if not run_command_func(f"sudo chown -R www-data:www-data {APP_DIR}", show_output=False): return False
+    if not run_command_func(f"sudo chmod -R 755 {APP_DIR}", show_output=False): return False
     web_root = os.path.join(APP_DIR, "..")
     if os.path.exists(os.path.join(web_root, "README.md")):
-        if not run_cmd_func(f"sudo chmod 664 {os.path.join(web_root, 'README.md')}"): return False
-        if not run_cmd_func(f"sudo chown www-data:www-data {os.path.join(web_root, 'README.md')}"): return False
+        if not run_command_func(f"sudo chmod 664 {os.path.join(web_root, 'README.md')}", show_output=False): return False
+        if not run_command_func(f"sudo chown www-data:www-data {os.path.join(web_root, 'README.md')}", show_output=False): return False
     if os.path.exists(os.path.join(web_root, "LICENSE")):
-        if not run_cmd_func(f"sudo chmod 664 {os.path.join(web_root, 'LICENSE')}"): return False
-        if not run_cmd_func(f"sudo chown www-data:www-data {os.path.join(web_root, 'LICENSE')}"): return False
+        if not run_command_func(f"sudo chmod 664 {os.path.join(web_root, 'LICENSE')}", show_output=False): return False
+        if not run_command_func(f"sudo chown www-data:www-data {os.path.join(web_root, 'LICENSE')}", show_output=False): return False
     if os.path.exists(os.path.join(ASSETS_DIR, "targets.json")):
-        if not run_cmd_func(f"sudo chmod 664 {ASSETS_DIR}/targets.json"): return False
+        if not run_command_func(f"sudo chmod 664 {ASSETS_DIR}/targets.json", show_output=False): return False
     print_success_func("File permissions set correctly.")
     return True
 
-def configure_apache(run_cmd_func, print_header_func, print_success_func, print_info_func, print_warning_func, print_error_func):
-    print_header_func("Configuring Apache")
-    
+def configure_apache(run_command_func, print_info_func, print_warning_func, print_error_func, print_success_func):
+    print_info_func("Configuring Apache...")
     hostname, cert_file, key_file = detect_ssl_certs(print_info_func, print_warning_func)
 
     if not cert_file or not key_file:
@@ -303,7 +447,7 @@ def configure_apache(run_cmd_func, print_header_func, print_success_func, print_
     try:
         with open("ssl_info.json.tmp", "w") as f:
             json.dump({"cert_path": cert_file}, f)
-        if not run_cmd_func(f"sudo cp ssl_info.json.tmp {SSL_INFO_CONFIG_FILE}"): return False
+        if not run_command_func(f"sudo cp ssl_info.json.tmp {SSL_INFO_CONFIG_FILE}", show_output=False): return False
         os.remove("ssl_info.json.tmp")
     except Exception as e:
         print_error_func(f"Failed to write SSL info file: {e}")
@@ -340,19 +484,19 @@ def configure_apache(run_cmd_func, print_header_func, print_success_func, print_
     try:
         with open("anus.conf.tmp", "w") as f:
             f.write(apache_conf_content)
-        if not run_cmd_func(f"sudo cp anus.conf.tmp {APACHE_CONF_PATH}"): return False
+        if not run_command_func(f"sudo cp anus.conf.tmp {APACHE_CONF_PATH}", show_output=False): return False
         os.remove("anus.conf.tmp")
     except Exception as e:
         print_error_func(f"Failed to write Apache config file: {e}")
         return False
 
-    if not run_cmd_func("sudo a2ensite anus.conf", ignore_errors=True): return False
-    if not run_cmd_func("sudo a2enmod ssl alias", ignore_errors=True): return False
+    if not run_command_func("sudo a2ensite anus.conf", ignore_errors=True): return False
+    if not run_command_func("sudo a2enmod ssl alias", ignore_errors=True): return False
     print_success_func("Apache configured.")
     return True
 
-def setup_systemd_service(run_cmd_func, print_header_func, print_success_func):
-    print_header_func(f"Setting up systemd service: {SERVICE_NAME}")
+def setup_systemd_service(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
+    print_info_func(f"Setting up systemd service: {SERVICE_NAME}...")
     service_content = f"""
 [Unit]
 Description=A.N.U.S. Network Monitoring Service
@@ -371,15 +515,15 @@ WantedBy=multi-user.target
 """
     with open(f"{SERVICE_NAME}.service.tmp", "w") as f: f.write(service_content)
     
-    if not run_cmd_func(f"sudo mv {SERVICE_NAME}.service.tmp {SYSTEMD_SERVICE_PATH}"): return False
-    if not run_cmd_func("sudo systemctl daemon-reload"): return False
-    if not run_cmd_func(f"sudo systemctl enable {SERVICE_NAME}.service"): return False
-    if not run_cmd_func(f"sudo systemctl restart {SERVICE_NAME}.service"): return False
+    if not run_command_func(f"sudo mv {SERVICE_NAME}.service.tmp {SYSTEMD_SERVICE_PATH}", show_output=False): return False
+    if not run_command_func("sudo systemctl daemon-reload", show_output=False): return False
+    if not run_command_func(f"sudo systemctl enable {SERVICE_NAME}.service", show_output=False): return False
+    if not run_command_func(f"sudo systemctl restart {SERVICE_NAME}.service", show_output=False): return False
     print_success_func("Systemd service created and started.")
     return True
 
-def apply_system_tweaks(run_cmd_func, print_header_func, print_success_func, print_warning_func, print_error_func, print_info_func):
-    print_header_func("Applying system tweaks")
+def apply_system_tweaks(run_command_func, print_info_func, print_success_func, print_error_func, print_warning_func):
+    print_info_func("Applying system tweaks...")
     nmap_path = shutil.which("nmap")
     traceroute_path = shutil.which("traceroute")
 
@@ -387,22 +531,20 @@ def apply_system_tweaks(run_cmd_func, print_header_func, print_success_func, pri
         print_error_func("Could not find 'nmap' or 'traceroute' executables.")
         return False
 
-    # Reverting to sudoers file method for better compatibility
     sudoers_file = "/etc/sudoers.d/anus-permissions"
     sudoers_content = (
         f"www-data ALL=(ALL) NOPASSWD: {nmap_path}\n"
         f"www-data ALL=(ALL) NOPASSWD: {traceroute_path}\n"
     )
     
-    print_info_func(f"Creating sudoers file at {sudoers_file}...")
+    print_info_func(f"  Creating sudoers file at {sudoers_file}...")
     try:
         with open("anus-permissions.tmp", "w") as f:
             f.write(sudoers_content)
         
-        # Use a command to move and set permissions, as direct Python calls might fail
-        if not run_cmd_func(f"sudo mv anus-permissions.tmp {sudoers_file}"): return False
-        if not run_cmd_func(f"sudo chown root:root {sudoers_file}"): return False
-        if not run_cmd_func(f"sudo chmod 0440 {sudoers_file}"): return False
+        if not run_command_func(f"sudo mv anus-permissions.tmp {sudoers_file}", show_output=False): return False
+        if not run_command_func(f"sudo chown root:root {sudoers_file}", show_output=False): return False
+        if not run_command_func(f"sudo chmod 0440 {sudoers_file}", show_output=False): return False
         
         print_success_func("Sudoers rule for nmap & traceroute created successfully.")
     except Exception as e:
@@ -424,10 +566,10 @@ class CursesUI:
         curses.start_color()
         curses.use_default_colors()
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Selected
-        curses.init_pair(2, curses.COLOR_RED, -1)     # Error
-        curses.init_pair(3, curses.COLOR_YELLOW, -1)   # Header/Title
-        curses.init_pair(4, curses.COLOR_CYAN, -1)     # Info
-        curses.init_pair(5, curses.COLOR_GREEN, -1)    # Success
+        curses.init_pair(2, curses.COLOR_RED, -1)     # Error / Destructive
+        curses.init_pair(3, curses.COLOR_YELLOW, -1)   # Warning / Re-install
+        curses.init_pair(4, curses.COLOR_CYAN, -1)     # Info / View
+        curses.init_pair(5, curses.COLOR_GREEN, -1)    # Success / Install
         curses.init_pair(6, curses.COLOR_MAGENTA, -1)  # Borders
         curses.init_pair(7, curses.COLOR_WHITE, -1)    # Default Text
         curses.init_pair(8, curses.COLOR_BLUE, -1)     # Panel titles
@@ -451,7 +593,7 @@ class CursesUI:
 
         if menu_visible:
             menu_width = 30
-            status_height = 8
+            status_height = 9
             self.menu_win = curses.newwin(h - 2, menu_width, 1, 1)
             self.output_win = curses.newwin(h - 2 - status_height, w - menu_width - 2, 1, menu_width + 1)
             self.status_win = curses.newwin(status_height, w - menu_width - 2, h - 1 - status_height, menu_width + 1)
@@ -486,8 +628,19 @@ class CursesUI:
         if cert_details:
             self.status_win.addstr(2, 2, "SSL Cert:", curses.color_pair(5))
             self.status_win.addstr(3, 4, f"Issuer: {cert_details['issuer']}", curses.color_pair(7))
-            self.status_win.addstr(4, 4, f"Expires: {cert_details['end_date']}", curses.color_pair(7))
-            self.status_win.addstr(5, 4, f"Fingerprint: {cert_details['fingerprint'][:32]}...", curses.color_pair(7))
+            self.status_win.addstr(4, 4, f"Issued: {cert_details['start_date']}", curses.color_pair(7))
+            
+            end_date = datetime.strptime(cert_details['end_date'], '%Y-%m-%d %H:%M:%S')
+            days_left = (end_date - datetime.now()).days
+            
+            color = curses.color_pair(5) # Green
+            if days_left < 14: color = curses.color_pair(3) # Yellow
+            if days_left < 7: color = curses.color_pair(2) # Red
+
+            self.status_win.addstr(5, 4, f"Expires: {cert_details['end_date']} (", curses.color_pair(7))
+            self.status_win.addstr(f"{days_left} days left", color | curses.A_BOLD)
+            self.status_win.addstr(")", curses.color_pair(7))
+            self.status_win.addstr(6, 4, f"Fingerprint: {cert_details['fingerprint'][:32]}...", curses.color_pair(7))
         else:
             self.status_win.addstr(2, 2, "SSL Cert: Not Found", curses.color_pair(2))
         
@@ -498,15 +651,28 @@ class CursesUI:
         self.menu_win.clear()
         self.menu_win.box()
         self.menu_win.addstr(0, 2, " Menu ", curses.color_pair(8) | curses.A_BOLD)
+
+        menu_colors = {
+            "Install / Update": curses.color_pair(5),
+            "Re-install": curses.color_pair(3),
+            "View Service Status": curses.color_pair(4),
+            "View Service Logs": curses.color_pair(4),
+            "Clear Output": curses.color_pair(7),
+            "Clear Database": curses.color_pair(2),
+            "Uninstall": curses.color_pair(2),
+            "Exit": curses.color_pair(7)
+        }
+
         for idx, row in enumerate(self.menu):
             x = w // 2 - len(row) // 2
             y = (h // 2 - len(self.menu) // 2) + idx
+            color = menu_colors.get(row, curses.color_pair(7))
             if idx == self.current_row:
                 self.menu_win.attron(curses.color_pair(1))
                 self.menu_win.addstr(y, x, f" {row} ")
                 self.menu_win.attroff(curses.color_pair(1))
             else:
-                self.menu_win.addstr(y, x, row, curses.color_pair(7))
+                self.menu_win.addstr(y, x, row, color)
         self.menu_win.refresh()
 
     def update_progress_bar(self, current_step, total_steps, message=""):
@@ -560,7 +726,6 @@ class CursesUI:
 
             if return_code != 0 and not ignore_errors:
                 win.addstr(f"\nError: Command failed with exit code {return_code}\n", curses.color_pair(2) | curses.A_BOLD)
-                # If not in verbose mode, the output wasn't streamed, so print it now.
                 if not VERBOSE_MODE:
                     if stdout_lines:
                         win.addstr("--- STDOUT ---\n", curses.color_pair(2))
@@ -628,42 +793,65 @@ class CursesUI:
                         continue
 
                     if selected_action_title in ["Uninstall", "Clear Database", "Re-install"]:
-                        action_on_exit = selected_action_title.lower().replace("-", "_")
+                        action_on_exit = selected_action_title.lower().replace("-", "_").replace(" ", "_")
                         break
-
+                    
                     self.output_win.clear()
                     self.output_win.box()
                     self.output_win.addstr(0, 2, f" {selected_action_title} ", curses.color_pair(8) | curses.A_BOLD)
                     self.output_win.refresh()
-
-                    funcs = self.create_action_funcs(self.output_win)
+                    
+                    def c_print_success(msg): self.output_win.addstr(f"✔ {msg}\n", curses.color_pair(5)); self.output_win.refresh()
+                    def c_print_error(msg): self.output_win.addstr(f"✖ {msg}\n", curses.color_pair(2)); self.output_win.refresh()
+                    def c_print_info(msg): self.output_win.addstr(f"{msg}\n", curses.color_pair(7)); self.output_win.refresh()
+                    def c_print_warning(msg): self.output_win.addstr(f"⚠ {msg}\n", curses.color_pair(3)); self.output_win.refresh()
+                    def c_run_command(cmd, ignore_errors=False, show_output=True):
+                        return self.run_command_curses(self.output_win, cmd, ignore_errors)
 
                     if selected_action_title == "Install / Update":
                         install_steps = [
-                            ("Installing prerequisites", lambda: install_prerequisites(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Setting up directories", lambda: setup_directories_and_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Downloading assets", lambda: download_assets(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_error"])),
-                            ("Copying application files", lambda: copy_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                            ("Setting permissions", lambda: set_permissions(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Configuring Apache", lambda: configure_apache(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_warning"], funcs["p_error"])),
-                            ("Applying system tweaks", lambda: apply_system_tweaks(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                            ("Setting up systemd service", lambda: setup_systemd_service(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Finalizing setup", lambda: funcs["run_cmd"]("sudo systemctl restart apache2", ignore_errors=True))
+                            ("Installing prerequisites", lambda: install_prerequisites(c_run_command, c_print_info, c_print_success, c_print_error, c_print_warning)),
+                            ("Setting up directories", lambda: setup_directories_and_files(c_run_command, c_print_info, c_print_success, c_print_error, c_print_warning)),
+                            ("Downloading assets", lambda: download_assets(c_run_command, c_print_info, c_print_error, c_print_success, c_print_warning)),
+                            ("Copying application files", lambda: copy_files(c_run_command, c_print_info, c_print_warning, c_print_error, c_print_success)),
+                            ("Setting permissions", lambda: set_permissions(c_run_command, c_print_info, c_print_success, c_print_error, c_print_warning)),
+                            ("Configuring Apache", lambda: configure_apache(c_run_command, c_print_info, c_print_warning, c_print_error, c_print_success)),
+                            ("Applying system tweaks", lambda: apply_system_tweaks(c_run_command, c_print_info, c_print_success, c_print_error, c_print_warning)),
+                            ("Setting up database", lambda: setup_database(c_run_command, c_print_info, c_print_success, c_print_error, c_print_warning)),
+                            ("Setting up systemd service", lambda: setup_systemd_service(c_run_command, c_print_info, c_print_success, c_print_error, c_print_warning)),
+                            ("Finalizing setup", lambda: c_run_command("sudo systemctl restart apache2", ignore_errors=True, show_output=False))
                         ]
                         
                         for i, (msg, step_func) in enumerate(install_steps):
                             self.update_progress_bar(i, len(install_steps), msg)
+                            c_print_info(f"\n--- {msg} ---")
                             if not step_func():
-                                funcs["p_error"](f"\n--- Step '{msg}' failed. Aborting installation. ---")
+                                c_print_error(f"\n--- Step '{msg}' failed. Aborting installation. ---")
                                 break
                         else:
                             self.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
-                            funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
+                            c_print_success(f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
 
                     elif selected_action_title == "View Service Status":
-                        funcs["run_cmd"](f"sudo systemctl status {SERVICE_NAME}.service --no-pager")
+                        try:
+                            command = f"sudo systemctl status {SERVICE_NAME}.service --no-pager"
+                            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                            output = result.stdout + result.stderr
+                            for line in output.splitlines():
+                                self.output_win.addstr(f"{line}\n")
+                            self.output_win.refresh()
+                        except Exception as e:
+                            self.output_win.addstr(f"Failed to get service status: {e}\n", curses.color_pair(2))
+
                     elif selected_action_title == "View Service Logs":
-                        funcs["run_cmd"](f"sudo journalctl -u {SERVICE_NAME}.service -n 50 --no-pager")
+                        try:
+                            command = f"sudo journalctl -u {SERVICE_NAME}.service -n 50 --no-pager"
+                            result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+                            for line in result.stdout.splitlines():
+                                self.output_win.addstr(f"{line}\n")
+                            self.output_win.refresh()
+                        except Exception as e:
+                            self.output_win.addstr(f"Failed to get service logs: {e}\n", curses.color_pair(2))
                     
                     self.output_win.addstr("\n\nPress any key to return to the menu.", curses.color_pair(3) | curses.A_BOLD)
                     self.output_win.getch()
@@ -677,84 +865,110 @@ class CursesUI:
         
         return action_on_exit
 
-    def create_action_funcs(self, win):
-        return {
-            "run_cmd": lambda cmd, ignore_errors=False: self.run_command_curses(win, cmd, ignore_errors),
-            "p_header": lambda msg: VERBOSE_MODE and (win.addstr(f"\n--- {msg} ---\n", curses.color_pair(3) | curses.A_BOLD), win.refresh()),
-            "p_success": lambda msg: (win.addstr(f"✔ {msg}\n", curses.color_pair(5) | curses.A_BOLD), win.refresh()),
-            "p_info": lambda msg: VERBOSE_MODE and (win.addstr(f"{msg}\n", curses.color_pair(4)), win.refresh()),
-            "p_error": lambda msg: (win.addstr(f"✖ {msg}\n", curses.color_pair(2) | curses.A_BOLD), win.refresh()),
-            "p_warning": lambda msg: (win.addstr(f"⚠ {msg}\n", curses.color_pair(3)), win.refresh()),
-        }
+# --- Screen Detection Functions ---
+def is_screen_installed() -> bool:
+    """Checks if the 'screen' package is installed using dpkg or which."""
+    try:
+        result = subprocess.run(['dpkg', '-s', 'screen'], capture_output=True)
+        return result.returncode == 0
+    except FileNotFoundError:
+        return shutil.which('screen') is not None
 
-# --- Simple Fallback Functions ---
-def simple_install_or_update():
-    simple_print_header(f"Starting A.N.U.S. {VERSION} Installation/Update")
-    if not install_prerequisites(simple_run_command, simple_print_header, simple_print_success) or \
-       not setup_directories_and_files(simple_run_command, simple_print_header, simple_print_success) or \
-       not download_assets(simple_run_command, simple_print_header, simple_print_success, simple_print_info, simple_print_error) or \
-       not copy_files(simple_run_command, simple_print_header, simple_print_success, simple_print_warning, simple_print_error, simple_print_info) or \
-       not set_permissions(simple_run_command, simple_print_header, simple_print_success) or \
-       not configure_apache(simple_run_command, simple_print_header, simple_print_success, simple_print_info, simple_print_warning, simple_print_error) or \
-       not apply_system_tweaks(simple_run_command, simple_print_header, simple_print_success, simple_print_warning, simple_print_error, simple_print_info) or \
-       not setup_systemd_service(simple_run_command, simple_print_header, simple_print_success):
-        simple_print_error("\n--- Setup failed. Please check the errors above. ---")
-        return
+def check_user_screen_session() -> (bool, str):
+    """
+    Checks the ORIGINAL user's screen session using the helper script.
     
-    simple_print_header("Finalizing Setup")
-    simple_run_command("sudo systemctl restart apache2")
-    simple_run_command(f"sudo systemctl status {SERVICE_NAME}.service")
-    simple_print_success(f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
-    print("The Apache web server and the Python monitoring service have been configured and restarted.")
+    This function now executes the helper script, captures its output,
+    and returns both the boolean result and the full output for display.
+    """
+    original_user = get_user()
+    if not original_user or original_user == 'root':
+        is_in_screen = 'STY' in os.environ
+        output = "Running as root without a SUDO_USER. Standard environment check performed."
+        return is_in_screen, output
 
-def simple_uninstall(confirm=True):
-    simple_print_header("Uninstalling A.N.U.S.")
-    if confirm:
-        user_confirm = input(f"{colors.YELLOW}Are you sure you want to completely uninstall A.N.U.S.? (y/N): {colors.ENDC}")
-        if user_confirm.lower() != 'y':
-            simple_print_info("Uninstallation cancelled.")
-            return
-    simple_run_command(f"sudo systemctl stop {SERVICE_NAME}.service", ignore_errors=True)
-    simple_run_command(f"sudo systemctl disable {SERVICE_NAME}.service", ignore_errors=True)
-    if os.path.exists(SYSTEMD_SERVICE_PATH): simple_run_command(f"sudo rm {SYSTEMD_SERVICE_PATH}")
-    simple_run_command("sudo systemctl daemon-reload")
-    if os.path.exists(APACHE_CONF_PATH):
-        simple_run_command(f"sudo a2dissite anus.conf", ignore_errors=True)
-        simple_run_command(f"sudo rm {APACHE_CONF_PATH}")
-        simple_run_command("sudo systemctl reload apache2")
-    if os.path.isdir(APP_DIR): simple_run_command(f"sudo rm -rf {APP_DIR}")
-    if os.path.exists(DB_FILE): simple_run_command(f"sudo rm {DB_FILE}")
-    if os.path.exists(CLIENT_IP_FILE): simple_run_command(f"sudo rm {CLIENT_IP_FILE}")
-    sudoers_file = "/etc/sudoers.d/anus-permissions"
-    if os.path.exists(sudoers_file): simple_run_command(f"sudo rm {sudoers_file}")
-    simple_print_success("\n--- Uninstallation complete. ---")
+    try:
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        helper_script_path = os.path.join(current_dir, "support", "screen_test.py")
 
-def simple_clear_database():
-    simple_print_header("Clearing Database")
-    confirm = input(f"{colors.YELLOW}Are you sure? This will delete all metrics. (y/N): {colors.ENDC}")
-    if confirm.lower() != 'y':
-        simple_print_info("Database clear cancelled.")
-        return
-    simple_run_command(f"sudo systemctl stop {SERVICE_NAME}.service", ignore_errors=True)
-    if os.path.exists(DB_FILE):
-        simple_run_command(f"sudo rm {DB_FILE}")
-    simple_run_command(f"sudo systemctl start {SERVICE_NAME}.service", ignore_errors=True)
-    simple_print_success("Database cleared.")
+        if not os.path.exists(helper_script_path):
+            error_msg = f"Screen helper script not found at: {helper_script_path}"
+            return False, error_msg
 
+        command = ["sudo", "-u", original_user, sys.executable, helper_script_path]
+        
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        script_output = result.stdout
+        is_in_screen = "✅ Status: Running inside a GNU screen session." in script_output
+        
+        return is_in_screen, script_output
+
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        error_output = f"Failed to execute screen check helper: {e}"
+        if hasattr(e, 'stderr'):
+            error_output += f"\nStderr: {e.stderr}"
+        return False, error_output
+
+# --- Main execution block ---
 def main():
     if os.geteuid() != 0:
         simple_print_error("This script must be run as root. Please use sudo.")
         sys.exit(1)
 
-    # Handle command-line flags for non-interactive mode
     args = {arg.lstrip('-/').lower() for arg in sys.argv[1:]}
     
+    # --- START: Integrated Screen Logic (with --already-in-screen flag) ---
+    if 'menu' in args and '--already-in-screen' not in args:
+        simple_print_header("Screen Session Management")
+        
+        is_in_screen, check_output = check_user_screen_session()
+        print(check_output)
+
+        if not is_in_screen:
+            if not is_screen_installed():
+                simple_print_info("The 'screen' package is not installed. Attempting to install...")
+                if not simple_run_command("sudo apt-get update", show_output=VERBOSE_MODE) or \
+                   not simple_run_command("sudo apt-get install -y screen"):
+                    simple_print_error("Failed to install 'screen'. The interactive menu requires it.")
+                    sys.exit(1)
+                simple_print_success("'screen' package has been installed successfully.")
+            
+            simple_print_info("Not in a screen session. Relaunching the installer inside 'screen'...")
+            time.sleep(2)
+
+            script_path = os.path.realpath(__file__)
+            python_executable = sys.executable
+            
+            # Relaunch, adding the --already-in-screen flag to prevent a loop
+            command_to_run = ['screen', '-S', 'anus_installer', 'sudo', python_executable, script_path] + sys.argv[1:] + ['--already-in-screen']
+            
+            try:
+                os.execvp('screen', command_to_run)
+            except FileNotFoundError:
+                simple_print_error("Could not execute 'screen'. Please ensure it is in your system's PATH.")
+                sys.exit(1)
+            return
+        else:
+            simple_print_success("Continuing installer in the current screen session.")
+            time.sleep(1)
+    
+    # If the flag is present, remove it so it doesn't interfere with other logic
+    if '--already-in-screen' in sys.argv:
+        sys.argv.remove('--already-in-screen')
+        args.discard('already-in-screen')
+    # --- END: Integrated Screen Logic ---
+
+    # Handle non-interactive flags
+    if 'help' in args:
+        show_help()
+        sys.exit(0)
     if 'uninstall' in args:
         simple_uninstall()
         sys.exit(0)
     if 'reinstall' in args:
         simple_uninstall(confirm=False)
-        simple_install_or_update()
+        # We need a non-curses install function here
+        simple_install_or_update_with_funcs() 
         sys.exit(0)
     if 'clear-database' in args or 'cleardatabase' in args:
         simple_clear_database()
@@ -765,69 +979,62 @@ def main():
     if 'logs' in args:
         os.system(f"sudo journalctl -u {SERVICE_NAME}.service -n 50")
         sys.exit(0)
+    
+    is_menu_mode = 'menu' in args
+    is_direct_install = not args or ('verbose' in args and len(args) == 1)
 
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-    if CURSES_AVAILABLE:
-        try:
-            is_menu_mode = 'menu' in args
-            
-            def curses_main_loop(stdscr):
-                ui = CursesUI(stdscr)
-                return ui.run()
-
-            if is_menu_mode:
+    try:
+        if is_menu_mode:
+            if CURSES_AVAILABLE:
+                def curses_main_loop(stdscr):
+                    ui = CursesUI(stdscr)
+                    return ui.run()
                 action_on_exit = curses.wrapper(curses_main_loop)
-                # After curses has exited, perform the requested action
+                
                 if action_on_exit == "uninstall":
                     simple_uninstall()
-                    print("\nUninstallation complete. Press Enter to exit.")
-                    input()
                 elif action_on_exit == "re_install":
                     simple_uninstall(confirm=False)
-                    simple_install_or_update()
-                    input("\nRe-installation complete. Press Enter to continue.")
+                    simple_install_or_update_with_funcs()
                 elif action_on_exit == "clear_database":
                     simple_clear_database()
-                    input("\nDatabase cleared. Press Enter to return to the menu...")
+            else:
+                simple_print_warning("Curses library not found. Falling back to non-interactive mode.")
+        elif is_direct_install:
+            simple_install_or_update_with_funcs()
+        else:
+            show_help()
+            sys.exit(1)
 
-            else: # Default action: direct install
-                def direct_install_wrapper(stdscr):
-                    ui = CursesUI(stdscr)
-                    
-                    def install_action(win):
-                        funcs = ui.create_action_funcs(win)
-                        install_steps = [
-                            ("Installing prerequisites", lambda: install_prerequisites(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Setting up directories", lambda: setup_directories_and_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Downloading assets", lambda: download_assets(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_error"])),
-                            ("Copying application files", lambda: copy_files(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                            ("Setting permissions", lambda: set_permissions(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Configuring Apache", lambda: configure_apache(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_info"], funcs["p_warning"], funcs["p_error"])),
-                            ("Applying system tweaks", lambda: apply_system_tweaks(funcs["run_cmd"], funcs["p_header"], funcs["p_success"], funcs["p_warning"], funcs["p_error"], funcs["p_info"])),
-                            ("Setting up systemd service", lambda: setup_systemd_service(funcs["run_cmd"], funcs["p_header"], funcs["p_success"])),
-                            ("Finalizing setup", lambda: funcs["run_cmd"]("sudo systemctl restart apache2", ignore_errors=True))
-                        ]
-                        
-                        for i, (msg, step_func) in enumerate(install_steps):
-                            ui.update_progress_bar(i, len(install_steps), msg)
-                            if not step_func():
-                                funcs["p_error"](f"\n--- Step '{msg}' failed. Aborting installation. ---")
-                                break
-                        else:
-                            ui.update_progress_bar(len(install_steps), len(install_steps), "Complete!")
-                            funcs["p_success"](f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
-                    
-                    ui.show_output_window("Install / Update", install_action, menu_visible=False)
+    except KeyboardInterrupt:
+        print("\n\nOperation cancelled by user.")
+        sys.exit(0)
 
-                curses.wrapper(direct_install_wrapper)
-        except curses.error as e:
-            simple_print_warning("Curses UI failed to initialize. Falling back to simple text interface.")
-            simple_print_error(f"Error details: {e}")
-            simple_install_or_update()
-    else:
-        print(f"{colors.YELLOW}Curses library not found. Falling back to simple text interface.{colors.ENDC}")
-        simple_install_or_update()
+def simple_install_or_update_with_funcs():
+    simple_print_header(f"Starting A.N.U.S. {VERSION} Installation/Update")
+    steps = [
+        ("Installing prerequisites", install_prerequisites),
+        ("Setting up directories", setup_directories_and_files),
+        ("Downloading assets", download_assets),
+        ("Copying application files", copy_files),
+        ("Setting permissions", set_permissions),
+        ("Configuring Apache", configure_apache),
+        ("Applying system tweaks", apply_system_tweaks),
+        ("Setting up database", setup_database),
+        ("Setting up systemd service", setup_systemd_service),
+    ]
+    
+    for i, (msg, step_func) in enumerate(steps):
+        simple_print_header(f"Step {i+1}/{len(steps)}: {msg}")
+        if not step_func(simple_run_command, simple_print_info, simple_print_success, simple_print_error, simple_print_warning):
+            simple_print_error(f"\n--- Step '{msg}' failed. Aborting installation. ---")
+            return
+        simple_print_success(f"Step '{msg}' complete.")
+
+    simple_print_header("Finalizing Setup")
+    simple_run_command("sudo systemctl restart apache2")
+    simple_run_command(f"sudo systemctl status {SERVICE_NAME}.service")
+    simple_print_success(f"\n--- A.N.U.S. {VERSION} Installation/Update complete! ---")
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,9 @@
-<!-- A.N.U.S. v1.3.6 -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A.N.U.S. v1.3.6 - Automated Network Utility System</title>
+    <title>A.N.U.S. - Automated Network Utility System</title>
     <script src="./assets/tailwindcss.js"></script>
     <script src="./assets/tone.js"></script>
     <script src="./assets/chart.js"></script>
@@ -15,21 +14,20 @@
     <link href="./assets/style.css" rel="stylesheet">
     <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:%23f59e0b;stroke-width:4;stroke-miterlimit:10;}.st1{fill:%23f59e0b;stroke:%23f59e0b;stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:%23f59e0b;stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>" />
 </head>
-<body class="bg-primary text-primary flex items-center justify-center min-h-screen p-4">
+<body class="bg-primary text-primary flex items-center justify-center min-h-screen p-2 sm:p-4">
 
-    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-bg-primary z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div id="loading-logo-container" class="text-accent">
              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-32 h-32">
-                <defs><filter id="glow-loader" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>
-                <g class="logo-spin-outer"><circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/></g>
-                <g class="logo-spin-inner"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
-                <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow-loader)"/>
-                <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
-                <g class="spokes">
-                    <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
-                </g>
-            </svg>
+                 <defs><filter id="glow-loader" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter></defs>
+                 <g class="logo-spin-outer"><circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/></g>
+                 <g class="logo-spin-inner"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
+                 <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow-loader)"/>
+                 <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
+                 <g class="spokes">
+                     <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                 </g>
+             </svg>
         </div>
         <div class="w-full max-w-md mt-8 text-center">
             <p id="loading-status-text" class="text-lg text-accent-secondary font-semibold mb-2">Initializing...</p>
@@ -44,39 +42,39 @@
         </div>
     </div>
 
-    <div id="app-container" class="w-full max-w-7xl mx-auto bg-main border border-main rounded-2xl shadow-lg p-6 md:p-8 opacity-0 transition-opacity duration-500">
+    <div id="app-container" class="w-full max-w-7xl mx-auto bg-main border border-main rounded-2xl shadow-lg p-4 md:p-8 opacity-0 transition-opacity duration-500">
         <header class="flex flex-col items-center mb-6 border-b border-main pb-6">
              <div id="logo-container" class="flex flex-col items-center gap-2 cursor-pointer">
-                <svg id="logo-svg" class="w-24 h-24 text-accent" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"></feMergeNode>
-                                <feMergeNode in="SourceGraphic"></feMergeNode>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    <g class="logo-spin-outer">
-                        <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/>
-                    </g>
-                    <g class="logo-spin-inner">
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
-                        <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
-                        <path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
-                    </g>
-                    <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow)"/>
-                    <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
-                    <g class="spokes">
-                        <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
-                    </g>
-                </svg>
-                <div>
-                    <h1 id="app-title" class="text-3xl font-bold text-accent text-center">A.N.U.S. v1.3.6</h1>
-                    <p class="text-muted text-center">Automated Network Utility System</p>
-                </div>
-            </div>
+                 <svg id="logo-svg" class="w-24 h-24 text-accent" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                     <defs>
+                         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                             <feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
+                             <feMerge>
+                                 <feMergeNode in="coloredBlur"></feMergeNode>
+                                 <feMergeNode in="SourceGraphic"></feMergeNode>
+                             </feMerge>
+                         </filter>
+                     </defs>
+                     <g class="logo-spin-outer">
+                         <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                         <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/>
+                     </g>
+                     <g class="logo-spin-inner">
+                         <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+                         <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
+                         <path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
+                     </g>
+                     <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow)"/>
+                     <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
+                     <g class="spokes">
+                         <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                     </g>
+                 </svg>
+                 <div>
+                     <h1 id="app-title" class="text-2xl sm:text-3xl font-bold text-accent text-center">A.N.U.S. <span class="app-version"></span></h1>
+                     <p class="text-sm text-muted text-center">Automated Network Utility System</p>
+                 </div>
+             </div>
             <div id="current-status-card" class="card card-muted status-checking mt-4 p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto">
                 <div class="flex items-center justify-center gap-3">
                     <div id="status-indicator" class="w-4 h-4 rounded-full bg-[var(--status-color)] blinking-dot"></div>
@@ -88,13 +86,13 @@
 
         <main>
             <div class="border-b border-main mb-6">
-                <nav class="-mb-px flex space-x-6 justify-center" aria-label="Tabs">
-                    <button id="tab-dashboard" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-accent tab-active">Dashboard</button>
-                    <button id="tab-trends" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Trends</button>
-                    <button id="tab-neighborhood" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Network Neighborhood</button>
-                    <button id="tab-log" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Event Log</button>
-                    <button id="tab-settings" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Settings</button>
-                    <button id="tab-diagnostics" class="whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">On-Demand Diagnostics</button>
+                <nav class="-mb-px flex space-x-2 sm:space-x-6 justify-center overflow-x-auto" aria-label="Tabs">
+                    <button id="tab-dashboard" class="whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 font-medium text-sm hover:text-accent tab-active">Dashboard</button>
+                    <button id="tab-trends" class="whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Trends</button>
+                    <button id="tab-neighborhood" class="whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Neighborhood</button>
+                    <button id="tab-log" class="whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Event Log</button>
+                    <button id="tab-settings" class="whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Settings</button>
+                    <button id="tab-diagnostics" class="whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 border-transparent font-medium text-sm text-muted hover:text-accent">Diagnostics</button>
                 </nav>
             </div>
 
@@ -107,18 +105,18 @@
 
             <div id="view-trends" class="hidden">
                  <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Live Latency Trends</h2>
-                    <div class="card chart-card chart-container-blur p-4 h-96 relative flex items-center justify-center">
-                        <canvas id="trends-chart"></canvas>
-                        <div id="trends-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
-                            <p class="animate-pulse text-lg font-semibold text-accent">Loading historical data...</p>
-                        </div>
-                        <button id="clear-trends-filter-btn" class="absolute top-2 right-2 bg-accent hover:bg-opacity-80 text-white text-xs font-bold py-1 px-3 rounded-md hidden">Clear Filter</button>
-                    </div>
-                </div>
+                     <div class="card chart-card chart-container-blur p-4 h-96 relative flex items-center justify-center">
+                         <canvas id="trends-chart"></canvas>
+                         <div id="trends-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
+                             <p class="animate-pulse text-lg font-semibold text-accent">Loading historical data...</p>
+                         </div>
+                         <button id="clear-trends-filter-btn" class="absolute top-2 right-2 bg-accent hover:bg-opacity-80 text-white text-xs font-bold py-1 px-3 rounded-md hidden">Clear Filter</button>
+                     </div>
+                 </div>
             </div>
 
             <div id="view-neighborhood" class="hidden">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                     <h2 class="text-xl font-semibold text-accent">Network Neighborhood</h2>
                     <div class="flex items-center gap-4">
                         <label class="text-sm font-medium text-primary">Responsive Scan Mode</label>
@@ -128,9 +126,9 @@
                         </div>
                     </div>
                 </div>
-                <div id="network-tree-container" class="card relative p-0 h-[70vh] overflow-hidden">
-                    <svg id="network-tree-svg" class="absolute top-0 left-0 w-full h-full" style="transform-origin: 0 0;"></svg>
-                    <div id="network-nodes-container" class="relative w-full h-full" style="transform-origin: 0 0;"></div>
+                <div id="network-tree-container" class="card relative p-4 h-[70vh] overflow-auto">
+                    <svg id="network-tree-svg" class="absolute top-0 left-0 w-full h-full" style="pointer-events: none;"></svg>
+                    <div id="network-nodes-container" class="relative w-full min-h-full flex flex-col items-center gap-8"></div>
                     <div id="nmap-loading-indicator" class="absolute inset-0 z-20 flex items-center justify-center bg-bg-tertiary/80 backdrop-blur-sm hidden">
                         <p class="animate-pulse text-lg font-semibold text-accent">Scanning the network...</p>
                     </div>
@@ -138,7 +136,7 @@
             </div>
 
             <div id="view-log" class="hidden">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                     <h2 class="text-xl font-semibold text-accent">Event Log</h2>
                     <div class="flex items-center gap-4">
                         <div id="log-view-toggle" class="flex items-center border border-main rounded-md p-1">
@@ -161,43 +159,42 @@
 
             <div id="view-settings" class="hidden">
                  <div class="card card-muted p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="lg:col-span-2"><h3 class="text-lg font-semibold text-accent-secondary mb-2">General</h3></div>
-                    <div class="flex items-center justify-between"><label for="sound-toggle" class="text-sm font-medium text-primary">Sound FX</label><div class="relative inline-block w-10 mr-2 align-middle select-none"><input type="checkbox" name="sound-toggle" id="sound-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="sound-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-border-primary cursor-pointer"></label></div></div>
+                     <div class="lg:col-span-2"><h3 class="text-lg font-semibold text-accent-secondary mb-2">General</h3></div>
+                     <div class="flex items-center justify-between"><label for="sound-toggle" class="text-sm font-medium text-primary">Sound FX</label><div class="relative inline-block w-10 mr-2 align-middle select-none"><input type="checkbox" name="sound-toggle" id="sound-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="sound-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-border-primary cursor-pointer"></label></div></div>
                     
-                    <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Update Rate</h3><div id="update-interval-group" class="flex flex-wrap gap-x-6 gap-y-2"></div></div>
-                    <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">"Online" Detection Method</h3><div id="online-detection-method-group" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div></div>
-                    <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Theme Selector</h3><div id="theme-selector-group" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div></div>
-                </div>
+                     <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Update Rate</h3><div id="update-interval-group" class="flex flex-wrap gap-x-6 gap-y-2"></div></div>
+                     <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">"Online" Detection Method</h3><div id="online-detection-method-group" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div></div>
+                     <div class="lg:col-span-3 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Theme Selector</h3><div id="theme-selector-group" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div></div>
+                 </div>
             </div>
             
             <div id="view-diagnostics" class="hidden">
                  <div class="card card-muted p-6 space-y-6">
-                    <h2 class="text-xl font-semibold text-accent">On-Demand Diagnostics</h2>
-                    <p class="text-sm text-muted">Perform a full diagnostic test on any host, with customizable options. This will return live data directly to the screen and is not logged.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <input type="text" id="diag-target-input" placeholder="e.g., example.com or 192.168.1.1" class="col-span-full md:col-span-1 p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
-                        <div>
-                            <label for="diag-ping-count" class="text-xs text-muted">Ping Count:</label>
-                            <input type="number" id="diag-ping-count" value="4" min="1" max="50" class="w-full p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
-                        </div>
-                        <div>
-                            <label for="diag-ping-size" class="text-xs text-muted">Ping Size (bytes):</label>
-                            <input type="number" id="diag-ping-size" value="56" min="1" max="1472" class="w-full p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
-                        </div>
-                        <button id="run-diag-btn" class="col-span-full md:col-span-1 p-2 rounded-md bg-accent text-white font-semibold hover:bg-opacity-80 transition-colors">Run Diagnostics</button>
-                    </div>
-                    <div id="diag-output-container" class="bg-bg-primary p-4 rounded-md font-mono text-xs overflow-y-auto max-h-[400px] border border-border-primary">
-                        <p class="text-muted">Enter a target and click "Run Diagnostics" to begin.</p>
-                    </div>
-                </div>
+                     <h2 class="text-xl font-semibold text-accent">On-Demand Diagnostics</h2>
+                     <p class="text-sm text-muted">Perform a full diagnostic test on any host, with customizable options. This will return live data directly to the screen and is not logged.</p>
+                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                         <input type="text" id="diag-target-input" placeholder="e.g., example.com or 192.168.1.1" class="col-span-full md:col-span-1 p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
+                         <div>
+                             <label for="diag-ping-count" class="text-xs text-muted">Ping Count:</label>
+                             <input type="number" id="diag-ping-count" value="4" min="1" max="50" class="w-full p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
+                         </div>
+                         <div>
+                             <label for="diag-ping-size" class="text-xs text-muted">Ping Size (bytes):</label>
+                             <input type="number" id="diag-ping-size" value="56" min="1" max="1472" class="w-full p-2 rounded-md bg-bg-primary border border-border-primary text-primary focus:outline-none focus:border-accent">
+                         </div>
+                         <button id="run-diag-btn" class="col-span-full md:col-span-1 p-2 rounded-md bg-accent text-white font-semibold hover:bg-opacity-80 transition-colors">Run Diagnostics</button>
+                     </div>
+                     <div id="diag-output-container" class="bg-bg-primary p-4 rounded-md font-mono text-xs overflow-y-auto max-h-[400px] border border-border-primary">
+                         <p class="text-muted">Enter a target and click "Run Diagnostics" to begin.</p>
+                     </div>
+                 </div>
             </div>
         </main>
         <footer class="text-center text-xs text-muted mt-8">
-            <p>A.N.U.S. v1.3.6 - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
+            <p>A.N.U.S. <span class="app-version"></span> - Released under the <a href="javascript:void(0)" id="license-link" class="text-accent hover:underline">GPLv3 License</a>. <a href="javascript:void(0)" id="readme-link" class="text-accent hover:underline">View Readme</a></p>
         </footer>
     </div>
 
-    <!-- Modals -->
     <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center"><div class="relative mx-auto p-5 border border-main w-96 shadow-lg rounded-md bg-bg-secondary"><div class="mt-3 text-center"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50"><svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><h3 class="text-lg font-medium text-primary mt-2">Clear All Metrics?</h3><p class="text-sm text-muted p-4">This will clear all historical data. This action cannot be undone.</p><div class="items-center px-4 py-3 gap-2 flex justify-center"><button id="modal-cancel-btn" class="px-4 py-2 bg-bg-tertiary rounded-md w-full">Cancel</button><button id="modal-confirm-btn" class="px-4 py-2 bg-status-down text-white hover:bg-status-down-hover rounded-md w-full">Delete</button></div></div></div></div>
     <div id="node-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-2xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 id="modal-title" class="text-xl font-semibold text-accent">Node Details</h3><button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="modal-content" class="text-sm space-y-4"></div></div></div>
     <div id="server-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">A.N.U.S. Server Health</h3><button id="server-modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="server-modal-content" class="text-sm space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-muted p-4 rounded-lg h-64"><canvas id="cpu-chart"></canvas></div><div class="bg-muted p-4 rounded-lg h-64"><canvas id="mem-chart"></canvas></div><div class="md:col-span-2 bg-muted p-4 rounded-lg h-64"><canvas id="net-chart"></canvas></div></div></div></div>
@@ -206,6 +203,7 @@
 
     <script type="module">
         // --- State and Configuration ---
+        const APP_VERSION = '1.3.9'; // <-- SET VERSION HERE
         let currentState = null, lastState = null, lastStateChangeTime = null, log = [], allPingsData = [], trendsChart, isTrendsDataLoaded = false, soundEnabled = false, bruhPlayer, upPlayer;
         let FUZZY_SAYINGS = {};
         const sessionStartTime = new Date();
@@ -221,10 +219,10 @@
         let isResponsiveScanMode = false;
         let networkScanData = null; 
         let themes = {};
-        let pan = { x: 0, y: 0 };
-        let scale = 1;
-        let isDragging = false;
-        let startPos = { x: 0, y: 0 };
+        
+        // --- Network Neighborhood Dragging State ---
+        let draggedNode = null;
+        let offsetX = 0, offsetY = 0;
 
         const DOMElements = {
             loadingOverlay: document.getElementById('loading-overlay'),
@@ -354,8 +352,7 @@
         }
         
         async function fetchNetworkNeighborhood() {
-            DOMElements.networkNodesContainer.innerHTML = '';
-            DOMElements.networkTreeSVG.innerHTML = '';
+            if (draggedNode) return; // Don't refresh while dragging
             DOMElements.nmapLoadingIndicator.classList.remove('hidden');
             try {
                 const scanData = await apiCall('get_network_neighborhood');
@@ -370,116 +367,202 @@
         }
 
         function renderNetworkTree(scanData) {
-            const container = DOMElements.networkTreeContainer;
-            const svg = DOMElements.networkTreeSVG;
-            const nodesContainer = DOMElements.networkNodesContainer;
-            if (!container || !svg || !nodesContainer) return;
-            const containerRect = container.getBoundingClientRect();
-            const width = containerRect.width;
+            const { networkNodesContainer, networkTreeSVG } = DOMElements;
+            if (!networkNodesContainer || !networkTreeSVG) return;
 
             if (!scanData || !scanData.hosts || scanData.hosts.length === 0) {
-                nodesContainer.innerHTML = `<p class="text-center text-muted p-8">No devices found on the network.</p>`;
+                networkNodesContainer.innerHTML = `<p class="text-center text-muted p-8">No devices found on the network.</p>`;
                 return;
             }
 
-            nodesContainer.innerHTML = '';
-            svg.innerHTML = '';
-            
+            // Preserve node positions if they already exist
+            const existingPositions = {};
+            networkNodesContainer.querySelectorAll('.network-node').forEach(node => {
+                existingPositions[node.dataset.ip] = {
+                    left: node.style.left,
+                    top: node.style.top
+                };
+            });
+
+            networkNodesContainer.innerHTML = ''; // Clear old nodes
+
             const gateway = scanData.hosts.find(h => h.ip === serverGatewayIp);
-            let server = scanData.hosts.find(h => h.ip === '127.0.0.1' || h.ip === scanData.server_ip);
-            let client = scanData.hosts.find(h => h.ip === clientIp);
-            let otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== scanData.server_ip && h.ip !== '127.0.0.1' && h.ip !== clientIp);
-            
-            const positions = {};
-            const nodeWidth = 250;
-            const nodeHeight = 120;
-            const horizontalSpacing = 40;
-            const verticalSpacing = 100;
+            const server = scanData.hosts.find(h => h.ip === '127.0.0.1' || h.ip === scanData.server_ip);
+            const client = scanData.hosts.find(h => h.ip === clientIp);
+            const otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== scanData.server_ip && h.ip !== '127.0.0.1' && h.ip !== clientIp);
 
-            const childNodes = [server, client, ...otherHosts].filter(Boolean);
-
-            if (gateway) {
-                positions[gateway.ip] = { x: width / 2 - nodeWidth / 2, y: 30 };
-            }
-
-            if (childNodes.length > 0) {
-                const totalChildWidth = (childNodes.length * nodeWidth) + ((childNodes.length - 1) * horizontalSpacing);
-                let startX = (width / 2) - (totalChildWidth / 2);
-                const childY = 30 + nodeHeight + verticalSpacing;
-
-                childNodes.forEach((node, index) => {
-                    if (node) {
-                        const nodeX = startX + index * (nodeWidth + horizontalSpacing);
-                        positions[node.ip] = { x: nodeX, y: childY };
-                    }
-                });
-            }
-            
-            const drawLine = (fromIp, toIp) => {
-                if (!fromIp || !toIp || !positions[fromIp] || !positions[toIp]) return;
-                const fromPos = positions[fromIp];
-                const toPos = positions[toIp];
-                const x1 = fromPos.x + nodeWidth / 2;
-                const y1 = fromPos.y + nodeHeight / 2;
-                const x2 = toPos.x + nodeWidth / 2;
-                const y2 = toPos.y + nodeHeight / 2;
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
-                path.setAttribute('stroke', 'var(--border-primary)');
-                path.setAttribute('stroke-width', '2');
-                svg.appendChild(path);
-            };
-            
-            const renderHost = (host) => {
-                const pos = positions[host.ip];
-                if (!pos) return;
-                const hostType = getHostType(host.ip);
+            const createNodeElement = (host, type) => {
                 const hostName = host.hostname || 'Unknown';
-                const icon = hostType === 'Gateway' ? '&#x1F6A7;' : hostType === 'Client' ? '&#x1F4BB;' : '&#x1F5A5;';
+                const icon = type === 'Gateway' ? '&#x1F6A7;' : (type === 'Server' || type === 'Client') ? '&#x1F4BB;' : '&#x1F5A5;';
                 const statusColor = host.is_up ? 'text-status-up' : 'text-status-down';
                 const statusText = host.is_up ? 'Online' : 'Offline';
 
                 let services = '';
                 if (host.services && host.services.length > 0) {
-                    services = host.services.map(s => `
-                        <p class="flex items-center text-xs text-muted mt-1">
-                            <span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
-                            <span>${s.port}/${s.protocol} - ${s.name}</span>
-                        </p>
-                    `).join('');
+                    services = host.services.map(s => `<p class="flex items-center text-xs text-muted mt-1"><span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span><span>${s.port}/${s.protocol} - ${s.name}</span></p>`).join('');
+                }
+
+                const nodeElement = document.createElement('div');
+                nodeElement.className = "network-node bg-bg-tertiary p-4 rounded-lg border-main border flex items-start gap-4 cursor-grab hover:bg-bg-secondary transition-colors absolute min-w-[250px] w-auto";
+                nodeElement.dataset.ip = host.ip;
+                nodeElement.dataset.type = type;
+
+                if (existingPositions[host.ip]) {
+                    nodeElement.style.left = existingPositions[host.ip].left;
+                    nodeElement.style.top = existingPositions[host.ip].top;
                 }
                 
-                const nodeElement = document.createElement('div');
-                nodeElement.className = "network-node bg-bg-tertiary p-4 rounded-lg border-main border flex items-start gap-4 cursor-pointer hover:bg-bg-secondary transition-colors";
-                nodeElement.style.width = `${nodeWidth}px`;
-                nodeElement.style.top = `${pos.y}px`;
-                nodeElement.style.left = `${pos.x}px`;
-                nodeElement.dataset.ip = host.ip;
-                nodeElement.addEventListener('click', () => showNmapNodeDetailsModal(host));
-                nodesContainer.appendChild(nodeElement);
                 nodeElement.innerHTML = `
                     <span class="text-3xl">${icon}</span>
-                    <div class="flex-grow">
+                    <div class="flex-grow overflow-hidden">
                         <h4 class="text-lg font-semibold truncate" title="${hostName}">${hostName}</h4>
                         <p class="text-sm text-muted">${host.ip}</p>
                         <p class="text-xs ${statusColor}">${statusText}</p>
-                        ${host.vendor ? `<p class="text-xs text-muted">Vendor: ${host.vendor}</p>` : ''}
+                        ${host.vendor ? `<p class="text-xs text-muted break-words">Vendor: ${host.vendor}</p>` : ''}
                         ${services ? `<div class="mt-2"><p class="text-xs font-semibold text-accent-secondary">Services:</p>${services}</div>` : ''}
                     </div>
                 `;
-            };
-
-            if (gateway) renderHost(gateway);
-            childNodes.forEach(node => { if(node) renderHost(node); });
-
-            svg.innerHTML = '';
-            if (gateway) {
-                childNodes.forEach(node => {
-                    if (node) {
-                        drawLine(gateway.ip, node.ip);
+                nodeElement.addEventListener('mousedown', onDragStart);
+                nodeElement.addEventListener('click', (e) => {
+                    if (!e.target.closest('.network-node').classList.contains('dragging')) {
+                        showNmapNodeDetailsModal(host);
                     }
                 });
+                return nodeElement;
+            };
+            
+            const gatewayContainer = document.createElement('div');
+            gatewayContainer.className = "w-full flex justify-center";
+            
+            const serverClientContainer = document.createElement('div');
+            serverClientContainer.className = "w-full flex justify-center gap-16 flex-wrap";
+
+            const otherDevicesContainer = document.createElement('div');
+            otherDevicesContainer.className = "w-full flex justify-center gap-8 flex-wrap";
+
+            if (gateway) gatewayContainer.appendChild(createNodeElement(gateway, 'Gateway'));
+            if (server) serverClientContainer.appendChild(createNodeElement(server, 'Server'));
+            if (client) serverClientContainer.appendChild(createNodeElement(client, 'Client'));
+            otherHosts.forEach(host => otherDevicesContainer.appendChild(createNodeElement(host, 'Device')));
+            
+            networkNodesContainer.append(gatewayContainer, serverClientContainer, otherDevicesContainer);
+            
+            setTimeout(() => {
+                positionNodesAndDrawLines(existingPositions);
+            }, 50);
+        }
+
+        function positionNodesAndDrawLines(existingPositions) {
+            const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect();
+            const nodes = DOMElements.networkNodesContainer.querySelectorAll('.network-node');
+            const gatewayNode = DOMElements.networkNodesContainer.querySelector('[data-type="Gateway"]');
+
+            if (!gatewayNode) {
+                redrawLines();
+                return;
             }
+
+            nodes.forEach(node => {
+                if (!existingPositions[node.dataset.ip]) {
+                    const nodeRect = node.getBoundingClientRect();
+                    if (node.dataset.type === 'Gateway') {
+                        node.style.top = '20px';
+                        node.style.left = `${(containerRect.width / 2) - (nodeRect.width / 2)}px`;
+                    } else if (node.dataset.type === 'Server') {
+                         node.style.top = '200px';
+                         node.style.left = `${(containerRect.width / 2) - nodeRect.width - 50}px`;
+                    } else if (node.dataset.type === 'Client') {
+                         node.style.top = '200px';
+                         node.style.left = `${(containerRect.width / 2) + 50}px`;
+                    } else {
+                        const otherNodes = Array.from(DOMElements.networkNodesContainer.querySelectorAll('[data-type="Device"]'));
+                        const index = otherNodes.indexOf(node);
+                        const itemsPerRow = Math.floor((containerRect.width - 40) / (nodeRect.width + 32));
+                        const row = Math.floor(index / itemsPerRow);
+                        const col = index % itemsPerRow;
+                        node.style.top = `${400 + row * (nodeRect.height + 32)}px`;
+                        node.style.left = `${20 + col * (nodeRect.width + 32)}px`;
+                    }
+                }
+            });
+            redrawLines();
+        }
+
+        function redrawLines() {
+            const svg = DOMElements.networkTreeSVG;
+            const container = DOMElements.networkTreeContainer;
+            if (!svg || !container) return;
+            svg.innerHTML = '';
+            const containerRect = container.getBoundingClientRect();
+
+            const gatewayNode = DOMElements.networkNodesContainer.querySelector('[data-type="Gateway"]');
+            if (!gatewayNode) return;
+
+            const gatewayRect = gatewayNode.getBoundingClientRect();
+            const fromX = (gatewayRect.left - containerRect.left) + (gatewayRect.width / 2);
+            const fromY = (gatewayRect.top - containerRect.top) + gatewayRect.height;
+            
+            DOMElements.networkNodesContainer.querySelectorAll('.network-node:not([data-type="Gateway"])').forEach(node => {
+                const nodeRect = node.getBoundingClientRect();
+                const toX = (nodeRect.left - containerRect.left) + (nodeRect.width / 2);
+                const toY = (nodeRect.top - containerRect.top);
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${fromX} ${fromY} C ${fromX} ${fromY + 50}, ${toX} ${toY - 50}, ${toX} ${toY}`);
+                path.setAttribute('stroke', 'var(--border-primary)');
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                svg.appendChild(path);
+            });
+        }
+
+        function onDragStart(e) {
+            if (e.button !== 0) return; // Only left-click
+            draggedNode = e.target.closest('.network-node');
+            if (!draggedNode) return;
+            
+            draggedNode.classList.add('dragging');
+            draggedNode.style.cursor = 'grabbing';
+            
+            const rect = draggedNode.getBoundingClientRect();
+            const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect();
+            
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', onDragEnd);
+        }
+
+        function onDrag(e) {
+            if (!draggedNode) return;
+            e.preventDefault();
+            
+            const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect();
+            
+            let x = e.clientX - offsetX - containerRect.left + DOMElements.networkTreeContainer.scrollLeft;
+            let y = e.clientY - offsetY - containerRect.top + DOMElements.networkTreeContainer.scrollTop;
+            
+            // Clamp position within the container
+            x = Math.max(0, Math.min(x, DOMElements.networkTreeContainer.scrollWidth - draggedNode.offsetWidth));
+            y = Math.max(0, Math.min(y, DOMElements.networkTreeContainer.scrollHeight - draggedNode.offsetHeight));
+
+            draggedNode.style.left = `${x}px`;
+            draggedNode.style.top = `${y}px`;
+            
+            redrawLines();
+        }
+
+        function onDragEnd() {
+            if (draggedNode) {
+                draggedNode.style.cursor = 'grab';
+                setTimeout(() => {
+                    if (draggedNode) draggedNode.classList.remove('dragging');
+                }, 0);
+            }
+            draggedNode = null;
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', onDragEnd);
         }
 
         function showNmapNodeDetailsModal(data) {
@@ -672,15 +755,14 @@
                         <div id="diag-ping-cs-container" class="mb-4"></div>
                         <div class="mb-8" id="diag-gateway-wrapper">
                             <div id="diag-gateway" class="card card-muted p-4 border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
-                                <!-- Gateway content will be dynamically inserted here -->
-                            </div>
+                                </div>
                         </div>
                         <div>
                             <div id="diag-internet" class="internet-nodes-container card card-muted p-4 node-glow">
                                 <p class="font-semibold text-primary text-center mb-4">Internet Nodes</p>
                                 <div id="internet-nodes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
                             </div>
-                        </div>`;
+                    </div>`;
             }
             document.getElementById('diag-server')?.addEventListener('click', showServerDetailsModal);
         }
@@ -742,21 +824,21 @@
 
             if (!document.getElementById('gateway-ping-chart')) {
                  gatewayCard.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                        <div class="md:col-span-1 text-center">
-                            <p class="font-semibold text-primary">Network Gateway</p>
-                            <p class="text-xs text-muted truncate" title="${details.vendor || 'Unknown Vendor'}">${details.vendor || 'Unknown Vendor'}</p>
-                            <div class="h-16 w-full my-2"><canvas id="gateway-ping-chart"></canvas></div>
-                        </div>
-                        <div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2">
-                            <p><span class="font-medium text-muted">IP:</span> ${details.ip}</p>
-                            <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
-                            <p><span class="font-medium text-muted">Ping:</span> <span id="gateway-ping-value" class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
-                            <p><span class="font-medium text-muted">Jitter:</span> <span id="gateway-jitter-value">${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
-                            <p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0))}">${gatewayPingData.packet_loss_15m !== null && typeof gatewayPingData.packet_loss_15m !== 'undefined' ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}</span></p>
-                        </div>
-                    </div>
-                `;
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                         <div class="md:col-span-1 text-center">
+                             <p class="font-semibold text-primary">Network Gateway</p>
+                             <p class="text-xs text-muted truncate" title="${details.vendor || 'Unknown Vendor'}">${details.vendor || 'Unknown Vendor'}</p>
+                             <div class="h-16 w-full my-2"><canvas id="gateway-ping-chart"></canvas></div>
+                         </div>
+                         <div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2">
+                             <p><span class="font-medium text-muted">IP:</span> ${details.ip}</p>
+                             <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
+                             <p><span class="font-medium text-muted">Ping:</span> <span id="gateway-ping-value" class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
+                             <p><span class="font-medium text-muted">Jitter:</span> <span id="gateway-jitter-value">${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
+                             <p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0))}">${gatewayPingData.packet_loss_15m !== null && typeof gatewayPingData.packet_loss_15m !== 'undefined' ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}</span></p>
+                         </div>
+                     </div>
+                 `;
                  const newCard = gatewayCard.cloneNode(true);
                  gatewayCard.parentNode.replaceChild(newCard, gatewayCard);
                  newCard.addEventListener('click', () => {
@@ -842,30 +924,30 @@
                         trendsChart.update('none');
                     } else {
                          trendsChart = new Chart(DOMElements.trendsChartCanvas, {
-                            type: 'line', data: { datasets },
-                            options: { 
-                                responsive: true, maintainAspectRatio: false, 
-                                scales: { 
-                                    x: { type: 'time', time: { unit: 'minute' }, min: start * 1000, max: end * 1000, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, 
-                                    y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } 
-                                },
-                                plugins: {
-                                    legend: { labels: { color: 'var(--text-primary)' } },
-                                    zoom: { 
-                                        pan: { enabled: true, mode: 'x' }, 
-                                        zoom: { 
-                                            wheel: { enabled: true }, 
-                                            pinch: { enabled: true }, 
-                                            mode: 'x',
-                                            onZoomComplete: ({chart}) => {
-                                                const {min, max} = chart.scales.x;
-                                                fetchAndRender(Math.floor(min / 1000), Math.ceil(max / 1000));
-                                            }
-                                        } 
-                                    }
-                                }
-                            }
-                        });
+                             type: 'line', data: { datasets },
+                             options: { 
+                                 responsive: true, maintainAspectRatio: false, 
+                                 scales: { 
+                                     x: { type: 'time', time: { unit: 'minute' }, min: start * 1000, max: end * 1000, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, 
+                                     y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } 
+                                 },
+                                 plugins: {
+                                     legend: { labels: { color: 'var(--text-primary)' } },
+                                     zoom: { 
+                                         pan: { enabled: true, mode: 'x' }, 
+                                         zoom: { 
+                                             wheel: { enabled: true }, 
+                                             pinch: { enabled: true }, 
+                                             mode: 'x',
+                                             onZoomComplete: ({chart}) => {
+                                                 const {min, max} = chart.scales.x;
+                                                 fetchAndRender(Math.floor(min / 1000), Math.ceil(max / 1000));
+                                             }
+                                         } 
+                                     }
+                                 }
+                             }
+                         });
                     }
                     isTrendsDataLoaded = true;
                 } catch(e) {
@@ -889,7 +971,7 @@
                     dataset.data.push({ x: ping.timestamp * 1000, y: ping.ping });
                 }
             });
-            trendsChart.update('quiet');
+            trendsChart.update('none');
         }
 
         // --- Initialization and Event Listeners ---
@@ -998,24 +1080,17 @@
                 DOMElements.diagOutputContainer.textContent = `Running diagnostics for ${target}...`;
 
                 try {
-                    const result = await apiCall('on_demand_diagnostic', { target, count: pingCount, size: pingSize });
+                    const result = await apiCall('on_demand_ping', { target, count: pingCount, size: pingSize });
                     let output = '';
                     if (result.error) {
                         output = `ERROR: ${result.error}`;
                     } else {
                         output = `--- Ping Output ---\n`
-                        + `Status: ${result.status}\n`
-                        + `Ping: ${result.ping !== null ? `${result.ping}ms` : 'N/A'}\n`
-                        + `Jitter: ${result.jitter !== null ? `${result.jitter}ms` : 'N/A'}\n`
-                        + `Packet Loss: ${result.packet_loss !== null ? `${result.packet_loss}%` : 'N/A'}\n\n`
-                        + `--- Host Info ---\n`
-                        + `Hostname: ${result.hostname || 'N/A'}\n`
-                        + `MAC Address: ${result.mac_address || 'N/A'}\n`
-                        + `Vendor: ${result.vendor || 'N/A'}\n\n`
+                        + `${result.ping}\n\n`
                         + `--- DNS Info ---\n`
-                        + `${(result.dns_info && result.dns_info.length > 0) ? result.dns_info.join('\n') : 'N/A'}\n\n`
+                        + `${(result.dns && result.dns.length > 0) ? result.dns.join('\n') : 'N/A'}\n\n`
                         + `--- Traceroute ---\n`
-                        + `${(result.traceroute_info && result.traceroute_info.length > 0) ? result.traceroute_info.join('\n') : 'N/A'}`;
+                        + `${(result.traceroute && result.traceroute.length > 0) ? result.traceroute.join('\n') : 'N/A'}`;
                     }
                     DOMElements.diagOutputContainer.textContent = output;
                 } catch (error) {
@@ -1023,62 +1098,6 @@
                     DOMElements.diagOutputContainer.textContent = `Failed to run diagnostics: ${error.message}`;
                 }
             });
-            
-            const treeContainer = DOMElements.networkTreeContainer;
-            if (treeContainer) {
-                treeContainer.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                    startPos.x = e.clientX - pan.x;
-                    startPos.y = e.clientY - pan.y;
-                    treeContainer.style.cursor = 'grabbing';
-                });
-
-                treeContainer.addEventListener('mousemove', (e) => {
-                    if (!isDragging) return;
-                    e.preventDefault();
-                    pan.x = e.clientX - startPos.x;
-                    pan.y = e.clientY - startPos.y;
-                    applyTransform();
-                });
-
-                treeContainer.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    treeContainer.style.cursor = 'grab';
-                });
-
-                treeContainer.addEventListener('mouseleave', () => {
-                    isDragging = false;
-                    treeContainer.style.cursor = 'grab';
-                });
-
-                treeContainer.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    const scaleAmount = 0.1;
-                    const rect = treeContainer.getBoundingClientRect();
-                    const mouseX = e.clientX - rect.left;
-                    const mouseY = e.clientY - rect.top;
-
-                    const oldScale = scale;
-                    scale -= e.deltaY * 0.001 * scale;
-                    scale = Math.min(Math.max(0.1, scale), 5); // Clamp scale
-
-                    // Adjust pan to zoom towards the mouse pointer
-                    pan.x = mouseX - (mouseX - pan.x) * (scale / oldScale);
-                    pan.y = mouseY - (mouseY - pan.y) * (scale / oldScale);
-                    
-                    applyTransform();
-                });
-            }
-        }
-
-        function applyTransform() {
-            const nodesContainer = DOMElements.networkNodesContainer;
-            const svgContainer = DOMElements.networkTreeSVG;
-            if (nodesContainer && svgContainer) {
-                const transformValue = `translate(${pan.x}px, ${pan.y}px) scale(${scale})`;
-                nodesContainer.style.transform = transformValue;
-                svgContainer.style.transform = transformValue;
-            }
         }
 
         async function loadThemes() {
@@ -1580,7 +1599,15 @@
             }
         }
 
+        function setVersionNumber() {
+            document.title = `A.N.U.S. v${APP_VERSION} - Automated Network Utility System`;
+            document.querySelectorAll('.app-version').forEach(el => {
+                el.textContent = `v${APP_VERSION}`;
+            });
+        }
+
         async function initializeApp() {
+            setVersionNumber();
             try {
                 updateLoadingStatus("Initializing...", 0);
                 
@@ -1631,14 +1658,14 @@
                             drawDiagnosticPaths(null, null, allPingsData, { server_ip: clientIp, server_gateway_ip: serverGatewayIp });
                         }
                         if (!DOMElements.views.neighborhood?.classList.contains('hidden') && networkScanData) {
-                            renderNetworkTree(networkScanData);
+                             redrawLines();
                         }
                     }).observe(DOMElements.diagnosticsContainer);
                 }
                 if (DOMElements.networkTreeContainer) {
                     new ResizeObserver(() => {
                         if (!DOMElements.views.neighborhood?.classList.contains('hidden') && networkScanData) {
-                            renderNetworkTree(networkScanData);
+                            redrawLines();
                         }
                     }).observe(DOMElements.networkTreeContainer);
                 }
