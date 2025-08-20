@@ -30,34 +30,23 @@ A.N.U.S. (Automated Network Utility System) is a comprehensive, self-hosted netw
 
 ## 🖼️ Screenshots
 
-<div align="center">
-<img src="./assets/dashboard-view.png" alt="Main Dashboard View" width="32%">
-<img src="./assets/trends-view.png" alt="Historical Trends View" width="32%">
-<img src="./assets/calendar-view.png" alt="Event Log Calendar View" width="32%">
-</div>
+<p align="center">
+<img src="./assets/dashboard-view.png" alt="Main Dashboard View Screenshot" width="700">
 <br>
-<div align="center">
-<strong>Main Dashboard View</strong> | <strong>Historical Trends View</strong> | <strong>Event Log (Calendar View)</strong>
-</div>
+<strong>Main Dashboard View</strong>
+</p>
+
+<p align="center">
+<img src="./assets/trends-view.png" alt="Historical Trends View Screenshot" width="700">
 <br>
-<div align="center">
-<img src="./assets/new-view-1.png" alt="New View 1" width="32%">
-<img src="./assets/new-view-2.png" alt="New View 2" width="32%">
-<img src="./assets/new-view-3.png" alt="New View 3" width="32%">
-</div>
+<strong>Historical Trends View</strong>
+</p>
+
+<p align="center">
+<img src="./assets/calendar-view.png" alt="Event Log Calendar View Screenshot" width="700">
 <br>
-<div align="center">
-<strong>New View 1</strong> | <strong>New View 2</strong> | <strong>New View 3</strong>
-</div>
-<br>
-<div align="center">
-<img src="./assets/new-view-4.png" alt="New View 4" width="49%">
-<img src="./assets/new-view-5.png" alt="New View 5" width="49%">
-</div>
-<br>
-<div align="center">
-<strong>New View 4</strong> | <strong>New View 5</strong>
-</div>
+<strong>Event Log (Calendar View)</strong>
+</p>
 
 ## 🛠️ Tech Stack
 
