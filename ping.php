@@ -26,6 +26,10 @@ function get_db_connection() {
             startTime INTEGER NOT NULL,
             endTime INTEGER
         )");
+        $db->exec("CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )");
         return $db;
     } catch (PDOException $e) {
         http_response_code(500);
@@ -40,9 +44,14 @@ function get_settings($db) {
         'smartCheckThreshold' => 3,
         'criticalServices' => 'Gateway,OpenDNS Primary,Google DNS,Cloudflare DNS'
     ];
-    $stmt = $db->query("SELECT key, value FROM settings");
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $settings[$row['key']] = $row['value'];
+    try {
+        $stmt = $db->query("SELECT key, value FROM settings");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $settings[$row['key']] = $row['value'];
+        }
+    } catch (PDOException $e) {
+        error_log('Error fetching settings: ' . $e->getMessage());
+        // Fallback to default settings
     }
     return $settings;
 }
@@ -60,7 +69,11 @@ function get_data_from_socket($command) {
         $response .= fread($client, 8192);
     }
     fclose($client);
-    return json_decode($response, true);
+    $decoded_response = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return ['error' => "Invalid JSON response from service: " . $response];
+    }
+    return $decoded_response;
 }
 
 function get_gateway_details_from_db($db) {
@@ -163,7 +176,7 @@ switch ($action) {
     case 'get_all_latest_metrics':
         try {
             // Fetch latest metrics
-            $stmt = $db->query("SELECT name, ping, jitter, status, dns_info, traceroute_info, timestamp, packet_loss FROM metrics WHERE is_on_demand = 0 AND timestamp > (strftime('%s', 'now') - 900) GROUP BY name ORDER BY timestamp DESC");
+            $stmt = $db->query("SELECT name, ping, jitter, status, dns_info, traceroute_info, timestamp, packet_loss, min_ping_15m, max_ping_15m, packet_loss_15m FROM metrics WHERE is_on_demand = 0 GROUP BY name");
             $latest_metrics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Fetch settings
@@ -193,6 +206,13 @@ switch ($action) {
             // Get status start time from the latest event log entry
             $stmt_log_start = $db->query("SELECT startTime FROM event_log ORDER BY startTime DESC LIMIT 1");
             $status_start_time = $stmt_log_start->fetchColumn() ?: time();
+            
+            // Get SSL cert details
+            $ssl_cert_details = null;
+            $ssl_info_file = '/var/db/anus_ssl_info.json';
+            if (file_exists($ssl_info_file)) {
+                $ssl_cert_details = json_decode(file_get_contents($ssl_info_file), true);
+            }
 
 
             $server_status = [
@@ -206,7 +226,8 @@ switch ($action) {
                 'overall_status' => $overall_status,
                 'status_start_time' => date('c', $status_start_time),
                 'is_packet_loss_happening' => $is_packet_loss_happening,
-                'packet_loss_details' => $packet_loss_details
+                'packet_loss_details' => $packet_loss_details,
+                'ssl_cert_details' => $ssl_cert_details
             ];
 
             foreach ($latest_metrics as &$metric_data) {

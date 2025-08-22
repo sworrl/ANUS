@@ -153,3 +153,16 @@ canvas { filter: drop-shadow(0 0 8px var(--accent-primary-trans-2)); transition:
     position: absolute;
     z-index: 10;
 }
+
+.digital-clock {
+    font-family: 'Inter', monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--bg-tertiary);
+    color: var(--accent-primary);
+    border: 2px solid var(--border-primary);
+    box-shadow: 2px 2px 4px var(--shadow-dark), inset 1px 1px 2px var(--shadow-light);
+    text-shadow: 0 0 5px var(--accent-primary);
+}

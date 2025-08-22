@@ -40,7 +40,7 @@ MAX_WORKERS = 100
 
 # --- Database Functions ---
 def setup_database():
-    """Initializes the database schema if tables don't exist."""
+    """Initializes the database schema if tables don't exist and performs migrations."""
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         # Metrics for individual targets
@@ -51,6 +51,17 @@ def setup_database():
                 timestamp INTEGER, packet_loss REAL, is_on_demand BOOLEAN DEFAULT 0
             )
         """)
+        
+        # Add new columns if they don't exist (migration step)
+        try:
+            cursor.execute("ALTER TABLE metrics ADD COLUMN min_ping_15m REAL")
+            cursor.execute("ALTER TABLE metrics ADD COLUMN max_ping_15m REAL")
+            cursor.execute("ALTER TABLE metrics ADD COLUMN packet_loss_15m REAL")
+            print("Database migration: Added 15m ping and loss columns to 'metrics' table.")
+        except sqlite3.OperationalError as e:
+            if "duplicate column name" not in str(e):
+                print(f"Migration error: {e}")
+
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_metrics_name_timestamp ON metrics (name, timestamp DESC)")
         # Server resource usage metrics
         cursor.execute("""
@@ -91,13 +102,36 @@ def log_metric(metric):
     """Logs a single ping result to the metrics table."""
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
+        # Calculate 15m metrics
+        now = int(time.time())
+        time_15m_ago = now - 900
+        
         cursor.execute("""
-            INSERT INTO metrics (name, ping, jitter, status, dns_info, traceroute_info, timestamp, packet_loss, is_on_demand)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            SELECT AVG(ping), MIN(ping), MAX(ping), AVG(packet_loss)
+            FROM metrics
+            WHERE name = ? AND timestamp >= ?
+        """, (metric['name'], time_15m_ago))
+        
+        avg_ping_15m, min_ping_15m, max_ping_15m, avg_packet_loss_15m = cursor.fetchone()
+        
+        if metric['status'] == 'UP':
+            # Add current ping to average calculation
+            ping_values = [p for p in [avg_ping_15m, metric['ping']] if p is not None]
+            min_ping_15m = min(ping_values) if ping_values else None
+            max_ping_15m = max(ping_values) if ping_values else None
+            # The packet loss for the last 15 minutes is a more complex calculation
+            packet_loss_15m = avg_packet_loss_15m if avg_packet_loss_15m is not None else 0
+        else:
+            packet_loss_15m = avg_packet_loss_15m if avg_packet_loss_15m is not None else 100
+        
+        cursor.execute("""
+            INSERT INTO metrics (name, ping, jitter, status, dns_info, traceroute_info, timestamp, packet_loss, is_on_demand, min_ping_15m, max_ping_15m, packet_loss_15m)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             metric['name'], metric.get('ping'), metric.get('jitter'), metric['status'],
             json.dumps(metric.get('dns_info', [])), json.dumps(metric.get('traceroute_info', [])),
-            int(time.time()), metric.get('packet_loss'), metric.get('is_on_demand', 0)
+            now, metric.get('packet_loss'), metric.get('is_on_demand', 0),
+            min_ping_15m, max_ping_15m, packet_loss_15m
         ))
         conn.commit()
 
@@ -226,8 +260,14 @@ def ping_target_once(target, server_gateway_ip):
     host_url = server_gateway_ip if is_gateway else target['url']
     clean_host = host_url.replace("https://", "").replace("http://", "").split('/')[0] if host_url else None
     
+    # Define a default failure state to ensure all keys are present
+    failure_result = {
+        "name": target["name"], "status": "DOWN", "packet_loss": 100.0,
+        "ping": None, "jitter": None, "dns_info": [], "traceroute_info": []
+    }
+
     if not clean_host: 
-        return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
+        return failure_result
 
     try:
         ping_count = 5
@@ -241,15 +281,19 @@ def ping_target_once(target, server_gateway_ip):
         if latencies:
             avg_ping = sum(latencies) / len(latencies)
             jitter = (sum((x - avg_ping) ** 2 for x in latencies) / (len(latencies) - 1)) ** 0.5 if len(latencies) > 1 else 0
-            return {"name": target["name"], "ping": avg_ping, "jitter": jitter, "status": "UP", "packet_loss": packet_loss}
+            
+            return {
+                "name": target["name"], "ping": avg_ping, "jitter": jitter, "status": "UP",
+                "packet_loss": packet_loss, "dns_info": [], "traceroute_info": []
+            }
         else:
-            return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
+            return failure_result
 
     except subprocess.CalledProcessError:
-         return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
+         return failure_result
     except Exception as e:
         print(f"Error pinging {target['name']}: {e}")
-        return {"name": target["name"], "status": "DOWN", "packet_loss": 100.0}
+        return failure_result
 
 def continuous_ping_target(target, server_gateway_ip):
     """Continuously pings a target based on the update interval from settings."""

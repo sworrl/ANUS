@@ -73,7 +73,6 @@
                  <div>
                      <h1 id="app-title" class="text-2xl sm:text-3xl font-bold text-accent text-center">A.N.U.S. <span class="app-version"></span></h1>
                      <p class="text-sm text-muted text-center">Automated Network Utility System</p>
-                     <p id="current-datetime" class="text-xs text-muted text-center mt-2"></p>
                  </div>
              </div>
             <div id="current-status-card" class="card card-muted status-checking mt-4 p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto">
@@ -82,6 +81,10 @@
                     <span id="status-text" class="font-semibold text-lg text-accent-secondary">Checking...</span>
                 </div>
                 <p id="status-timer" class="text-sm text-muted mt-1">Initializing...</p>
+            </div>
+            
+            <div class="flex justify-center my-6">
+                <div id="current-datetime" class="digital-clock"></div>
             </div>
         </header>
 
@@ -225,7 +228,7 @@
         </footer>
     </div>
 
-    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-sm shadow-lg rounded-md bg-bg-secondary"><div class="mt-3 text-center"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50"><svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><h3 class="text-lg font-medium text-primary mt-2">Clear All Metrics?</h3><p class="text-sm text-muted p-4">This will permanently clear all historical data. This action cannot be undone.</p><div class="items-center px-4 py-3 gap-2 flex justify-center"><button id="modal-cancel-btn" class="px-4 py-2 bg-bg-tertiary rounded-md w-full">Cancel</button><button id="modal-confirm-btn" class="px-4 py-2 bg-status-down text-white hover:bg-status-down-hover rounded-md w-full">Delete</button></div></div></div></div>
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-sm shadow-lg rounded-md bg-bg-secondary"><div class="mt-3 text-center"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50"><svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><h3 class="text-lg font-medium text-primary mt-2">Clear All Metrics?</h3><p class="text-sm text-muted p-4">This will clear all historical data. This action cannot be undone.</p><div class="items-center px-4 py-3 gap-2 flex justify-center"><button id="modal-cancel-btn" class="px-4 py-2 bg-bg-tertiary rounded-md w-full">Cancel</button><button id="modal-confirm-btn" class="px-4 py-2 bg-status-down text-white hover:bg-status-down-hover rounded-md w-full">Delete</button></div></div></div></div>
     <div id="node-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-2xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 id="modal-title" class="text-xl font-semibold text-accent">Node Details</h3><button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="modal-content" class="text-sm space-y-4"></div></div></div>
     <div id="server-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">A.N.U.S. Server Health</h3><button id="server-modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="server-modal-content" class="text-sm space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-muted p-4 rounded-lg h-64"><canvas id="cpu-chart"></canvas></div><div class="bg-muted p-4 rounded-lg h-64"><canvas id="mem-chart"></canvas></div><div class="md:col-span-2 bg-muted p-4 rounded-lg h-64"><canvas id="net-chart"></canvas></div></div></div></div>
     <div id="license-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">GPLv3 License</h3><button id="license-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="license-content" class="text-xs space-y-4 max-h-[70vh] overflow-y-auto pr-4"></div></div></div>
@@ -296,8 +299,7 @@
             diagPingCount: document.getElementById('diag-ping-count'),
             diagPingSize: document.getElementById('diag-ping-size'),
             runDiagBtn: document.getElementById('run-diag-btn'),
-            diagOutputContainer: document.getElementById('diag-output-container'),
-            currentDatetime: document.getElementById('current-datetime')
+            diagOutputContainer: document.getElementById('diag-output-container')
         };
         
 
@@ -647,7 +649,6 @@
             try { if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline(); } catch(e) { console.error("Failed to render Log Timeline", e); }
             try { updateFuzzyQualityMetric(data.pings, data.server_status.internet_quality_score); } catch(e) { console.error("Failed to update Fuzzy Quality Metric", e); }
             try { updateLogoColor(data.server_status.internet_quality_score, currentState); } catch(e) { console.error("Failed to update Logo Color", e); }
-            try { updateClock(); } catch(e) { console.error("Failed to update Clock", e); }
         }
         
         function updateStatusUI(score) {
@@ -688,10 +689,6 @@
         function createUptimeCards() {
             if (!DOMElements.uptimeStatsContainer) return;
             const windows = [
-                { label: 'Last 15 Minutes', key: '15m' },
-                { label: 'Last 30 Minutes', key: '30m' },
-                { label: 'Last 1 Hour', key: '1h' },
-                { label: 'Last 6 Hours', key: '6h' },
                 { label: 'Last 24 Hours', key: '24h' },
                 { label: 'Last 7 Days', key: '7d' },
                 { label: 'Last 30 Days', key: '30d' },
@@ -717,10 +714,6 @@
                     if (downtimeEl) downtimeEl.textContent = downtimeText;
                 };
 
-                updateCard('15m', stats['15m'].uptime_percentage, 'N/A', `${formatLongDuration(stats['15m'].total_downtime_seconds)} downtime`);
-                updateCard('30m', stats['30m'].uptime_percentage, 'N/A', `${formatLongDuration(stats['30m'].total_downtime_seconds)} downtime`);
-                updateCard('1h', stats['1h'].uptime_percentage, 'N/A', `${formatLongDuration(stats['1h'].total_downtime_seconds)} downtime`);
-                updateCard('6h', stats['6h'].uptime_percentage, 'N/A', `${formatLongDuration(stats['6h'].total_downtime_seconds)} downtime`);
                 updateCard('24h', stats['24h'].uptime_percentage, 'N/A', `${formatLongDuration(stats['24h'].total_downtime_seconds)} downtime`);
                 updateCard('7d', stats['7d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['7d'].total_downtime_seconds)} downtime`);
                 updateCard('30d', stats['30d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['30d'].total_downtime_seconds)} downtime`);
@@ -731,7 +724,6 @@
                     const chartContainer = document.getElementById('uptime-chart-longest_online');
                     if (chartContainer) chartContainer.innerHTML = `<div class="h-full flex items-center justify-center"><span class="text-3xl font-bold text-status-up">${stats.longest_online_formatted.split(',')[0]}</span></div>`;
                 }
-
             } catch (error) {
                 console.error("Failed to update uptime stats:", error);
             }
@@ -1664,20 +1656,24 @@
             else if (ua.includes('Chrome')) browser = 'Chrome';
             else if (ua.includes('Safari')) browser = 'Safari';
 
-            const details = await apiCall('get_client_details');
-            const hostname = details?.hostname || 'N/A';
-            const mac = details?.mac || 'N/A';
-            
-            clientCard.innerHTML = `
-                <p class="font-semibold text-primary">Client Device</p>
-                <p class="text-xs text-muted truncate" title="${hostname}">${hostname}</p>
-                <div class="mt-2 text-xs text-left space-y-1">
-                    <p><span class="font-medium text-muted">IP:</span> ${clientIp}</p>
-                    <p><span class="font-medium text-muted">MAC:</span> ${mac}</p>
-                    <p><span class="font-medium text-muted">OS:</span> ${os}</p>
-                    <p><span class="font-medium text-muted">Browser:</span> ${browser}</p>
-                </div>
-            `;
+            try {
+                const details = await apiCall('get_client_details');
+                const hostname = details?.hostname || 'N/A';
+                const mac = details?.mac || 'N/A';
+                clientCard.innerHTML = `
+                    <p class="font-semibold text-primary">Client Device</p>
+                    <p class="text-xs text-muted truncate" title="${hostname}">${hostname}</p>
+                    <div class="mt-2 text-xs text-left space-y-1">
+                        <p><span class="font-medium text-muted">IP:</span> ${clientIp}</p>
+                        <p><span class="font-medium text-muted">MAC:</span> ${mac}</p>
+                        <p><span class="font-medium text-muted">OS:</span> ${os}</p>
+                        <p><span class="font-medium text-muted">Browser:</span> ${browser}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error("Failed to get client details:", error);
+                clientCard.innerHTML = `<p class="text-center text-status-down p-4">Error fetching client details.</p>`;
+            }
         }
         
         function updateServerInfo(serverStatus) {
@@ -1750,13 +1746,18 @@
         
         function updateClock() {
             const now = new Date();
-            const date = now.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
-            const time = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-            DOMElements.currentDatetime.textContent = `${date} ${time}`;
+            const date = now.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            if (DOMElements.currentDatetime) {
+                 DOMElements.currentDatetime.innerHTML = `${date} <span class="text-accent-secondary">|</span> ${time}`;
+            }
         }
 
         async function initializeApp() {
             setVersionNumber();
+            updateClock();
+            setInterval(updateClock, 1000);
+
             try {
                 updateLoadingStatus("Initializing...", 0);
                 
@@ -1793,8 +1794,9 @@
                     await updateUptimeStats();
                 } catch(e) {
                     console.error("Failed to fetch initial metrics. Proceeding with limited functionality...", e);
+                    handleError(e); // Catch and display the error
                 }
-
+                
                 updateLoadingStatus("Ready to display...", 100);
                 await new Promise(resolve => setTimeout(resolve, 300));
                 
@@ -1805,9 +1807,13 @@
                     if (DOMElements.appContainer) DOMElements.appContainer.classList.remove('opacity-0');
                 }, 500);
 
-                const updateInterval = (await apiCall('get_settings')).updateInterval || '2000';
-                startPolling(updateInterval);
-                setInterval(updateClock, 1000);
+                // Check if the app is functional before starting the main polling loop
+                if (lastSuccessfulFetch > 0) {
+                    const updateInterval = (await apiCall('get_settings')).updateInterval || '2000';
+                    startPolling(updateInterval);
+                } else {
+                    console.warn("Skipping main polling loop due to failed initial data fetch.");
+                }
                 
                 if (DOMElements.diagnosticsFlowContainer) {
                     new ResizeObserver(() => {
