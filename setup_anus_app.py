@@ -941,7 +941,7 @@ def main():
             script_path = os.path.realpath(__file__)
             python_executable = sys.executable
             
-            # Relaunch, adding the --already-in-screen flag to prevent a loop
+            # Relaunch, adding the --already-in-screen flag to prevent a loop.
             command_to_run = ['screen', '-S', 'anus_installer', 'sudo', python_executable, script_path] + sys.argv[1:] + ['--already-in-screen']
             
             try:
@@ -954,7 +954,7 @@ def main():
             simple_print_success("Continuing installer in the current screen session.")
             time.sleep(1)
     
-    # If the flag is present, remove it so it doesn't interfere with other logic
+    # If the flag is present, remove it so it doesn't interfere with other logic.
     if '--already-in-screen' in sys.argv:
         sys.argv.remove('--already-in-screen')
         args.discard('already-in-screen')

@@ -347,6 +347,10 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
+    if os.path.exists(SOCKET_PATH):
+        print(f"Warning: Stale socket file found at {SOCKET_PATH}. Removing.")
+        os.remove(SOCKET_PATH)
+
     print("Starting A.N.U.S. Python Service...")
     setup_database()
     
