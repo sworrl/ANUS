@@ -81,6 +81,36 @@ function get_gateway_details_from_db($db) {
     return $stmt_gateway->fetch(PDO::FETCH_ASSOC) ?: ['ip' => 'N/A', 'mac' => 'N/A', 'vendor' => 'N/A'];
 }
 
+function calculate_internet_quality_score($latest_metrics) {
+    $total_ping = 0;
+    $total_jitter = 0;
+    $total_packet_loss = 0;
+    $ping_count = 0;
+
+    foreach ($latest_metrics as $metric) {
+        if ($metric['status'] === 'UP' && $metric['ping'] !== null) {
+            $total_ping += $metric['ping'];
+            $total_jitter += $metric['jitter'] ?? 0;
+            $total_packet_loss += $metric['packet_loss'] ?? 0;
+            $ping_count++;
+        }
+    }
+
+    if ($ping_count === 0) {
+        return 0;
+    }
+
+    $avg_ping = $total_ping / $ping_count;
+    $avg_jitter = $total_jitter / $ping_count;
+    $avg_packet_loss = $total_packet_loss / $ping_count;
+
+    $ping_score = max(0, 200 - ($avg_ping * 2));
+    $jitter_score = max(0, 150 - ($avg_jitter * 5));
+    $loss_score = max(0, 150 - ($avg_packet_loss * 1.5));
+
+    return round($ping_score + $jitter_score + $loss_score);
+}
+
 function calculate_internet_status($latest_metrics, $settings) {
     $method = $settings['onlineDetectionMethod'] ?? 'smart_check';
     $critical_services = array_map('trim', explode(',', $settings['criticalServices'] ?? ''));
@@ -184,6 +214,7 @@ switch ($action) {
 
             // Calculate overall status
             $overall_status = calculate_internet_status($latest_metrics, $settings);
+            $internet_quality_score = calculate_internet_quality_score($latest_metrics);
             
             // Update the event log with the new status
             update_event_log($db, $overall_status);
@@ -224,6 +255,7 @@ switch ($action) {
                 'gateway_details' => $gateway_details,
                 'resource_usage' => $resource_usage,
                 'overall_status' => $overall_status,
+                'internet_quality_score' => $internet_quality_score,
                 'status_start_time' => date('c', $status_start_time),
                 'is_packet_loss_happening' => $is_packet_loss_happening,
                 'packet_loss_details' => $packet_loss_details,

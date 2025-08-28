@@ -75,7 +75,7 @@
                      <p class="text-sm text-muted text-center">Automated Network Utility System</p>
                  </div>
              </div>
-            <div id="current-status-card" class="card card-muted status-checking mt-4 p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto">
+            <div id="current-status-card" class="card card-muted status-checking mt-4 p-3 text-center transition-all duration-300 w-full max-w-md mx-auto">
                 <div class="flex items-center justify-center gap-3">
                     <div id="status-indicator" class="w-4 h-4 rounded-full bg-[var(--status-color)] blinking-dot"></div>
                     <span id="status-text" class="font-semibold text-lg text-accent-secondary">Checking...</span>
@@ -106,7 +106,12 @@
                     <div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         </div>
                 </div>
-                <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Internet Quality</h2><div id="quality-container" class="card card-muted p-6 text-center"><p id="quality-text" class="text-lg font-medium">Calculating...</p><p id="quality-score" class="text-sm text-muted mt-1">(Score: ---)</p></div></div>
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-accent mb-4">Live Internet Quality Metrics</h2>
+                    <div id="quality-metrics-container" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                        <!-- Gauges will be inserted here by JS -->
+                    </div>
+                </div>
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div></div>
             </div>
 
@@ -251,6 +256,7 @@
         let isResponsiveScanMode = false;
         let networkScanData = null; 
         let themes = {};
+        const qualityGaugeInstances = {};
         
         // --- Network Neighborhood Dragging State ---
         let draggedNode = null;
@@ -284,7 +290,8 @@
             criticalServicesOptions: document.getElementById('critical-services-options'),
             criticalServicesList: document.getElementById('critical-services-list'),
             saveSettingsBtn: document.getElementById('save-settings-btn'),
-            qualityContainer: document.getElementById('quality-container'), qualityText: document.getElementById('quality-text'), qualityScore: document.getElementById('quality-score'),
+            qualityMetricsContainer: document.getElementById('quality-metrics-container'), 
+            qualityScore: document.getElementById('quality-score'),
             calGrid: document.getElementById('cal-grid'), calMonthYear: document.getElementById('cal-month-year'), calPrevMonthBtn: document.getElementById('cal-prev-month'), calNextMonthBtn: document.getElementById('cal-next-month'),
             licenseModal: document.getElementById('license-modal'), licenseLink: document.querySelector('#license-link'), readmeLink: document.querySelector('#readme-link'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content'),
             readmeModal: document.getElementById('readme-modal'), readmeCloseBtn: document.getElementById('readme-close-btn'), readmeContent: document.getElementById('readme-content'),
@@ -350,18 +357,30 @@
 
         const measureHttpLatency = async (url) => { if (!url || url.trim() === '' || url.trim() === 'N/A') return null; const testUrl = url.startsWith('http')?url:`http://${url}`; const startTime = performance.now(); try { await fetch(`${testUrl}?t=${Date.now()}`, { mode: 'no-cors', cache: 'no-store', signal: AbortSignal.timeout(1900) }); return performance.now() - startTime; } catch (e) { return null; } };
         const measureServerLatency = async () => { const startTime = performance.now(); const result = await apiCall('pong'); return result ? performance.now() - startTime : null; };
-        const formatDuration = (ms) => { if (ms < 0) ms = 0; let s = Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60); s%=60; m%=60; const pad = n => String(n).padStart(2,'0'); return `${pad(h)}:${pad(m)}:${pad(s)}`; };
-        const formatLongDuration = (seconds) => {
-            if (!seconds || seconds <= 0) return "0 Seconds";
-            let days = Math.floor(seconds / 86400); seconds %= 86400;
-            let hours = Math.floor(seconds / 3600); seconds %= 3600;
-            let minutes = Math.floor(seconds / 60); seconds = Math.floor(seconds % 60);
+        const formatLongDuration = (ms) => {
+            if (ms <= 0) return "0 Seconds";
+            let seconds = Math.floor(ms / 1000);
+            
+            const years = Math.floor(seconds / 31536000);
+            seconds %= 31536000;
+            const weeks = Math.floor(seconds / 604800);
+            seconds %= 604800;
+            const days = Math.floor(seconds / 86400);
+            seconds %= 86400;
+            const hours = Math.floor(seconds / 3600);
+            seconds %= 3600;
+            const minutes = Math.floor(seconds / 60);
+            seconds %= 60;
+
             const parts = [];
+            if (years > 0) parts.push(`${years} Year${years > 1 ? 's' : ''}`);
+            if (weeks > 0) parts.push(`${weeks} Week${weeks > 1 ? 's' : ''}`);
             if (days > 0) parts.push(`${days} Day${days > 1 ? 's' : ''}`);
             if (hours > 0) parts.push(`${hours} Hour${hours > 1 ? 's' : ''}`);
             if (minutes > 0) parts.push(`${minutes} Minute${minutes > 1 ? 's' : ''}`);
             if (seconds > 0) parts.push(`${seconds} Second${seconds > 1 ? 's' : ''}`);
-            return parts.join(', ');
+
+            return parts.slice(0, 2).join(', ');
         };
         const formatTimestamp = (isoOrUnix) => { const date = new Date(isoOrUnix); return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); };
         const timeAgo = (timestamp) => { const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000); let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + " years ago"; interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + " months ago"; interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " days ago"; interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " hours ago"; interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " minutes ago"; return Math.floor(seconds) + " seconds ago"; };
@@ -635,7 +654,7 @@
         // --- UI Rendering Functions ---
         function updateDashboard(data, clientToServerPing, clientToGatewayPing) {
             if (!data) return;
-            try { updateStatusUI(data.server_status.internet_quality_score); } catch(e) { console.error("Failed to update Status UI", e); }
+            try { updateStatusUI(data.server_status.internet_quality_score, data.server_status); } catch(e) { console.error("Failed to update Status UI", e); }
             try { updateUptimeStats(); } catch(e) { console.error("Failed to update Uptime Stats", e); }
             try { renderServerHealth(data.server_status); } catch(e) { console.error("Failed to render Server Health", e); }
             try { if(!DOMElements.views.diagnostics.classList.contains('hidden')) {
@@ -646,19 +665,21 @@
                 drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status);
             } } catch(e) { console.error("Failed to update Diagnostics tab", e); }
             try { if (isTrendsDataLoaded) { updateTrendsChart(data.pings); } } catch(e) { console.error("Failed to update Trends Chart", e); }
-            try { if(!DOMElements.views.log.classList.contains('hidden')) renderLogTimeline(); } catch(e) { console.error("Failed to render Log Timeline", e); }
-            try { updateFuzzyQualityMetric(data.pings, data.server_status.internet_quality_score); } catch(e) { console.error("Failed to update Fuzzy Quality Metric", e); }
+            try { if(!DOMElements.views.log.classList.contains('hidden')) { renderLogTimeline(); } } catch(e) { console.error("Failed to render Log Timeline", e); }
+            try { renderQualityMetrics(data.pings); } catch(e) { console.error("Failed to update Quality Metrics", e); }
             try { updateLogoColor(data.server_status.internet_quality_score, currentState); } catch(e) { console.error("Failed to update Logo Color", e); }
         }
         
-        function updateStatusUI(score) {
+        function updateStatusUI(score, statusData) {
             const { statusIndicator, statusText, statusTimer, currentStatusCard } = DOMElements;
             let statusClass = 'status-checking';
             let statusString = 'Checking...';
+            let statusSubtext = '';
 
             if (currentState === 'DOWN') {
                 statusClass = 'status-down';
                 statusString = 'Disconnected';
+                statusSubtext = 'Gateway is unreachable.';
             } else if (currentState === 'UP') {
                 if (score > 400) { statusClass = 'status-up'; statusString = 'Excellent'; }
                 else if (score > 300) { statusClass = 'status-up'; statusString = 'Good'; }
@@ -667,12 +688,24 @@
                 else { statusClass = 'status-down'; statusString = 'Unstable'; }
             }
             
-            currentStatusCard.className = `card card-muted ${statusClass} mt-4 p-3 text-center transition-all duration-300 w-full max-w-xs mx-auto`;
+            if (statusData.is_packet_loss_happening && (statusString === 'Unstable' || statusString === 'Poor' || statusString === 'Disconnected')) {
+                const lossDetails = statusData.packet_loss_details.map(d => `${d.name} (${d.loss}%)`).join(', ');
+                statusSubtext = `Packet Loss Detected: ${lossDetails}`;
+            }
+
+            currentStatusCard.className = `card card-muted ${statusClass} mt-4 p-3 text-center transition-all duration-300 w-full max-w-md mx-auto`;
             statusIndicator.classList.toggle('blinking-dot', statusString === 'Checking...');
             statusText.textContent = statusString;
+            
+            let timerHTML = '';
             if (lastStateChangeTime) {
-                statusTimer.textContent = `for ${formatDuration(new Date() - lastStateChangeTime)}`;
+                timerHTML += `for ${formatLongDuration(new Date() - lastStateChangeTime)}`;
             }
+            if (statusSubtext) {
+                timerHTML += `<br><span class="text-xs">${statusSubtext}</span>`;
+            }
+            statusTimer.innerHTML = timerHTML;
+
 
             if (lastState !== null && lastState !== currentState) { 
                 if (currentState === 'DOWN') playSound(bruhPlayer); 
@@ -683,8 +716,8 @@
 
         function renderLogTimeline() {
             if (!DOMElements.logTimelineContainer) return;
-            DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatDuration(new Date(e.endTime) - new Date(e.startTime))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
-        function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatDuration(new Date() - new Date(log[0].startTime)); } }
+            DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatLongDuration((new Date(e.endTime) - new Date(e.startTime)))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
+        function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatLongDuration(new Date() - new Date(log[0].startTime)); } }
         
         function createUptimeCards() {
             if (!DOMElements.uptimeStatsContainer) return;
@@ -714,9 +747,9 @@
                     if (downtimeEl) downtimeEl.textContent = downtimeText;
                 };
 
-                updateCard('24h', stats['24h'].uptime_percentage, 'N/A', `${formatLongDuration(stats['24h'].total_downtime_seconds)} downtime`);
-                updateCard('7d', stats['7d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['7d'].total_downtime_seconds)} downtime`);
-                updateCard('30d', stats['30d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['30d'].total_downtime_seconds)} downtime`);
+                updateCard('24h', stats['24h'].uptime_percentage, 'N/A', `${formatLongDuration(stats['24h'].total_downtime_seconds * 1000)} downtime`);
+                updateCard('7d', stats['7d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['7d'].total_downtime_seconds * 1000)} downtime`);
+                updateCard('30d', stats['30d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['30d'].total_downtime_seconds * 1000)} downtime`);
                 
                 const longestUptimeEl = document.getElementById('downtime-longest_online');
                 if (longestUptimeEl) {
@@ -884,7 +917,7 @@
             });
             svg.innerHTML = svgMarkup;
             
-            pingCS.innerHTML = `Client ↔ Server: <span class="font-bold ${getPingStatusClass(clientToServerPing)}">${clientToServerPing ? Math.round(clientToServerPing)+'ms' : 'N/A'}</span>`;
+            pingCS.innerHTML = `Client ? Server: <span class="font-bold ${getPingStatusClass(clientToServerPing)}">${clientToServerPing ? Math.round(clientToServerPing)+'ms' : 'N/A'}</span>`;
         }
 
         function updateGatewayInfo(serverStatus) {
@@ -988,7 +1021,7 @@
                     const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
                         if (!Array.isArray(historicalData[targetName])) return [];
                         const color = palette[index % palette.length];
-                        return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2, };
+                        return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2 };
                     });
                     
                     if (trendsChart) {
@@ -1060,7 +1093,9 @@
                     tab.classList.add('tab-active');
                     Object.values(DOMElements.views).forEach(v => v.classList.add('hidden'));
                     const view = tab.id.split('-')[1];
-                    if (DOMElements.views[view]) DOMElements.views[view].classList.remove('hidden');
+                    if (DOMElements.views[view]) {
+                        DOMElements.views[view].classList.remove('hidden');
+                    }
                     if (view === 'log') {
                         apiCall('get_log').then(serverLog => {
                             if (serverLog) {
@@ -1387,37 +1422,74 @@
         }
 
 
-        function updateFuzzyQualityMetric(pings, score) {
-            if (!FUZZY_SAYINGS || Object.keys(FUZZY_SAYINGS).length === 0 || !DOMElements.qualityText) return;
-            if (currentState === 'DOWN') {
-                DOMElements.qualityText.textContent = FUZZY_SAYINGS["0"][Math.floor(Math.random() * FUZZY_SAYINGS["0"].length)];
-                DOMElements.qualityScore.textContent = "(Score: 0)";
-                DOMElements.qualityText.style.color = 'var(--color-status-down)';
+        function renderQualityMetrics(pings) {
+            const upPings = pings.filter(p => p.status === 'UP' && p.ping !== null);
+            if (upPings.length === 0) {
+                // Handle case with no data
+                DOMElements.qualityMetricsContainer.innerHTML = '<p class="text-center text-muted col-span-full">No active targets to measure quality.</p>';
                 return;
             }
 
-            const levelKeys = Object.keys(FUZZY_SAYINGS).map(Number).sort((a, b) => a - b);
-            let sayingKey = levelKeys[0];
-            for (const key of levelKeys) {
-                if (score >= key) {
-                    sayingKey = key;
-                } else {
-                    break;
-                }
-            }
+            const avgPing = upPings.reduce((sum, p) => sum + p.ping, 0) / upPings.length;
+            const avgJitter = upPings.reduce((sum, p) => sum + (p.jitter || 0), 0) / upPings.length;
+            const avgLoss = upPings.reduce((sum, p) => sum + (p.packet_loss_15m || 0), 0) / upPings.length;
 
-            if (sayingKey.toString() !== lastSayingKey) {
-                const sayings = FUZZY_SAYINGS[sayingKey];
-                DOMElements.qualityText.textContent = sayings[Math.floor(Math.random() * sayings.length)];
-                lastSayingKey = sayingKey.toString();
-            }
-
-            DOMElements.qualityScore.textContent = `(Score: ${score})`;
-            if (score < 150) DOMElements.qualityText.style.color = 'var(--color-status-down)';
-            else if (score < 300) DOMElements.qualityText.style.color = 'var(--color-status-warn)';
-            else if (score >= 300) DOMElements.qualityText.style.color = 'var(--color-status-up)';
+            createOrUpdateScoreGauge('quality-ping', avgPing, 200, 'Avg. Ping', 'ms', true);
+            createOrUpdateScoreGauge('quality-jitter', avgJitter, 50, 'Avg. Jitter', 'ms', true);
+            createOrUpdateScoreGauge('quality-loss', avgLoss, 100, 'Packet Loss', '%', true);
         }
 
+        function createOrUpdateScoreGauge(containerId, value, maxValue, label, unit, lowerIsBetter = true) {
+            const container = document.getElementById('quality-metrics-container');
+            if (!container) return;
+
+            let card = document.getElementById(containerId);
+            if (!card) {
+                card = document.createElement('div');
+                card.id = containerId;
+                card.className = 'card card-muted p-4 text-center';
+                container.appendChild(card);
+            }
+
+            const percentage = Math.min(100, (value / maxValue) * 100);
+            let colorVar;
+            const thresholds = lowerIsBetter ? [25, 60] : [75, 40];
+
+            if ((lowerIsBetter && percentage < thresholds[0]) || (!lowerIsBetter && percentage > thresholds[0])) {
+                colorVar = 'var(--color-status-up)';
+            } else if ((lowerIsBetter && percentage < thresholds[1]) || (!lowerIsBetter && percentage > thresholds[1])) {
+                colorVar = 'var(--color-status-warn)';
+            } else {
+                colorVar = 'var(--color-status-down)';
+            }
+
+            const size = 100;
+            const strokeWidth = 10;
+            const radius = (size / 2) - (strokeWidth / 2);
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+
+            card.innerHTML = `
+                <h3 class="text-sm font-medium text-muted">${label}</h3>
+                <div class="relative w-24 h-24 mx-auto my-2">
+                    <svg class="w-full h-full" viewBox="0 0 ${size} ${size}">
+                        <circle class="background" stroke="var(--border-primary)" stroke-width="${strokeWidth}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}"/>
+                        <circle class="progress" stroke="${colorVar}" stroke-width="${strokeWidth}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}" style="stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;"/>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-xl font-bold" style="color: ${colorVar};">${value.toFixed(1)}${unit}</span>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const progressCircle = card.querySelector('.progress');
+                if (progressCircle) {
+                    progressCircle.style.strokeDashoffset = offset;
+                }
+            }, 100);
+        }
+        
         async function createOrUpdateMiniChart(canvasId, nodeData, color) {
             const ctx = document.getElementById(canvasId);
             if (!ctx) return;
@@ -1568,8 +1640,8 @@
                     const totalDuration = eventsByDay[dateKey].UP + eventsByDay[dateKey].DOWN;
                     const upPercent = (eventsByDay[dateKey].UP / totalDuration) * 100;
                     const downPercent = (eventsByDay[dateKey].DOWN / totalDuration) * 100;
-                    if (downPercent > 1) html += `<div class="event-bar event-bar-down" style="width:${downPercent}%" title="Downtime: ${formatDuration(eventsByDay[dateKey].DOWN)}"></div>`;
-                    if (upPercent > 1) html += `<div class="event-bar event-bar-up" style="width:${upPercent}%" title="Uptime: ${formatDuration(eventsByDay[dateKey].UP)}"></div>`;
+                    if (downPercent > 1) html += `<div class="event-bar event-bar-down" style="width:${downPercent}%" title="Downtime: ${formatLongDuration(eventsByDay[dateKey].DOWN)}"></div>`;
+                    if (upPercent > 1) html += `<div class="event-bar event-bar-up" style="width:${upPercent}%" title="Uptime: ${formatLongDuration(eventsByDay[dateKey].UP)}"></div>`;
                 }
                 html += '</div>';
             }
@@ -1809,7 +1881,8 @@
 
                 // Check if the app is functional before starting the main polling loop
                 if (lastSuccessfulFetch > 0) {
-                    const updateInterval = (await apiCall('get_settings')).updateInterval || '2000';
+                    const settings = await apiCall('get_settings');
+                    const updateInterval = settings.updateInterval || '2000';
                     startPolling(updateInterval);
                 } else {
                     console.warn("Skipping main polling loop due to failed initial data fetch.");
