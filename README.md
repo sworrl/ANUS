@@ -1,10 +1,3 @@
-Of course. My apologies that the formatting didn't carry over correctly. I will provide the complete, combined `README.md` in a single markdown code block as you've requested.
-
-I've taken the header from the old version, updated the version to **v1.4.0**, changed the codename to **PurpleNurple** with a matching purple badge, and merged it with the casual-toned content you liked.
-
-Here is the complete file content for you to copy and paste directly into your `README.md` on GitHub.
-
-````markdown
 # A.N.U.S. - Automated Network Utility System
 [![Version](https://img.shields.io/badge/Version-v1.4.0-blue.svg)](https://github.com/sworrl/ANUS/releases/tag/v1.4.0)
 [![CODENAME](https://img.shields.io/badge/CODENAME-PurpleNurple-9370DB.svg)](https://github.com/sworrl/ANUS/releases/tag/v1.4.0)
@@ -45,24 +38,60 @@ A.N.U.S. isn't just another ping tool. It’s a full-blown health system for you
 ## 🖼️ See It in Action!
 
 <details>
-<summary><strong>Click here to check out some screenshots</strong></summary>
+<summary><strong>Click here for a full tour of the dashboard!</strong></summary>
 
 <p align="center">
   <img src="./assets/dashboard-view.png" alt="Main Dashboard View Screenshot" width="700">
   <br>
-  <em>The Main Dashboard View</em>
+  <em>The Main Dashboard: Your at-a-glance hub for uptime, quality scores, and server health.</em>
 </p>
 
 <p align="center">
   <img src="./assets/trends-view.png" alt="Historical Trends View Screenshot" width="700">
   <br>
-  <em>The Historical Trends View</em>
+  <em>The Trends View: Pan and zoom through historical latency data to spot patterns.</em>
+</p>
+
+<p align="center">
+  <img src="./assets/diagnostics-view.png" alt="Diagnostics View Screenshot" width="700">
+  <br>
+  <em>The Diagnostics View: A live, animated map of your network's data flow.</em>
+</p>
+
+<p align="center">
+  <img src="./assets/neighborhood-view.png" alt="Network Neighborhood View Screenshot" width="700">
+  <br>
+  <em>The Network Neighborhood: See all the devices currently on your local network.</em>
+</p>
+
+<p align="center">
+  <img src="./assets/log-timeline-view.png" alt="Event Log Timeline View Screenshot" width="700">
+  <br>
+  <em>The Event Log (Timeline): A detailed, chronological list of every connection change.</em>
 </p>
 
 <p align="center">
   <img src="./assets/calendar-view.png" alt="Event Log Calendar View Screenshot" width="700">
   <br>
-  <em>The Event Log (Calendar View)</em>
+  <em>The Event Log (Calendar): A monthly overview of your network's stability.</em>
+</p>
+
+<p align="center">
+  <img src="./assets/settings-view.png" alt="Settings View Screenshot" width="700">
+  <br>
+  <em>The Settings View: Customize themes, update intervals, and more on the fly.</em>
+</p>
+
+<p align="center">
+  <img src="./assets/node-details-modal.png" alt="Node Details Modal Screenshot" width="700">
+  <br>
+  <em>Node Details Modal: Click any target to see in-depth stats and the new circular ping graph.</em>
+</p>
+
+<p align="center">
+  <img src="./assets/server-health-modal.png" alt="Server Health Modal Screenshot" width="700">
+  <br>
+  <em>Server Health Modal: Dive deep into your server's historical CPU, Memory, and Network usage.</em>
 </p>
 
 </details>
@@ -165,6 +194,3 @@ For maximum security, you should manually review the code before running it.
 ## ⚖️ The Legal Stuff
 
 Wondering about the legal details? This project is licensed under the **GPLv3 License**. You can read the nitty-gritty details right [here](https://www.google.com/search?q=./LICENSE).
-
-```
-```
