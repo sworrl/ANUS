@@ -1,13 +1,10 @@
-# A.N.U.S. - Automated Network Utility System
-[![Version](https://img.shields.io/badge/Version-1.3.9-blue.svg)](https://github.com/sworrl/ANUS/releases/tag/v1.3.9)
-[![CODENAME](https://img.shields.io/badge/CODENAME-YellowSnow-gold.svg)](https://github.com/sworrl/ANUS/releases/tag/v1.3.9)
-
-![My Animated Logo](./assets/animated-logo.svg)
-
-A.N.U.S. (Automated Network Utility System) is a comprehensive, self-hosted network monitoring dashboard. This tool continuously tracks key internet health metrics like latency, jitter, and packet loss for custom targets, while also monitoring host server resources like CPU, memory, and network throughput. Features a sleek, modern web UI with real-time stats and historical trend charts.
+A.N.U.S. - Automated Network Utility System
+<p align="center">
+<img src="./assets/animated-logo.svg" alt="A.N.U.S. Animated Logo" width="200">
+</p>
 
 <p align="center">
-<strong>A comprehensive, self-hosted network monitoring dashboard.</strong>
+<strong>It's your very own, all-in-one dashboard for keeping an eye on your network!</strong>
 <br><br>
 <a href="#-installation">
 <img src="https://img.shields.io/badge/install-scripted-brightgreen?style=for-the-badge" alt="Install Script">
@@ -17,159 +14,157 @@ A.N.U.S. (Automated Network Utility System) is a comprehensive, self-hosted netw
 </a>
 </p>
 
-## ✨ Features
+✨ So, What's It Do?
+A.N.U.S. isn't just another ping tool. It’s a full-blown health system for your network and the server that runs it. Here's what you get!
 
-* **Comprehensive Monitoring**: Tracks Ping, Jitter, and Packet Loss for multiple user-defined targets.
-* **Real-time Dashboard**: A sleek, modern UI provides an at-a-glance overview of your entire network's health.
-* **Server Health**: Monitors the host server's CPU usage, memory usage, and network throughput in real-time.
-* **Historical Trends**: An interactive chart displays historical latency data, allowing you to zoom and pan through time to identify patterns.
-* **Event Logging**: Automatically logs network status changes (UP/DOWN) with duration, viewable in both a timeline and a monthly calendar format.
-* **Advanced Diagnostics**: A visual representation of the data flow from your client to the A.N.U.S. server, the network gateway, and out to the internet nodes.
-* **Customizable Themes**: Comes with multiple built-in themes to personalize your dashboard's appearance.
-* **Self-Hosted**: Runs on your own hardware with a simple setup script for easy installation.
+Feature
 
-## 🖼️ Screenshots
+What it means for you!
+
+Comprehensive Monitoring
+
+It keeps a close watch on the important stuff like Latency, Jitter, and Packet Loss for any website or server you want.
+
+Real-time Dashboard
+
+You get a slick, modern dashboard that shows you everything you need to know in a single glance, and it's always updating!
+
+Server Health
+
+Ever wonder if your server is sweating? It monitors CPU usage, Memory, and Network traffic for you.
+
+Historical Trends
+
+Check out the cool interactive chart to see your network's history. You can zoom and pan through time to spot any sneaky patterns or outages.
+
+Event Logging
+
+It automatically keeps a diary of when your connection goes down or comes back up, so you can see exactly what happened and for how long.
+
+Network Discovery
+
+The "Neighborhood" tab is pretty neat! It automatically finds and maps out all the devices on your local network.
+
+Advanced Diagnostics
+
+Get a cool visual of how your data flows from your computer, through your router, and out to the internet.
+
+Customizable Themes
+
+Make it your own! It comes with a bunch of fun themes, so you can switch up the look whenever you want.
+
+Self-Hosted
+
+Best of all, it runs on your own gear. We've got a simple setup script to make getting started on a Debian-based system a breeze.
+
+🖼️ See It in Action!
+<details>
+<summary><strong>Click here to check out some screenshots</strong></summary>
 
 <p align="center">
 <img src="./assets/dashboard-view.png" alt="Main Dashboard View Screenshot" width="700">
 <br>
-<strong>Main Dashboard View</strong>
+<em>The Main Dashboard View</em>
 </p>
 
 <p align="center">
 <img src="./assets/trends-view.png" alt="Historical Trends View Screenshot" width="700">
 <br>
-<strong>Historical Trends View</strong>
+<em>The Historical Trends View</em>
 </p>
 
 <p align="center">
 <img src="./assets/calendar-view.png" alt="Event Log Calendar View Screenshot" width="700">
 <br>
-<strong>Event Log (Calendar View)</strong>
+<em>The Event Log (Calendar View)</em>
 </p>
 
-## 🛠️ Tech Stack
+</details>
 
-* **Backend Service**: Python 3
-* **Web Server / API**: Apache2 & PHP
-* **Database**: SQLite
-* **Frontend**: HTML, Tailwind CSS, Chart.js, Tone.js
+🛠️ What Makes It Tick? (Tech Stack)
+Here's a peek under the hood at the tech we're using:
 
-### ⚠️ Important Security Note
+Backend Service: Python 3
 
-The installation commands below will download a script from the internet and run it with `sudo` (administrator) privileges. This gives the script full control over your system. For your security, it is **highly recommended** that you inspect the script's code before running it.
+Web Server / API: Apache2 & PHP
 
-The new installation method below downloads the entire project first, making it easy for you to review the `setup_anus_app.py` file before execution.
+Database: SQLite
 
+Frontend: HTML, Tailwind CSS, Chart.js, Tone.js
 
-## 🚀 Installation
+🚀 Let's Get This Thing Installed!
+Ready to get started? This installer is built for Debian-based systems (like Ubuntu, Debian, or Raspberry Pi OS). You'll need sudo access to get it running.
 
-This script is designed for Debian-based Linux distributions (like Ubuntu, Debian, Raspberry Pi OS). You will need `sudo` access to run the installer.
-
-## 🛑 Before You Begin... READ THIS! 🛑
-
+🛑 Hold On! Read This First.
 This project is not a beginner's guide to web hosting. It makes several key assumptions about your existing setup and knowledge. Please review the following points carefully before proceeding.
 
-### 🧠 Assumed Knowledge
-
+🧠 Assumed Knowledge
 This project assumes you are already comfortable with:
-* 🖥️ **Apache Web Server Configuration:** You should know your way around virtual hosts, `.conf` files, and basic server administration.
-* 🌐 **General Web Hosting Concepts:** Familiarity with DNS, file permissions, and how a web server serves content is expected.
 
-We will **not** be covering the basics of setting up a web server from scratch.
+🖥️ Apache Web Server Configuration: You should know your way around virtual hosts, .conf files, and basic server administration.
 
-### ✅ Required Setup
+🌐 General Web Hosting Concepts: Familiarity with DNS, file permissions, and how a web server serves content is expected.
 
-Before you run the installer, your server **must** already have:
-* An existing, fully functional **Apache2** installation.
-* 🔒 A valid SSL certificate (e.g., from **Let's Encrypt**) properly configured for your domain.
+We will not be covering the basics of setting up a web server from scratch.
 
-This script **does not** install or configure Apache or your SSL certificate for you. It builds *on top of* an existing, working, and secured setup.
+✅ Required Setup
+Before you run the installer, your server must already have:
 
-Please note that this script builds upon your existing server configuration:
+An existing, fully functional Apache2 installation.
 
-✅ It DOES: Create a new anus.conf file to enable the required Apache virtual host.
+🔒 A valid SSL certificate (e.g., from Let's Encrypt) properly configured for your domain.
 
-❌ It DOES NOT: Install the Apache server itself or configure your SSL (Let's Encrypt) certificate.
+Just a heads-up: The script works with what you've already got. It doesn't install Apache or set up SSL for you, but it will create the anus.conf file you need to get the site working!
 
-You must start with a working and secured Apache setup before running this script.
+💥 Super Important Warning! For Your Eyes Only!
+This application is intended for private, internal, or personal home-lab use ONLY.
 
----
+It has NOT been security-hardened for a public-facing environment. Exposing it to the open internet could create significant security risks for your server and network. Please do not point this at the big, scary internet.
 
-### 💥 **CRITICAL WARNING: FOR PRIVATE USE ONLY** 💥
-
-> **This application is intended for private, internal, or personal home-lab use ONLY.**
->
-> It has **NOT** been security-hardened for a public-facing environment. Exposing it to the open internet could create significant security risks for your server and network. Please do not point this at the big, scary internet.
-
----
-
-## 🧪 Hardware & Testing Notice
+🧪 Hardware & Testing Notice
 This project has only been formally developed and tested on the following hardware and software configurations. While it may work on other Debian-based systems, your mileage may vary.
 
-### 🍓 Raspberry Pi 4: Tested on Raspbian OS (64-bit), providing a lightweight and efficient hosting option.
+🍓 Raspberry Pi 4: Tested on Raspbian OS (64-bit), providing a lightweight and efficient hosting option.
 
-### 🐧 Ubuntu Server: Tested on version 25 (64-bit), ideal for more robust server environments.
+🐧 Ubuntu Server: Tested on version 25 (64-bit), ideal for more robust server environments.
 
-While it may work on other Debian-based systems (like Ubuntu), your mileage may vary. Proceed with caution and be prepared for some tinkering if you are using an untested platform.
+⚠️ A Note on Security
+The installation commands below will download a script from the internet and run it with sudo (administrator) privileges. This gives the script full control over your system. For your security, it is highly recommended that you inspect the script's code before running it. The new installation method below downloads the entire project first, making it easy for you to review the setup_anus_app.py file before execution.
 
-### ⚠️ Important Security Note
+Installation Commands
+One-Liner Install
+This command will clone the repository into a folder named ANUS, change into that directory, and then run the fully automated installation.
 
-The installation commands below will download a script from the internet and run it with `sudo` (administrator) privileges. This gives the script full control over your system. For your security, it is **highly recommended** that you inspect the script's code before running it.
+sudo rm -r ANUS && git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git) && cd ANUS && sudo ./setup_anus_app.py
 
-The new installation method below downloads the entire project first, making it easy for you to review the `setup_anus_app.py` file before execution.
-
-### One-Liner Install
-
-This command will clone the repository into a folder named `ANUS`, change into that directory, and then run the fully automated installation.
-
-```bash
-sudo rm -r ANUS && git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py
-```
-
-### Interactive Menu Install
-
+Interactive Menu Install
 For more options, including uninstalling or managing the service, use the following command to run the setup script with the interactive menu.
 
-```bash
-sudo rm -r ANUS && git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo ./setup_anus_app.py -menu
+sudo rm -r ANUS && git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git) && cd ANUS && sudo ./setup_anus_app.py -menu
 
-```
-
-### Manual Install (Safest Method)
-
+Manual Install (Safest Method)
 For maximum security, you should manually review the code before running it.
 
-1.  **Clone the repository:**
-```bash
-git clone https://github.com/sworrl/ANUS.git
-```
-2.  **Navigate into the project directory:**
-```bash
-   cd ANUS
-   ```
-3.  **Inspect the script's contents** using a text editor or a command like `less`:
-   ```bash
-    less sudo ./setup_anus_app.py
-    
-   ```
-4.  **If you trust the code**, run the installer:
-   ```bash
-   sudo python3 ANUS/setup_anus_app.py
-   ```
-### Interactive Menu Install
+Clone the repository:
 
-For more options, including uninstalling or managing the service, run the setup script with the `-menu` flag.
+git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git)
 
-```bash
-wget https://raw.githubusercontent.com/sworrl/ANUS/main/ANUS/setup_anus_app.py && sudo python3 setup_anus_app.py -menu
-```
+Navigate into the project directory:
 
-## ⚙️ Configuration
+cd ANUS
 
- * **Targets**: To change the hosts that A.N.U.S. monitors, you can edit the `targets.json` file located in the web directory (`/var/www/html/anus/targets.json` by default). The Python service will automatically pick up the changes on its next cycle.
- * **Dashboard Settings**: The update interval, sound effects, theme, and online detection method can all be configured directly from the "Settings" tab in the web interface.
+Inspect the script's contents using a text editor or a command like less:
 
-## ⚖️ License
+less setup_anus_app.py
 
-This project is licensed under the GPLv3 License.
+If you trust the code, run the installer with the interactive menu:
+
+sudo ./setup_anus_app.py -menu
+
+⚙️ Making It Your Own (Configuration)
+Targets: Want to change what A.N.U.S. is watching? Just edit the targets.json file. You'll find it at /var/www/html/anus/assets/targets.json. The service will spot the changes right away!
+
+Dashboard Settings: Feel like changing the theme, update speed, or sound effects? You can do all of that right from the "Settings" tab in the app. No files to edit!
+
+⚖️ The Legal Stuff
+Wondering about the legal details? This project is licensed under the GPLv3 License.

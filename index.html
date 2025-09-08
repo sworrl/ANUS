@@ -16,6 +16,7 @@
 </head>
 <body class="bg-primary text-primary flex items-center justify-center min-h-screen p-2 sm:p-4">
 
+    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 bg-bg-primary z-50 flex flex-col items-center justify-center transition-opacity duration-500">
         <div id="loading-logo-container" class="text-accent">
              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-32 h-32">
@@ -24,9 +25,7 @@
                  <g class="logo-spin-inner"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
                  <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow-loader)"/>
                  <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
-                 <g class="spokes">
-                     <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
-                 </g>
+                 <g class="spokes"><path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/></g>
              </svg>
         </div>
         <div class="w-full max-w-md mt-8 text-center">
@@ -42,33 +41,19 @@
         </div>
     </div>
 
+    <!-- Main App Container -->
     <div id="app-container" class="w-full max-w-7xl mx-auto bg-main border border-main rounded-2xl shadow-lg p-4 md:p-8 opacity-0 transition-opacity duration-500">
         <header class="flex flex-col items-center mb-6 border-b border-main pb-6">
              <div id="logo-container" class="flex flex-col items-center gap-2 cursor-pointer">
                  <svg id="logo-svg" class="w-24 h-24 text-accent" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                      <defs>
-                         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                             <feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
-                             <feMerge>
-                                 <feMergeNode in="coloredBlur"></feMergeNode>
-                                 <feMergeNode in="SourceGraphic"></feMergeNode>
-                             </feMerge>
-                         </filter>
+                         <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
                      </defs>
-                     <g class="logo-spin-outer">
-                         <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
-                         <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/>
-                     </g>
-                     <g class="logo-spin-inner">
-                         <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/>
-                         <path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
-                         <path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" />
-                     </g>
+                     <g class="logo-spin-outer"><circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.5"/></g>
+                     <g class="logo-spin-inner"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="1" opacity="0.7"/><path d="M 50 15 A 35 35 0 0 1 85 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /><path d="M 50 85 A 35 35 0 0 1 15 50" fill="none" stroke-width="2" stroke="var(--accent-secondary)" /></g>
                      <circle class="outer-ring" cx="50" cy="50" r="28" fill="none" stroke="currentColor" stroke-width="2.5" filter="url(#glow)"/>
                      <circle class="inner-ring" cx="50" cy="50" r="10" fill="currentColor"/>
-                     <g class="spokes">
-                         <path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/>
-                     </g>
+                     <g class="spokes"><path d="M50 22.5V15 M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3" fill="none" stroke="currentColor" stroke-width="2.5"/></g>
                  </svg>
                  <div>
                      <h1 id="app-title" class="text-2xl sm:text-3xl font-bold text-accent text-center">A.N.U.S. <span class="app-version"></span></h1>
@@ -83,7 +68,9 @@
                 <p id="status-timer" class="text-sm text-muted mt-1">Initializing...</p>
             </div>
             
-            <div class="flex justify-center my-6">
+            <div id="main-score-container" class="my-6"></div>
+            
+            <div class="flex justify-center">
                 <div id="current-datetime" class="digital-clock"></div>
             </div>
         </header>
@@ -103,14 +90,11 @@
             <div id="view-dashboard">
                 <div class="mb-8">
                     <h2 class="text-xl font-semibold text-accent mb-4">Uptime Statistics</h2>
-                    <div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                        </div>
+                    <div id="uptime-stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"></div>
                 </div>
                 <div class="mb-8">
                     <h2 class="text-xl font-semibold text-accent mb-4">Live Internet Quality Metrics</h2>
-                    <div id="quality-metrics-container" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                        <!-- Gauges will be inserted here by JS -->
-                    </div>
+                    <div id="quality-metrics-container" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"></div>
                 </div>
                 <div class="mb-8"><h2 class="text-xl font-semibold text-accent mb-4">Server Health</h2><div id="server-health-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div></div>
             </div>
@@ -131,6 +115,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                     <h2 class="text-xl font-semibold text-accent">Network Neighborhood</h2>
                     <div class="flex items-center gap-4">
+                        <button id="manual-scan-btn" class="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-opacity-80 rounded-lg">Manual Scan</button>
                         <label class="text-sm font-medium text-primary">Responsive Scan Mode</label>
                         <div class="relative inline-block w-10 mr-2 align-middle select-none">
                             <input type="checkbox" name="responsive-scan-toggle" id="responsive-scan-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
@@ -198,7 +183,7 @@
                      <div class="md:col-span-2 mt-4"><h3 class="text-lg font-semibold text-accent-secondary mb-2">Theme Selector</h3><div id="theme-selector-group" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div></div>
                  </div>
                  <div class="mt-6 flex justify-end">
-                     <button id="save-settings-btn" class="px-6 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-opacity-80 transition-colors">Save Settings</button>
+                     <span id="save-status-indicator" class="text-sm text-muted transition-opacity duration-300 opacity-0"></span>
                  </div>
             </div>
             
@@ -233,6 +218,7 @@
         </footer>
     </div>
 
+    <!-- Modals -->
     <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-sm shadow-lg rounded-md bg-bg-secondary"><div class="mt-3 text-center"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50"><svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><h3 class="text-lg font-medium text-primary mt-2">Clear All Metrics?</h3><p class="text-sm text-muted p-4">This will clear all historical data. This action cannot be undone.</p><div class="items-center px-4 py-3 gap-2 flex justify-center"><button id="modal-cancel-btn" class="px-4 py-2 bg-bg-tertiary rounded-md w-full">Cancel</button><button id="modal-confirm-btn" class="px-4 py-2 bg-status-down text-white hover:bg-status-down-hover rounded-md w-full">Delete</button></div></div></div></div>
     <div id="node-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-2xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 id="modal-title" class="text-xl font-semibold text-accent">Node Details</h3><button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="modal-content" class="text-sm space-y-4"></div></div></div>
     <div id="server-details-modal" class="fixed inset-0 bg-black bg-opacity-70 h-full w-full hidden z-50 flex items-center justify-center p-4"><div class="relative mx-auto p-5 border border-main w-full max-w-4xl shadow-lg rounded-md bg-bg-secondary"><div class="flex justify-between items-center mb-4 border-b border-main pb-3"><h3 class="text-xl font-semibold text-accent">A.N.U.S. Server Health</h3><button id="server-modal-close-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button></div><div id="server-modal-content" class="text-sm space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-muted p-4 rounded-lg h-64"><canvas id="cpu-chart"></canvas></div><div class="bg-muted p-4 rounded-lg h-64"><canvas id="mem-chart"></canvas></div><div class="md:col-span-2 bg-muted p-4 rounded-lg h-64"><canvas id="net-chart"></canvas></div></div></div></div>
@@ -241,12 +227,10 @@
 
     <script type="module">
         // --- State and Configuration ---
-        const APP_VERSION = '1.3.9'; // <-- SET VERSION HERE
+        const APP_VERSION = '1.4.0';
         let currentState = null, lastState = null, lastStateChangeTime = null, log = [], allPingsData = [], trendsChart, isTrendsDataLoaded = false, soundEnabled = false, bruhPlayer, upPlayer;
-        let FUZZY_SAYINGS = {};
         let clientIp = '...', serverGatewayIp = 'N/A', pollingIntervalId = null;
         let lastSuccessfulFetch = 0;
-        let lastSayingKey = null;
         const miniChartInstances = {};
         let serverChartCPU, serverChartMem, serverChartNet;
         let calendarDate = new Date();
@@ -257,14 +241,10 @@
         let networkScanData = null; 
         let themes = {};
         const qualityGaugeInstances = {};
-        
-        // --- Network Neighborhood Dragging State ---
-        let draggedNode = null;
-        let offsetX = 0, offsetY = 0;
+        let draggedNode = null, offsetX = 0, offsetY = 0;
 
         const DOMElements = {
             loadingOverlay: document.getElementById('loading-overlay'),
-            loadingLogoContainer: document.getElementById('loading-logo-container'),
             loadingErrorContainer: document.getElementById('loading-error-container'),
             loadingErrorMessage: document.getElementById('loading-error-message'),
             copyErrorBtn: document.getElementById('copy-error-btn'),
@@ -273,1642 +253,181 @@
             appContainer: document.getElementById('app-container'),
             statusIndicator: document.getElementById('status-indicator'), statusText: document.getElementById('status-text'), statusTimer: document.getElementById('status-timer'), currentStatusCard: document.getElementById('current-status-card'), uptimeStatsContainer: document.getElementById('uptime-stats-container'), serverHealthContainer: document.getElementById('server-health-container'),
             diagnosticsFlowContainer: document.getElementById('diagnostics-flow-container'), 
-            updateIntervalGroup: document.getElementById('update-interval-group'), 
-            soundToggle: document.getElementById('sound-toggle'), 
             logTimelineContainer: document.getElementById('log-timeline-container'), logCalendarContainer: document.getElementById('log-calendar-container'), logViewToggle: document.getElementById('log-view-toggle'), clearLogBtn: document.getElementById('clear-log-btn'), tabs: document.querySelectorAll('nav[aria-label="Tabs"] button'),
             views: { dashboard: document.getElementById('view-dashboard'), trends: document.getElementById('view-trends'), neighborhood: document.getElementById('view-neighborhood'), log: document.getElementById('view-log'), settings: document.getElementById('view-settings'), diagnostics: document.getElementById('view-diagnostics') },
             confirmModal: document.getElementById('confirm-modal'), modalCancelBtn: document.getElementById('modal-cancel-btn'), modalConfirmBtn: document.getElementById('modal-confirm-btn'), trendsChartCanvas: document.getElementById('trends-chart'),
             nodeDetailsModal: document.getElementById('node-details-modal'), modalTitle: document.getElementById('modal-title'), modalContent: document.getElementById('modal-content'), modalCloseBtn: document.getElementById('modal-close-btn'),
             serverDetailsModal: document.getElementById('server-details-modal'), serverModalCloseBtn: document.getElementById('server-modal-close-btn'),
-            logoContainer: document.getElementById('logo-container'), 
-            appTitle: document.getElementById('app-title'),
-            themeSelectorGroup: document.getElementById('theme-selector-group'), 
-            clearTrendsFilterBtn: document.getElementById('clear-trends-filter-btn'), 
-            onlineDetectionMethodGroup: document.getElementById('online-detection-method-group'),
-            smartCheckOptions: document.getElementById('smart-check-options'),
-            smartCheckThreshold: document.getElementById('smart-check-threshold'),
-            criticalServicesOptions: document.getElementById('critical-services-options'),
-            criticalServicesList: document.getElementById('critical-services-list'),
-            saveSettingsBtn: document.getElementById('save-settings-btn'),
-            qualityMetricsContainer: document.getElementById('quality-metrics-container'), 
-            qualityScore: document.getElementById('quality-score'),
+            logoContainer: document.getElementById('logo-container'), appTitle: document.getElementById('app-title'),
+            themeSelectorGroup: document.getElementById('theme-selector-group'), clearTrendsFilterBtn: document.getElementById('clear-trends-filter-btn'), 
+            onlineDetectionMethodGroup: document.getElementById('online-detection-method-group'), smartCheckOptions: document.getElementById('smart-check-options'),
+            smartCheckThreshold: document.getElementById('smart-check-threshold'), criticalServicesOptions: document.getElementById('critical-services-options'),
+            criticalServicesList: document.getElementById('critical-services-list'), qualityMetricsContainer: document.getElementById('quality-metrics-container'), 
             calGrid: document.getElementById('cal-grid'), calMonthYear: document.getElementById('cal-month-year'), calPrevMonthBtn: document.getElementById('cal-prev-month'), calNextMonthBtn: document.getElementById('cal-next-month'),
             licenseModal: document.getElementById('license-modal'), licenseLink: document.querySelector('#license-link'), readmeLink: document.querySelector('#readme-link'), licenseCloseBtn: document.getElementById('license-close-btn'), licenseContent: document.getElementById('license-content'),
             readmeModal: document.getElementById('readme-modal'), readmeCloseBtn: document.getElementById('readme-close-btn'), readmeContent: document.getElementById('readme-content'),
-            faviconLink: document.getElementById('favicon'),
-            networkTreeContainer: document.getElementById('network-tree-container'),
-            networkTreeSVG: document.getElementById('network-tree-svg'),
-            networkNodesContainer: document.getElementById('network-nodes-container'),
-            nmapLoadingIndicator: document.getElementById('nmap-loading-indicator'),
-            responsiveScanToggle: document.getElementById('responsive-scan-toggle'),
-            trendsLoadingIndicator: document.getElementById('trends-loading-indicator'),
-            diagTargetInput: document.getElementById('diag-target-input'),
-            diagPingCount: document.getElementById('diag-ping-count'),
-            diagPingSize: document.getElementById('diag-ping-size'),
-            runDiagBtn: document.getElementById('run-diag-btn'),
-            diagOutputContainer: document.getElementById('diag-output-container')
+            faviconLink: document.getElementById('favicon'), networkTreeContainer: document.getElementById('network-tree-container'),
+            networkTreeSVG: document.getElementById('network-tree-svg'), networkNodesContainer: document.getElementById('network-nodes-container'),
+            nmapLoadingIndicator: document.getElementById('nmap-loading-indicator'), responsiveScanToggle: document.getElementById('responsive-scan-toggle'),
+            trendsLoadingIndicator: document.getElementById('trends-loading-indicator'), diagTargetInput: document.getElementById('diag-target-input'),
+            diagPingCount: document.getElementById('diag-ping-count'), diagPingSize: document.getElementById('diag-ping-size'),
+            runDiagBtn: document.getElementById('run-diag-btn'), diagOutputContainer: document.getElementById('diag-output-container'),
+            currentDatetime: document.getElementById('current-datetime'), manualScanBtn: document.getElementById('manual-scan-btn')
         };
         
-
-        // --- Core Functions ---
-        const apiCall = async (action, payload = {}, timeout = 20000) => {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-
-            const url = new URL(`./ping.php`, window.location.href);
-            url.searchParams.append('action', action);
-            url.searchParams.append('t', Date.now());
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    signal: controller.signal,
-                    cache: 'no-cache'
-                });
-
-                clearTimeout(id);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`API Error: ${response.status} ${response.statusText} for action '${action}'. Response: ${errorText}`);
-                }
-
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    const data = await response.json();
-                    if (data.error) {
-                        throw new Error(`API returned an error for action '${action}': ${data.error}`);
-                    }
-                    return data;
-                } else {
-                    const responseText = await response.text();
-                    throw new Error(`Received non-JSON response from API for action '${action}'. Response: ${responseText}`);
-                }
-            } catch (error) {
-                clearTimeout(id);
-                if (error.name === 'AbortError') {
-                    throw new Error(`API request for action '${action}' timed out after ${timeout / 1000} seconds.`);
-                }
-                throw error;
-            }
-        };
-
-        const measureHttpLatency = async (url) => { if (!url || url.trim() === '' || url.trim() === 'N/A') return null; const testUrl = url.startsWith('http')?url:`http://${url}`; const startTime = performance.now(); try { await fetch(`${testUrl}?t=${Date.now()}`, { mode: 'no-cors', cache: 'no-store', signal: AbortSignal.timeout(1900) }); return performance.now() - startTime; } catch (e) { return null; } };
-        const measureServerLatency = async () => { const startTime = performance.now(); const result = await apiCall('pong'); return result ? performance.now() - startTime : null; };
-        const formatLongDuration = (ms) => {
-            if (ms <= 0) return "0 Seconds";
-            let seconds = Math.floor(ms / 1000);
-            
-            const years = Math.floor(seconds / 31536000);
-            seconds %= 31536000;
-            const weeks = Math.floor(seconds / 604800);
-            seconds %= 604800;
-            const days = Math.floor(seconds / 86400);
-            seconds %= 86400;
-            const hours = Math.floor(seconds / 3600);
-            seconds %= 3600;
-            const minutes = Math.floor(seconds / 60);
-            seconds %= 60;
-
-            const parts = [];
-            if (years > 0) parts.push(`${years} Year${years > 1 ? 's' : ''}`);
-            if (weeks > 0) parts.push(`${weeks} Week${weeks > 1 ? 's' : ''}`);
-            if (days > 0) parts.push(`${days} Day${days > 1 ? 's' : ''}`);
-            if (hours > 0) parts.push(`${hours} Hour${hours > 1 ? 's' : ''}`);
-            if (minutes > 0) parts.push(`${minutes} Minute${minutes > 1 ? 's' : ''}`);
-            if (seconds > 0) parts.push(`${seconds} Second${seconds > 1 ? 's' : ''}`);
-
-            return parts.slice(0, 2).join(', ');
-        };
-        const formatTimestamp = (isoOrUnix) => { const date = new Date(isoOrUnix); return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); };
-        const timeAgo = (timestamp) => { const seconds = Math.floor((new Date() - new Date(timestamp * 1000)) / 1000); let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + " years ago"; interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + " months ago"; interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " days ago"; interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " hours ago"; interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " minutes ago"; return Math.floor(seconds) + " seconds ago"; };
+        const apiCall = async (action, payload = {}, timeout = 20000) => { const c=new AbortController();const i=setTimeout(()=>c.abort(),timeout);const u=new URL(`./ping.php`,window.location.href);u.searchParams.append('action',action);u.searchParams.append('t',Date.now());try{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:c.signal,cache:'no-cache'});clearTimeout(i);if(!r.ok){const e=await r.text();throw new Error(`API Error: ${r.status} ${r.statusText}. Response: ${e}`);}const t=r.headers.get("content-type");if(t&&t.includes("application/json")){const d=await r.json();if(d.error)throw new Error(`API returned error: ${d.error}`);return d;}else{const d=await r.text();throw new Error(`Received non-JSON response: ${d}`);}}catch(e){clearTimeout(i);if(e.name==='AbortError')throw new Error(`API request timed out.`);throw e;}};
+        const formatLongDuration=(s)=>{if(s<=0)return"0 Seconds";let e=Math.floor(s/1e3);const t=[{d:31536e3,l:"Year"},{d:604800,l:"Week"},{d:86400,l:"Day"},{d:3600,l:"Hour"},{d:60,l:"Minute"}];const o=[];for(const a of t)if(e>=a.d){const r=Math.floor(e/a.d);o.push(`${r} ${a.l}${r>1?"s":""}`),e%=a.d}return e>0&&o.push(`${e} Second${e>1?"s":""}`),o.slice(0,2).join(", ")};
+        const formatTimestamp = (isoOrUnix) => new Date(isoOrUnix).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        const timeAgo = (t) => { const s = Math.floor((new Date - new Date(t*1e3))/1e3); let i=s/31536e3; if(i>1)return Math.floor(i)+" years ago"; i=s/2592e3; if(i>1)return Math.floor(i)+" months ago"; i=s/86400; if(i>1)return Math.floor(i)+" days ago"; i=s/3600; if(i>1)return Math.floor(i)+" hours ago"; i=s/60; if(i>1)return Math.floor(i)+" minutes ago"; return Math.floor(s)+" seconds ago"; };
         const getPingStatusClass = p => p === null ? 'text-status-down' : p < 75 ? 'text-status-up' : p < 150 ? 'text-status-warn' : 'text-status-down';
         const getUptimeStatusClass = p => p < 95 ? 'text-status-down' : p < 99 ? 'text-status-warn' : 'text-status-up';
-        const getResourceStatusClass = (val, thresholds) => val > thresholds[1] ? 'text-status-down' : val > thresholds[0] ? 'text-status-warn' : 'text-status-up';
+        const getResourceStatusClass = (v, t) => v > t[1] ? 'text-status-down' : v > t[0] ? 'text-status-warn' : 'text-status-up';
         function playSound(player, force = false) { if ((soundEnabled || force) && player?.loaded) { if (Tone.context.state !== 'running') Tone.start(); player.start(); } }
         
         async function fetchAndUpdateData() {
             try { 
                 const apiData = await apiCall('get_all_latest_metrics');
-                if (!apiData || !apiData.pings) {
-                    throw new Error("Received invalid data structure from 'get_all_latest_metrics'");
-                };
-                lastSuccessfulFetch = Date.now();
-                allPingsData = apiData.pings;
-                
+                if (!apiData || !apiData.pings) throw new Error("Invalid data from 'get_all_latest_metrics'");
+                lastSuccessfulFetch = Date.now(); allPingsData = apiData.pings;
                 const newStatus = apiData.server_status.overall_status;
-                
-                if (lastState !== null && lastState !== newStatus) {
-                    lastStateChangeTime = new Date();
-                    apiCall('get_log').then(serverLog => { if (serverLog) log = serverLog; });
-                } else if (lastState === null) {
-                    lastStateChangeTime = new Date(apiData.server_status.status_start_time);
-                }
-                currentState = newStatus;
-
-                serverGatewayIp = apiData.server_status.server_gateway_ip;
-                clientIp = apiData.server_status.client_ip || 'Unavailable';
-                const [clientToGatewayPing, clientToServerPing] = await Promise.all([ measureHttpLatency(serverGatewayIp), measureServerLatency() ]);
-                
-                updateDashboard(apiData, clientToServerPing, clientToGatewayPing);
-            } catch (e) {
-                handleError(e);
-            }
+                if (lastState !== null && lastState !== newStatus) { lastStateChangeTime = new Date(); apiCall('get_log').then(l => { if (l) log = l; }); } 
+                else if (lastState === null) { lastStateChangeTime = new Date(apiData.server_status.status_start_time); }
+                currentState = newStatus; serverGatewayIp = apiData.server_status.server_gateway_ip; clientIp = apiData.server_status.client_ip || 'Unavailable';
+                updateDashboard(apiData);
+            } catch (e) { handleError(e); }
         }
         
         async function fetchNetworkNeighborhood() {
-            if (draggedNode) return; // Don't refresh while dragging
-            DOMElements.nmapLoadingIndicator.classList.remove('hidden');
-            try {
-                const scanData = await apiCall('get_network_neighborhood');
-                networkScanData = scanData;
-                renderNetworkTree(scanData);
-            } catch (e) {
-                console.error("Error fetching network neighborhood:", e);
-                DOMElements.networkNodesContainer.innerHTML = `<p class="text-center text-status-down p-8">Failed to fetch network data. Please ensure Nmap is installed and the service has permission to run it.</p>`;
-            } finally {
-                DOMElements.nmapLoadingIndicator.classList.add('hidden');
-            }
+            if (draggedNode) return; DOMElements.nmapLoadingIndicator.classList.remove('hidden');
+            try { networkScanData = await apiCall('get_network_neighborhood'); renderNetworkTree(networkScanData); } 
+            catch (e) { DOMElements.networkNodesContainer.innerHTML = `<p class="text-center text-status-down p-8">Failed to fetch network data. Is Nmap installed and sudo permissions correct?</p>`; } 
+            finally { DOMElements.nmapLoadingIndicator.classList.add('hidden'); }
         }
 
         function renderNetworkTree(scanData) {
-            const { networkNodesContainer, networkTreeSVG } = DOMElements;
-            if (!networkNodesContainer || !networkTreeSVG) return;
-
-            if (!scanData || !scanData.hosts || scanData.hosts.length === 0) {
-                networkNodesContainer.innerHTML = `<p class="text-center text-muted p-8">No devices found on the network.</p>`;
-                return;
-            }
-
-            // Preserve node positions if they already exist
-            const existingPositions = {};
-            networkNodesContainer.querySelectorAll('.network-node').forEach(node => {
-                existingPositions[node.dataset.ip] = {
-                    left: node.style.left,
-                    top: node.style.top
-                };
-            });
-
-            networkNodesContainer.innerHTML = ''; // Clear old nodes
-
+            const { networkNodesContainer } = DOMElements; if (!networkNodesContainer) return;
+            if (!scanData || !scanData.hosts || scanData.hosts.length === 0) { networkNodesContainer.innerHTML = `<p class="text-center text-muted p-8">No devices found on the network.</p>`; return; }
+            const existingPositions = {}; networkNodesContainer.querySelectorAll('.network-node').forEach(n => { existingPositions[n.dataset.ip] = { left: n.style.left, top: n.style.top }; });
+            networkNodesContainer.innerHTML = '';
             const gateway = scanData.hosts.find(h => h.ip === serverGatewayIp);
-            const server = scanData.hosts.find(h => h.ip === '127.0.0.1' || h.ip === scanData.server_ip);
+            const server = scanData.hosts.find(h => h.ip === scanData.server_ip || h.hostname?.toLowerCase().includes(window.location.hostname.split('.')[0]));
             const client = scanData.hosts.find(h => h.ip === clientIp);
-            const otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== scanData.server_ip && h.ip !== '127.0.0.1' && h.ip !== clientIp);
-
-            const createNodeElement = (host, type) => {
-                const hostName = host.hostname || 'Unknown';
-                const icon = type === 'Gateway' ? '&#x1F6A7;' : (type === 'Server' || type === 'Client') ? '&#x1F4BB;' : '&#x1F5A5;';
-                const statusColor = host.is_up ? 'text-status-up' : 'text-status-down';
-                const statusText = host.is_up ? 'Online' : 'Offline';
-
-                let services = '';
-                if (host.services && host.services.length > 0) {
-                    services = host.services.map(s => `<p class="flex items-center text-xs text-muted mt-1"><span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span><span>${s.port}/${s.protocol} - ${s.name}</span></p>`).join('');
-                }
-
-                const nodeElement = document.createElement('div');
-                nodeElement.className = "network-node bg-bg-tertiary p-4 rounded-lg border-main border flex items-start gap-4 cursor-grab hover:bg-bg-secondary transition-colors absolute min-w-[250px] w-auto";
-                nodeElement.dataset.ip = host.ip;
-                nodeElement.dataset.type = type;
-
-                if (existingPositions[host.ip]) {
-                    nodeElement.style.left = existingPositions[host.ip].left;
-                    nodeElement.style.top = existingPositions[host.ip].top;
-                }
-                
-                nodeElement.innerHTML = `
-                    <span class="text-3xl">${icon}</span>
-                    <div class="flex-grow overflow-hidden">
-                        <h4 class="text-lg font-semibold truncate" title="${hostName}">${hostName}</h4>
-                        <p class="text-sm text-muted">${host.ip}</p>
-                        <p class="text-xs ${statusColor}">${statusText}</p>
-                        ${host.vendor ? `<p class="text-xs text-muted break-words">Vendor: ${host.vendor}</p>` : ''}
-                        ${services ? `<div class="mt-2"><p class="text-xs font-semibold text-accent-secondary">Services:</p>${services}</div>` : ''}
-                    </div>
-                `;
-                nodeElement.addEventListener('mousedown', onDragStart);
-                nodeElement.addEventListener('click', (e) => {
-                    if (!e.target.closest('.network-node').classList.contains('dragging')) {
-                        showNmapNodeDetailsModal(host);
-                    }
-                });
-                return nodeElement;
-            };
-            
-            const gatewayContainer = document.createElement('div');
-            gatewayContainer.className = "w-full flex justify-center";
-            
-            const serverClientContainer = document.createElement('div');
-            serverClientContainer.className = "w-full flex justify-center gap-16 flex-wrap";
-
-            const otherDevicesContainer = document.createElement('div');
-            otherDevicesContainer.className = "w-full flex justify-center gap-8 flex-wrap";
-
-            if (gateway) gatewayContainer.appendChild(createNodeElement(gateway, 'Gateway'));
-            if (server) serverClientContainer.appendChild(createNodeElement(server, 'Server'));
-            if (client) serverClientContainer.appendChild(createNodeElement(client, 'Client'));
-            otherHosts.forEach(host => otherDevicesContainer.appendChild(createNodeElement(host, 'Device')));
-            
-            networkNodesContainer.append(gatewayContainer, serverClientContainer, otherDevicesContainer);
-            
-            setTimeout(() => {
-                positionNodesAndDrawLines(existingPositions);
-            }, 50);
+            const otherHosts = scanData.hosts.filter(h => h.ip !== serverGatewayIp && h.ip !== scanData.server_ip && h.ip !== clientIp);
+            const createNode = (h,t) => { if (!h) return null; const n=document.createElement('div'); n.className="network-node bg-bg-tertiary p-4 rounded-lg border-main border flex items-start gap-4 cursor-grab hover:bg-bg-secondary transition-colors absolute min-w-[250px] w-auto"; n.dataset.ip=h.ip; n.dataset.type=t; if(existingPositions[h.ip]){n.style.left=existingPositions[h.ip].left;n.style.top=existingPositions[h.ip].top;} const s=(h.services&&h.services.length>0)?h.services.map(i=>`<p class="flex items-center text-xs text-muted mt-1"><span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span><span>${i.port}/${i.protocol} - ${i.name}</span></p>`).join(''):''; n.innerHTML=`<span class="text-3xl">${t==='Gateway'?'&#128695;':t==='Server'||t==='Client'?'&#128187;':'&#128421;'}</span><div class="flex-grow overflow-hidden"><h4 class="text-lg font-semibold truncate" title="${h.hostname||'Unknown'}">${h.hostname||'Unknown'}</h4><p class="text-sm text-muted">${h.ip}</p><p class="text-xs ${h.is_up?'text-status-up':'text-status-down'}">${h.is_up?'Online':'Offline'}</p>${h.vendor?`<p class="text-xs text-muted break-words">Vendor: ${h.vendor}</p>`:''}${s?`<div class="mt-2"><p class="text-xs font-semibold text-accent-secondary">Services:</p>${s}</div>`:''}</div>`; n.addEventListener('mousedown',onDragStart); n.addEventListener('click',e=>{if(!e.target.closest('.network-node').classList.contains('dragging'))showNmapNodeDetailsModal(h);}); return n;};
+            const gatewayCont = document.createElement('div'); gatewayCont.className="w-full flex justify-center";
+            const serverClientCont = document.createElement('div'); serverClientCont.className="w-full flex justify-center gap-16 flex-wrap";
+            const otherDevsCont = document.createElement('div'); otherDevsCont.className="w-full flex justify-center gap-8 flex-wrap";
+            [createNode(gateway,'Gateway')].forEach(n=>n&&gatewayCont.appendChild(n));
+            [createNode(server,'Server'),createNode(client,'Client')].forEach(n=>n&&serverClientCont.appendChild(n));
+            otherHosts.forEach(h=>otherDevsCont.appendChild(createNode(h,'Device')));
+            networkNodesContainer.append(gatewayCont,serverClientCont,otherDevsCont);
+            setTimeout(()=>positionNodesAndDrawLines(existingPositions),50);
         }
 
         function positionNodesAndDrawLines(existingPositions) {
             const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect();
-            const nodes = DOMElements.networkNodesContainer.querySelectorAll('.network-node');
-            const gatewayNode = DOMElements.networkNodesContainer.querySelector('[data-type="Gateway"]');
-
-            if (!gatewayNode) {
-                redrawLines();
-                return;
-            }
-
-            nodes.forEach(node => {
-                if (!existingPositions[node.dataset.ip]) {
-                    const nodeRect = node.getBoundingClientRect();
-                    if (node.dataset.type === 'Gateway') {
-                        node.style.top = '20px';
-                        node.style.left = `${(containerRect.width / 2) - (nodeRect.width / 2)}px`;
-                    } else if (node.dataset.type === 'Server') {
-                         node.style.top = '200px';
-                         node.style.left = `${(containerRect.width / 2) - nodeRect.width - 50}px`;
-                    } else if (node.dataset.type === 'Client') {
-                         node.style.top = '200px';
-                         node.style.left = `${(containerRect.width / 2) + 50}px`;
-                    } else {
-                        const otherNodes = Array.from(DOMElements.networkNodesContainer.querySelectorAll('[data-type="Device"]'));
-                        const index = otherNodes.indexOf(node);
-                        const itemsPerRow = Math.floor((containerRect.width - 40) / (nodeRect.width + 32));
-                        const row = Math.floor(index / itemsPerRow);
-                        const col = index % itemsPerRow;
-                        node.style.top = `${400 + row * (nodeRect.height + 32)}px`;
-                        node.style.left = `${20 + col * (nodeRect.width + 32)}px`;
-                    }
+            DOMElements.networkNodesContainer.querySelectorAll('.network-node').forEach(n => {
+                if (!existingPositions[n.dataset.ip]) {
+                    const r = n.getBoundingClientRect(); const t = n.dataset.type;
+                    if (t === 'Gateway') { n.style.top = '20px'; n.style.left = `${(containerRect.width / 2) - (r.width / 2)}px`; }
+                    else if (t === 'Server') { n.style.top = '200px'; n.style.left = `${(containerRect.width / 2) - r.width - 50}px`; }
+                    else if (t === 'Client') { n.style.top = '200px'; n.style.left = `${(containerRect.width / 2) + 50}px`; }
+                    else { const others = Array.from(DOMElements.networkNodesContainer.querySelectorAll('[data-type="Device"]')), idx = others.indexOf(n); const perRow = Math.floor((containerRect.width - 40)/(r.width + 32)); n.style.top = `${400 + Math.floor(idx/perRow) * (r.height + 32)}px`; n.style.left = `${20 + (idx % perRow) * (r.width + 32)}px`; }
                 }
             });
             redrawLines();
         }
 
         function redrawLines() {
-            const svg = DOMElements.networkTreeSVG;
-            const container = DOMElements.networkTreeContainer;
-            if (!svg || !container) return;
-            svg.innerHTML = '';
-            const containerRect = container.getBoundingClientRect();
-
-            const gatewayNode = DOMElements.networkNodesContainer.querySelector('[data-type="Gateway"]');
-            if (!gatewayNode) return;
-
-            const gatewayRect = gatewayNode.getBoundingClientRect();
-            const fromX = (gatewayRect.left - containerRect.left) + (gatewayRect.width / 2);
-            const fromY = (gatewayRect.top - containerRect.top) + gatewayRect.height;
-            
-            DOMElements.networkNodesContainer.querySelectorAll('.network-node:not([data-type="Gateway"])').forEach(node => {
-                const nodeRect = node.getBoundingClientRect();
-                const toX = (nodeRect.left - containerRect.left) + (nodeRect.width / 2);
-                const toY = (nodeRect.top - containerRect.top);
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${fromX} ${fromY} C ${fromX} ${fromY + 50}, ${toX} ${toY - 50}, ${toX} ${toY}`);
-                path.setAttribute('stroke', 'var(--border-primary)');
-                path.setAttribute('stroke-width', '2');
-                path.setAttribute('fill', 'none');
-                svg.appendChild(path);
+            const svg = DOMElements.networkTreeSVG, cont = DOMElements.networkTreeContainer; if (!svg || !cont) return;
+            svg.innerHTML = ''; const contRect = cont.getBoundingClientRect(); const gwNode = DOMElements.networkNodesContainer.querySelector('[data-type="Gateway"]'); if (!gwNode) return;
+            const gwRect = gwNode.getBoundingClientRect();
+            const fromX = (gwRect.left - contRect.left) + (gwRect.width / 2), fromY = (gwRect.top - contRect.top) + gwRect.height;
+            DOMElements.networkNodesContainer.querySelectorAll('.network-node:not([data-type="Gateway"])').forEach(n => {
+                const nRect = n.getBoundingClientRect(); const toX = (nRect.left - contRect.left) + (nRect.width/2), toY = (nRect.top-contRect.top);
+                const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+                p.setAttribute('d', `M ${fromX} ${fromY} C ${fromX} ${fromY+50}, ${toX} ${toY-50}, ${toX} ${toY}`);
+                p.setAttribute('stroke', 'var(--border-primary)'); p.setAttribute('stroke-width', '2'); p.setAttribute('fill', 'none'); svg.appendChild(p);
             });
         }
-
-        function onDragStart(e) {
-            if (e.button !== 0) return; // Only left-click
-            draggedNode = e.target.closest('.network-node');
-            if (!draggedNode) return;
-            
-            draggedNode.classList.add('dragging');
-            draggedNode.style.cursor = 'grabbing';
-            
-            const rect = draggedNode.getBoundingClientRect();
-            const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect();
-            
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
-            
-            document.addEventListener('mousemove', onDrag);
-            document.addEventListener('mouseup', onDragEnd);
-        }
-
-        function onDrag(e) {
-            if (!draggedNode) return;
-            e.preventDefault();
-            
-            const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect();
-            
-            let x = e.clientX - offsetX - containerRect.left + DOMElements.networkTreeContainer.scrollLeft;
-            let y = e.clientY - offsetY - containerRect.top + DOMElements.networkTreeContainer.scrollTop;
-            
-            // Clamp position within the container
-            x = Math.max(0, Math.min(x, DOMElements.networkTreeContainer.scrollWidth - draggedNode.offsetWidth));
-            y = Math.max(0, Math.min(y, DOMElements.networkTreeContainer.scrollHeight - draggedNode.offsetHeight));
-
-            draggedNode.style.left = `${x}px`;
-            draggedNode.style.top = `${y}px`;
-            
-            redrawLines();
-        }
-
-        function onDragEnd() {
-            if (draggedNode) {
-                draggedNode.style.cursor = 'grab';
-                setTimeout(() => {
-                    if (draggedNode) draggedNode.classList.remove('dragging');
-                }, 0);
-            }
-            draggedNode = null;
-            document.removeEventListener('mousemove', onDrag);
-            document.removeEventListener('mouseup', onDragEnd);
-        }
-
-        function showNmapNodeDetailsModal(data) {
-            DOMElements.modalTitle.textContent = `Network Device Details`;
-            let servicesList = 'No open services found.';
-            if (data.services && data.services.length > 0) {
-                servicesList = data.services.map(s => `<li>${s.port}/${s.protocol} - ${s.name}</li>`).join('');
-            }
-
-            DOMElements.modalContent.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div><p class="text-muted text-xs">Hostname</p><p class="font-semibold">${data.hostname || 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">IP Address</p><p class="font-semibold">${data.ip || 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">MAC Address</p><p class="font-semibold">${data.mac_address || 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">Vendor</p><p class="font-semibold">${data.vendor || 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">OS Fingerprint</p><p class="font-semibold">${data.os || 'N/A'}</p></div>
-                </div>
-                <div><p class="text-primary font-semibold mb-1">Open Services</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${servicesList}</ul></div>`;
-            DOMElements.nodeDetailsModal.classList.remove('hidden');
-        }
-
-        // --- UI Rendering Functions ---
-        function updateDashboard(data, clientToServerPing, clientToGatewayPing) {
-            if (!data) return;
-            try { updateStatusUI(data.server_status.internet_quality_score, data.server_status); } catch(e) { console.error("Failed to update Status UI", e); }
-            try { updateUptimeStats(); } catch(e) { console.error("Failed to update Uptime Stats", e); }
-            try { renderServerHealth(data.server_status); } catch(e) { console.error("Failed to render Server Health", e); }
-            try { if(!DOMElements.views.diagnostics.classList.contains('hidden')) {
-                updateClientInfo(); 
-                updateServerInfo(data.server_status);
-                updateGatewayInfo(data.server_status);
-                renderInternetNodeCards(data.pings);
-                drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, data.pings, data.server_status);
-            } } catch(e) { console.error("Failed to update Diagnostics tab", e); }
-            try { if (isTrendsDataLoaded) { updateTrendsChart(data.pings); } } catch(e) { console.error("Failed to update Trends Chart", e); }
-            try { if(!DOMElements.views.log.classList.contains('hidden')) { renderLogTimeline(); } } catch(e) { console.error("Failed to render Log Timeline", e); }
-            try { renderQualityMetrics(data.pings); } catch(e) { console.error("Failed to update Quality Metrics", e); }
-            try { updateLogoColor(data.server_status.internet_quality_score, currentState); } catch(e) { console.error("Failed to update Logo Color", e); }
-        }
-        
-        function updateStatusUI(score, statusData) {
-            const { statusIndicator, statusText, statusTimer, currentStatusCard } = DOMElements;
-            let statusClass = 'status-checking';
-            let statusString = 'Checking...';
-            let statusSubtext = '';
-
-            if (currentState === 'DOWN') {
-                statusClass = 'status-down';
-                statusString = 'Disconnected';
-                statusSubtext = 'Gateway is unreachable.';
-            } else if (currentState === 'UP') {
-                if (score > 400) { statusClass = 'status-up'; statusString = 'Excellent'; }
-                else if (score > 300) { statusClass = 'status-up'; statusString = 'Good'; }
-                else if (score > 200) { statusClass = 'status-warn'; statusString = 'Fair'; }
-                else if (score > 100) { statusClass = 'status-warn'; statusString = 'Poor'; }
-                else { statusClass = 'status-down'; statusString = 'Unstable'; }
-            }
-            
-            if (statusData.is_packet_loss_happening && (statusString === 'Unstable' || statusString === 'Poor' || statusString === 'Disconnected')) {
-                const lossDetails = statusData.packet_loss_details.map(d => `${d.name} (${d.loss}%)`).join(', ');
-                statusSubtext = `Packet Loss Detected: ${lossDetails}`;
-            }
-
-            currentStatusCard.className = `card card-muted ${statusClass} mt-4 p-3 text-center transition-all duration-300 w-full max-w-md mx-auto`;
-            statusIndicator.classList.toggle('blinking-dot', statusString === 'Checking...');
-            statusText.textContent = statusString;
-            
-            let timerHTML = '';
-            if (lastStateChangeTime) {
-                timerHTML += `for ${formatLongDuration(new Date() - lastStateChangeTime)}`;
-            }
-            if (statusSubtext) {
-                timerHTML += `<br><span class="text-xs">${statusSubtext}</span>`;
-            }
-            statusTimer.innerHTML = timerHTML;
-
-
-            if (lastState !== null && lastState !== currentState) { 
-                if (currentState === 'DOWN') playSound(bruhPlayer); 
-                if (currentState === 'UP') playSound(upPlayer); 
-            }
-            lastState = currentState;
-        }
-
-        function renderLogTimeline() {
-            if (!DOMElements.logTimelineContainer) return;
-            DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase()}"></div><div class="pl-10"><p class="font-semibold" style="color: ${e.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${e.status === 'UP' ? 'Connection Restored' : 'Connection Lost'}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatLongDuration((new Date(e.endTime) - new Date(e.startTime)))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
-        function updateActiveLogTimer() { const timerEl = document.getElementById('active-log-duration'); if (timerEl && log.length > 0) { timerEl.textContent = formatLongDuration(new Date() - new Date(log[0].startTime)); } }
-        
-        function createUptimeCards() {
-            if (!DOMElements.uptimeStatsContainer) return;
-            const windows = [
-                { label: 'Last 24 Hours', key: '24h' },
-                { label: 'Last 7 Days', key: '7d' },
-                { label: 'Last 30 Days', key: '30d' },
-                { label: 'Longest Uptime', key: 'longest_online' }
-            ];
-            DOMElements.uptimeStatsContainer.innerHTML = windows.map((w, i) => `
-                <div class="card card-muted p-4 text-center">
-                    <h3 class="text-sm font-medium text-muted">${w.label}</h3>
-                    <div id="uptime-chart-${w.key}" class="uptime-chart-container"></div>
-                    <p class="downtime-duration text-xs text-muted mt-1" id="downtime-${w.key}">--:--:-- downtime</p>
-                </div>`).join('');
-        }
-
-        async function updateUptimeStats() {
-            try {
-                const stats = await apiCall('get_uptime_stats');
-                if (!stats) return;
-
-                const updateCard = (key, percentage, drops, downtimeText) => {
-                    const containerId = `uptime-chart-${key}`;
-                    const downtimeEl = document.getElementById(`downtime-${key}`);
-                    createOrUpdateUptimeChart(containerId, percentage, drops);
-                    if (downtimeEl) downtimeEl.textContent = downtimeText;
-                };
-
-                updateCard('24h', stats['24h'].uptime_percentage, 'N/A', `${formatLongDuration(stats['24h'].total_downtime_seconds * 1000)} downtime`);
-                updateCard('7d', stats['7d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['7d'].total_downtime_seconds * 1000)} downtime`);
-                updateCard('30d', stats['30d'].uptime_percentage, 'N/A', `${formatLongDuration(stats['30d'].total_downtime_seconds * 1000)} downtime`);
-                
-                const longestUptimeEl = document.getElementById('downtime-longest_online');
-                if (longestUptimeEl) {
-                    longestUptimeEl.textContent = stats.longest_online_formatted;
-                    const chartContainer = document.getElementById('uptime-chart-longest_online');
-                    if (chartContainer) chartContainer.innerHTML = `<div class="h-full flex items-center justify-center"><span class="text-3xl font-bold text-status-up">${stats.longest_online_formatted.split(',')[0]}</span></div>`;
-                }
-            } catch (error) {
-                console.error("Failed to update uptime stats:", error);
-            }
-        }
-        
-        function renderServerHealth(status) {
-            if (!DOMElements.serverHealthContainer) return;
-            const services = [
-                {t:'Python Service',s:status.service_status},
-                {t:'Apache',s:status.apache_status},
-                {t:'PHP',s:status.php_fpm_status},
-            ];
-            let serviceMarkup = services.map(s=>`<div class="card card-muted p-4 flex items-center justify-between"><p class="text-sm text-muted">${s.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${s.s?'var(--color-status-up)':'var(--color-status-down)'}; color: var(--bg-primary)">${s.s?'Active':'Failed'}</span></div>`).join('');
-
-            let sslMarkup = '';
-            if (status.ssl_cert_details) {
-                const details = status.ssl_cert_details;
-                const expiryDate = new Date(details.end_date);
-                const daysLeft = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
-                let expiryClass = 'text-status-up';
-                if (daysLeft < 14) expiryClass = 'text-status-warn';
-                if (daysLeft < 7) expiryClass = 'text-status-down';
-
-                sslMarkup = `
-                    <div class="card card-muted p-4 col-span-1 md:col-span-2 lg:col-span-1">
-                        <p class="text-sm text-muted font-semibold mb-2">SSL Certificate</p>
-                        <p class="text-xs text-muted truncate" title="${details.fingerprint}">
-                            <span class="font-bold text-primary">Issuer:</span> ${details.issuer}
-                        </p>
-                        <p class="text-xs mt-1 ${expiryClass}">
-                            <span class="font-bold">Expires in ${daysLeft} days</span> (${details.end_date})
-                        </p>
-                    </div>`;
-            }
-
-            DOMElements.serverHealthContainer.innerHTML = serviceMarkup + sslMarkup;
-        }
-
-        function renderInternetNodeCards(pings) {
-            const internetNodes = pings.filter(p => p.name !== 'Gateway');
-            const grid = document.getElementById('internet-nodes-grid');
-            if (!grid) return;
-
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            const palette = themes[currentTheme].palette;
-
-            internetNodes.forEach((n, index) => {
-                const canvasId = `mini-chart-${n.name.replace(/[^a-zA-Z0-9]/g, '')}`;
-                let card = grid.querySelector(`.internet-node-card[data-node-name="${n.name}"]`);
-
-                if (!card) {
-                    card = document.createElement('div');
-                    card.className = "internet-node-card bg-bg-primary card p-3 border-2 transition-all cursor-pointer";
-                    card.dataset.nodeName = n.name;
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <p class="font-semibold truncate text-sm text-primary node-name" title="${n.name}"></p>
-                            <p class="text-xs font-bold node-ping"></p>
-                        </div>
-                        <div class="h-16 w-full my-2 chart-container-blur"><canvas id="${canvasId}"></canvas></div>
-                        <div class="text-xs text-muted flex justify-between">
-                            <span class="node-jitter"></span>
-                            <span class="node-loss"></span>
-                        </div>`;
-                    card.addEventListener('click', () => showNodeDetailsModal(n));
-                    grid.appendChild(card);
-                }
-
-                const serverGateway = pings.find(p => p.name === 'Gateway');
-                const cardStatus = serverGateway?.status === 'UP' && n.status === 'UP';
-                const pingValue = cardStatus && n.ping !== null ? Math.round(n.ping) + 'ms' : '---';
-                const jitterValue = n.jitter ? n.jitter.toFixed(1) + 'ms' : 'N/A';
-                const lossValue = n.packet_loss_15m !== null && typeof n.packet_loss_15m !== 'undefined' ? n.packet_loss_15m + '%' : 'N/A';
-                const lossClass = getUptimeStatusClass(100 - (n.packet_loss_15m || 0));
-
-                card.style.borderColor = `${cardStatus ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
-
-                card.querySelector('.node-name').textContent = n.name;
-                card.querySelector('.node-name').title = n.name;
-                const pingEl = card.querySelector('.node-ping');
-                pingEl.textContent = pingValue;
-                pingEl.className = `text-xs font-bold node-ping ${getPingStatusClass(n.ping)}`;
-
-                card.querySelector('.node-jitter').textContent = `Jitter: ${jitterValue}`;
-                const lossEl = card.querySelector('.node-loss');
-                lossEl.innerHTML = `Loss (15m): <span class="${lossClass}">${lossValue}</span>`;
-
-                const color = palette[index % palette.length];
-                createOrUpdateMiniChart(canvasId, n, color);
-            });
-        }
-        
-        function renderDiagnostics() {
-            const container = DOMElements.diagnosticsFlowContainer;
-            if (!document.getElementById('diag-layout')) {
-                container.innerHTML = `
-                    <div id="diag-layout" class="relative w-full max-w-5xl mx-auto">
-                        <svg id="diagnostics-svg-container"></svg>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-4">
-                            <div id="diag-client" class="text-center flex-shrink-0 card card-muted p-4 node-glow min-h-[160px]"></div>
-                            <div id="diag-server" class="text-center flex-shrink-0 card card-muted p-4 node-glow cursor-pointer min-h-[160px]"></div>
-                        </div>
-                        <div id="diag-ping-cs-container" class="mb-4"></div>
-                        <div class="mb-8" id="diag-gateway-wrapper">
-                            <div id="diag-gateway" class="card card-muted p-4 border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer">
-                                </div>
-                        </div>
-                        <div>
-                            <div id="diag-internet" class="internet-nodes-container card card-muted p-4 node-glow">
-                                <p class="font-semibold text-primary text-center mb-4">Internet Nodes</p>
-                                <div id="internet-nodes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
-                            </div>
-                    </div>`;
-            }
-            document.getElementById('diag-server')?.addEventListener('click', showServerDetailsModal);
-        }
-
-        function drawDiagnosticPaths(clientToServerPing, clientToGatewayPing, pings, serverStatus) {
-            const svg = document.getElementById('diagnostics-svg-container');
-            if (!svg) return;
-            const container = document.getElementById('diag-layout');
-            const client = document.getElementById('diag-client');
-            const server = document.getElementById('diag-server');
-            const gateway = document.getElementById('diag-gateway');
-            const internet = document.getElementById('diag-internet');
-            const pingCSContainer = document.getElementById('diag-ping-cs-container');
-            if (!client || !server || !gateway || !internet || !pingCSContainer) return;
-            
-            if (!pingCSContainer.innerHTML) {
-                 pingCSContainer.innerHTML = `<div id="diag-ping-cs" class="card card-muted p-3 text-center text-sm w-full max-w-xs mx-auto"></div>`;
-            }
-            const pingCS = document.getElementById('diag-ping-cs');
-
-            const serverGateway = pings.find(p => p.name === 'Gateway');
-            const internetNodes = pings.filter(p => p.name !== 'Gateway');
-            const clientToServerStatus = clientToServerPing !== null ? 'up' : 'down';
-            const serverToGatewayStatus = serverGateway?.status === 'UP' ? 'up' : 'down';
-            const gatewayToInternetStatus = serverGateway?.status === 'UP' && internetNodes.some(n => n.status === 'UP') ? 'up' : 'down';
-
-            const containerRect = container.getBoundingClientRect();
-            const getCoords = (el) => { const rect = el.getBoundingClientRect(); return { x: rect.left - containerRect.left, y: rect.top - containerRect.top, width: rect.width, height: rect.height, cx: rect.left - containerRect.left + rect.width / 2, cy: rect.top - containerRect.top + rect.height / 2 }; };
-            
-            const clientCoords = getCoords(client);
-            const serverCoords = getCoords(server);
-            const gatewayCoords = getCoords(gateway);
-            const internetCoords = getCoords(internet);
-
-            const paths = [
-                { id: 'path-cs', d: `M ${clientCoords.cx} ${clientCoords.cy} L ${serverCoords.cx} ${serverCoords.cy}`, status: clientToServerStatus, duration: '3s' },
-                { id: 'path-sg', d: `M ${serverCoords.cx} ${serverCoords.y + serverCoords.height} L ${gatewayCoords.cx} ${gatewayCoords.y}`, status: serverToGatewayStatus, duration: '2s' },
-                { id: 'path-cg', d: `M ${clientCoords.cx} ${clientCoords.y + clientCoords.height} L ${gatewayCoords.cx} ${gatewayCoords.y}`, status: 'up', duration: '2s' },
-                { id: 'path-gi', d: `M ${gatewayCoords.cx} ${gatewayCoords.y + gatewayCoords.height} L ${internetCoords.cx} ${internetCoords.y}`, status: gatewayToInternetStatus, duration: '2.5s' }
-            ];
-
-            let svgMarkup = '';
-            paths.forEach(p => {
-                svgMarkup += `<path id="${p.id}" class="flow-path" d="${p.d}" /><circle class="flow-dot ${p.status}"><animateMotion dur="${p.duration}" repeatCount="indefinite"><mpath href="#${p.id}" /></animateMotion></circle>`;
-            });
-            svg.innerHTML = svgMarkup;
-            
-            pingCS.innerHTML = `Client ? Server: <span class="font-bold ${getPingStatusClass(clientToServerPing)}">${clientToServerPing ? Math.round(clientToServerPing)+'ms' : 'N/A'}</span>`;
-        }
-
-        function updateGatewayInfo(serverStatus) {
-            const gatewayCard = document.getElementById('diag-gateway');
-            const gatewayPingData = allPingsData.find(p => p.name === 'Gateway');
-            if (!gatewayCard || !serverStatus.gateway_details || !gatewayPingData) {
-                if(gatewayCard) gatewayCard.innerHTML = '<p class="text-muted p-4">Gateway data not available.</p>';
-                return;
-            }
-            const details = serverStatus.gateway_details;
-
-            if (!document.getElementById('gateway-ping-chart')) {
-                 gatewayCard.innerHTML = `
-                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                         <div class="md:col-span-1 text-center">
-                             <p class="font-semibold text-primary">Network Gateway</p>
-                             <p class="text-xs text-muted truncate" title="${details.vendor || 'Unknown Vendor'}">${details.vendor || 'Unknown Vendor'}</p>
-                             <div class="h-16 w-full my-2"><canvas id="gateway-ping-chart"></canvas></div>
-                         </div>
-                         <div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2">
-                             <p><span class="font-medium text-muted">IP:</span> ${details.ip}</p>
-                             <p><span class="font-medium text-muted">MAC:</span> ${details.mac}</p>
-                             <p><span class="font-medium text-muted">Ping:</span> <span id="gateway-ping-value" class="${getPingStatusClass(gatewayPingData?.ping)}">${gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A'}</span></p>
-                             <p><span class="font-medium text-muted">Jitter:</span> <span id="gateway-jitter-value">${gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A'}</span></p>
-                             <p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0))}">${gatewayPingData.packet_loss_15m !== null && typeof gatewayPingData.packet_loss_15m !== 'undefined' ? gatewayPingData.packet_loss_15m + '%' : 'N/A'}</span></p>
-                         </div>
-                     </div>
-                 `;
-                 const newCard = gatewayCard.cloneNode(true);
-                 gatewayCard.parentNode.replaceChild(newCard, gatewayCard);
-                 newCard.addEventListener('click', () => {
-                     if (gatewayPingData) showNodeDetailsModal(gatewayPingData);
-                 });
-            } else {
-                 document.getElementById('gateway-ping-value').textContent = gatewayPingData?.ping ? Math.round(gatewayPingData.ping) + 'ms' : 'N/A';
-                 document.getElementById('gateway-jitter-value').textContent = gatewayPingData?.jitter ? gatewayPingData.jitter.toFixed(1) + 'ms' : 'N/A';
-                 const lossValue = gatewayPingData.packet_loss_15m !== null && typeof gatewayPingData.packet_loss_15m !== 'undefined' ? gatewayPingData.packet_loss_15m + '%' : 'N/A';
-                 document.getElementById('gateway-loss-value').innerHTML = lossValue;
-                 document.getElementById('gateway-loss-value').className = getUptimeStatusClass(100 - (gatewayPingData.packet_loss_15m || 0));
-            }
-
-            gatewayCard.style.borderColor = `${gatewayPingData.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}80`;
-            if (document.getElementById('gateway-ping-chart')) {
-                createOrUpdateMiniChart('gateway-ping-chart', gatewayPingData, 'var(--accent-primary)');
-            }
-        }
-
-        function showNodeDetailsModal(data) {
-            DOMElements.modalTitle.textContent = `Details for ${data.name}`;
-            const dnsList = (data.dns_info && Array.isArray(data.dns_info) && data.dns_info.length > 0) ? data.dns_info.map(ip => `<li>${ip}</li>`).join('') : '<li>No DNS data available</li>';
-            const traceList = (data.traceroute_info && Array.isArray(data.traceroute_info) && data.traceroute_info.length > 0) ? data.traceroute_info.map(hop => `<li>${hop}</li>`).join('') : '<li>No traceroute data available</li>';
-            
-            const packetLoss15m = data.packet_loss_15m !== null && typeof data.packet_loss_15m !== 'undefined' ? `${data.packet_loss_15m}%` : 'N/A';
-            const minMaxPing = data.min_ping_15m !== null && typeof data.min_ping_15m !== 'undefined' ? `${data.min_ping_15m}ms / ${data.max_ping_15m}ms` : 'N/A';
-
-            DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div><p class="text-muted text-xs">Status</p><p class="font-semibold" style="color:${data.status === 'UP' ? 'var(--color-status-up)' : 'var(--color-status-down)'}">${data.status}</p></div>
-                    <div><p class="text-muted text-xs">Ping</p><p class="font-semibold">${data.ping ? Math.round(data.ping) + ' ms' : 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">Jitter</p><p class="font-semibold">${data.jitter ? data.jitter.toFixed(2) + ' ms' : 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">Current Packet Loss</p><p class="font-semibold">${data.packet_loss !== null ? data.packet_loss + '%' : 'N/A'}</p></div>
-                    <div><p class="text-muted text-xs">Packet Loss (15m)</p><p class="font-semibold">${packetLoss15m}</p></div>
-                    <div><p class="text-muted text-xs">Min/Max Ping (15m)</p><p class="font-semibold">${minMaxPing}</p></div>
-                </div>
-                <div class="mb-4"><p class="text-muted text-xs">Last Checked</p><p class="font-semibold" id="modal-last-checked-time"></p></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><p class="text-primary font-semibold mb-1">DNS Info</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${dnsList}</ul></div>
-                    <div><p class="text-primary font-semibold mb-1">Traceroute</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${traceList}</ul></div>
-                </div>`;
-            
-            DOMElements.nodeDetailsModal.classList.remove('hidden');
-
-            if (modalUpdateIntervalId) clearInterval(modalUpdateIntervalId);
-            const updateModalTime = () => {
-                const lastCheckedEl = document.getElementById('modal-last-checked-time');
-                const latestNodeData = allPingsData.find(p => p.name === data.name);
-                if (lastCheckedEl && latestNodeData) {
-                    lastCheckedEl.textContent = `${formatTimestamp(latestNodeData.timestamp * 1000)} (${timeAgo(latestNodeData.timestamp)})`;
-                }
-            };
-            updateModalTime();
-            modalUpdateIntervalId = setInterval(updateModalTime, 1000);
-        }
-
-        async function initializeTrendsChart() {
-            if (isTrendsDataLoaded) return;
-            DOMElements.trendsLoadingIndicator.classList.remove('hidden');
-            
-            const fetchAndRender = async (start, end) => {
-                try {
-                    const historicalData = await apiCall('get_historical_data', {start: start, end: end});
-                    if (!historicalData || Object.keys(historicalData).length === 0) {
-                        if(trendsChart) trendsChart.clear();
-                        const ctx = DOMElements.trendsChartCanvas.getContext('2d');
-                        ctx.fillStyle = 'var(--text-secondary)';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('No historical data available for this range.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2);
-                        return;
-                    };
-                    const currentTheme = localStorage.getItem('theme') || 'dark';
-                    const palette = themes[currentTheme].palette;
-                    const datasets = Object.keys(historicalData).flatMap((targetName, index) => {
-                        if (!Array.isArray(historicalData[targetName])) return [];
-                        const color = palette[index % palette.length];
-                        return { label: targetName, data: historicalData[targetName].map(d => ({ x: d.timestamp * 1000, y: d.ping })), borderColor: color, backgroundColor: `${color}33`, tension: 0.2, pointRadius: 0, borderWidth: 2 };
-                    });
-                    
-                    if (trendsChart) {
-                        trendsChart.data.datasets = datasets;
-                        trendsChart.options.scales.x.min = start * 1000;
-                        trendsChart.options.scales.x.max = end * 1000;
-                        trendsChart.update('none');
-                    } else {
-                         trendsChart = new Chart(DOMElements.trendsChartCanvas, {
-                             type: 'line', data: { datasets },
-                             options: { 
-                                 responsive: true, maintainAspectRatio: false, 
-                                 scales: { 
-                                     x: { type: 'time', time: { unit: 'minute' }, min: start * 1000, max: end * 1000, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, 
-                                     y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' ms' } } 
-                                 },
-                                 plugins: {
-                                     legend: { labels: { color: 'var(--text-primary)' } },
-                                     zoom: { 
-                                         pan: { enabled: true, mode: 'x' }, 
-                                         zoom: { 
-                                             wheel: { enabled: true }, 
-                                             pinch: { enabled: true }, 
-                                             mode: 'x',
-                                             onZoomComplete: ({chart}) => {
-                                                 const {min, max} = chart.scales.x;
-                                                 fetchAndRender(Math.floor(min / 1000), Math.ceil(max / 1000));
-                                             }
-                                         } 
-                                     }
-                                 }
-                             }
-                         });
-                    }
-                    isTrendsDataLoaded = true;
-                } catch(e) {
-                    console.error("Error fetching/rendering trends chart:", e);
-                } finally {
-                    DOMElements.trendsLoadingIndicator.classList.add('hidden');
-                }
-            };
-            
-            const endTime = Math.floor(Date.now() / 1000);
-            const startTime = endTime - 86400; // Default to last 24 hours
-            fetchAndRender(startTime, endTime);
-        }
-        
-        function updateTrendsChart(pings) {
-            if (!trendsChart || !isTrendsDataLoaded) return;
-
-            pings.forEach(ping => {
-                const dataset = trendsChart.data.datasets.find(ds => ds.label === ping.name);
-                if (dataset) {
-                    dataset.data.push({ x: ping.timestamp * 1000, y: ping.ping });
-                }
-            });
-            trendsChart.update('none');
-        }
-
-        // --- Initialization and Event Listeners ---
+        function onDragStart(e) { if (e.button !== 0) return; draggedNode = e.target.closest('.network-node'); if (!draggedNode) return; draggedNode.classList.add('dragging'); draggedNode.style.cursor = 'grabbing'; const rect = draggedNode.getBoundingClientRect(); offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top; document.addEventListener('mousemove', onDrag); document.addEventListener('mouseup', onDragEnd); }
+        function onDrag(e) { if (!draggedNode) return; e.preventDefault(); const containerRect = DOMElements.networkTreeContainer.getBoundingClientRect(); let x = e.clientX - offsetX - containerRect.left + DOMElements.networkTreeContainer.scrollLeft; let y = e.clientY - offsetY - containerRect.top + DOMElements.networkTreeContainer.scrollTop; x = Math.max(0, Math.min(x, DOMElements.networkTreeContainer.scrollWidth - draggedNode.offsetWidth)); y = Math.max(0, Math.min(y, DOMElements.networkTreeContainer.scrollHeight - draggedNode.offsetHeight)); draggedNode.style.left = `${x}px`; draggedNode.style.top = `${y}px`; redrawLines(); }
+        function onDragEnd() { if (draggedNode) { draggedNode.style.cursor = 'grab'; setTimeout(() => { if (draggedNode) draggedNode.classList.remove('dragging'); }, 0); } draggedNode = null; document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', onDragEnd); }
+        function showNmapNodeDetailsModal(d) { DOMElements.modalTitle.textContent = `Device Details`; let s = 'No open services.'; if(d.services&&d.services.length>0) s = d.services.map(i=>`<li>${i.port}/${i.protocol} - ${i.name}</li>`).join(''); DOMElements.modalContent.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div><p class="text-muted text-xs">Hostname</p><p class="font-semibold">${d.hostname||'N/A'}</p></div><div><p class="text-muted text-xs">IP</p><p class="font-semibold">${d.ip||'N/A'}</p></div><div><p class="text-muted text-xs">MAC</p><p class="font-semibold">${d.mac_address||'N/A'}</p></div><div><p class="text-muted text-xs">Vendor</p><p class="font-semibold">${d.vendor||'N/A'}</p></div><div><p class="text-muted text-xs">OS</p><p class="font-semibold">${d.os||'N/A'}</p></div></div><div><p class="text-primary font-semibold mb-1">Services</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${s}</ul></div>`; DOMElements.nodeDetailsModal.classList.remove('hidden'); }
+        function updateDashboard(d) { if(!d) return; try{updateStatusUI(d.server_status.internet_quality_score, d.server_status);}catch(e){console.error("Fail Status UI",e)} try{updateUptimeStats();}catch(e){console.error("Fail Uptime Stats",e)} try{renderServerHealth(d.server_status);}catch(e){console.error("Fail Server Health",e)} try{if(!DOMElements.views.diagnostics.classList.contains('hidden')){updateClientInfo();updateServerInfo(d.server_status);updateGatewayInfo(d.server_status);renderInternetNodeCards(d.pings);drawDiagnosticPaths();}}catch(e){console.error("Fail Diag Tab",e)} try{if(isTrendsDataLoaded){updateTrendsChart(d.pings);}}catch(e){console.error("Fail Trends Chart",e)} try{if(!DOMElements.views.log.classList.contains('hidden')){renderLogTimeline();}}catch(e){console.error("Fail Log Timeline",e)} try{renderQualityMetrics(d.pings);}catch(e){console.error("Fail Quality Metrics",e)} try{updateLogoColor(d.server_status.internet_quality_score,currentState);}catch(e){console.error("Fail Logo Color",e)} }
+        function updateStatusUI(s, d) { const {statusIndicator:i, statusText:t, statusTimer:m, currentStatusCard:c}=DOMElements; let l='status-checking', a='Checking...', n=''; if(currentState==='DOWN'){l='status-down';a='Disconnected';n='Gateway is unreachable.'} else if(currentState==='UP'){if(s>400){l='status-up';a='Excellent'}else if(s>300){l='status-up';a='Good'}else if(s>200){l='status-warn';a='Fair'}else if(s>100){l='status-warn';a='Poor'}else{l='status-down';a='Unstable'}} if(d.is_packet_loss_happening&&['Unstable','Poor','Disconnected'].includes(a)){n=`Packet Loss: ${d.packet_loss_details.map(p=>`${p.name} (${p.loss}%)`).join(', ')}`} c.className=`card card-muted ${l} mt-4 p-3 text-center transition-all duration-300 w-full max-w-md mx-auto`; i.classList.toggle('blinking-dot',a==='Checking...'); t.textContent=a; let r=''; if(lastStateChangeTime)r+=`for ${formatLongDuration(new Date-lastStateChangeTime)}`; if(n)r+=`<br><span class="text-xs">${n}</span>`; m.innerHTML=r; if(lastState!==null&&lastState!==currentState){if(currentState==='DOWN')playSound(bruhPlayer);if(currentState==='UP')playSound(upPlayer)} lastState=currentState; renderMainScoreGauge(s); }
+        function renderMainScoreGauge(s) { const c=document.getElementById('main-score-container');if(!c)return;const g=s=>{if(s===null||isNaN(s))return'var(--text-muted)';if(s>400)return'var(--color-status-up)';if(s>200)return'var(--color-status-warn)';return'var(--color-status-down)'};const v=s===null||isNaN(s)?'---':Math.round(s);const o=g(s);const p=Math.min(100,(s/500)*100);const z=120,w=12,r=(z/2)-(w/2),f=2*Math.PI*r,t=f-((p/100)*f);let e=c.querySelector('.progress');if(!e){c.innerHTML=`<div class="relative w-32 h-32 mx-auto"><svg class="w-full h-full" viewBox="0 0 ${z} ${z}"><circle stroke="var(--bg-tertiary)" stroke-width="${w}" fill="transparent" r="${r}" cx="${z/2}" cy="${z/2}"/><circle class="progress" stroke="${o}" stroke-width="${w}" stroke-dasharray="${f}" stroke-dashoffset="${f}" fill="transparent" r="${r}" cx="${z/2}" cy="${z/2}" style="stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.8s ease-out, stroke 0.5s;"/></svg><div class="absolute inset-0 flex flex-col items-center justify-center"><span class="score-value font-bold text-3xl" style="color: ${o};">${v}</span><span class="text-xs text-muted">Quality Score</span></div></div>`;setTimeout(()=>{const i=c.querySelector('.progress');if(i)i.style.strokeDashoffset=t;},100);}else{const i=c.querySelector('.score-value');e.style.strokeDashoffset=t;e.style.stroke=o;i.style.color=o;i.textContent=v;}}
+        function renderLogTimeline() { if (!DOMElements.logTimelineContainer) return; DOMElements.logTimelineContainer.innerHTML = log.length ? `<div class="timeline">${log.map((e, i) => `<div class="timeline-item"><div class="timeline-dot ${e.status.toLowerCase().replace(/\s+/g, '-')}"></div><div class="pl-10"><p class="font-semibold" style="color:${e.status === 'UP' ? 'var(--color-status-up)' : (e.status === 'DOWN' ? 'var(--color-status-down)' : 'var(--text-secondary)')}">${e.status}</p><p class="text-xs text-muted">${formatTimestamp(e.startTime)}</p><p class="text-sm mt-1">Duration: <span ${i === 0 ? 'id="active-log-duration"' : ''}>${formatLongDuration((new Date(e.endTime) - new Date(e.startTime)))}</span></p></div></div>`).join('')}</div>` : '<p class="text-center p-8 text-muted">No events logged.</p>'; }
+        function updateActiveLogTimer() { const t=document.getElementById('active-log-duration');if(t&&log.length>0){t.textContent=formatLongDuration(new Date-new Date(log[0].startTime));}}
+        function createUptimeCards() { if (!DOMElements.uptimeStatsContainer) return; const w=[{l:'Last 24 Hours',k:'24h'},{l:'Last 7 Days',k:'7d'},{l:'Last 30 Days',k:'30d'},{l:'Longest Uptime',k:'longest_online'}]; DOMElements.uptimeStatsContainer.innerHTML=w.map(i=>`<div class="card card-muted p-4 text-center"><h3 class="text-sm font-medium text-muted">${i.l}</h3><div id="uptime-chart-${i.k}" class="uptime-chart-container"></div><p class="downtime-duration text-xs text-muted mt-1" id="downtime-${i.k}">--:--:-- downtime</p></div>`).join(''); }
+        async function updateUptimeStats() { try{const s=await apiCall('get_uptime_stats');if(!s)return;const u=(k,p,d)=>{createOrUpdateUptimeChart(`uptime-chart-${k}`,p);const e=document.getElementById(`downtime-${k}`);if(e)e.textContent=d;};u('24h',s['24h'].uptime_percentage,`${formatLongDuration(s['24h'].total_downtime_seconds*1e3)} downtime`);u('7d',s['7d'].uptime_percentage,`${formatLongDuration(s['7d'].total_downtime_seconds*1e3)} downtime`);u('30d',s['30d'].uptime_percentage,`${formatLongDuration(s['30d'].total_downtime_seconds*1e3)} downtime`);const l=document.getElementById('downtime-longest_online');if(l){l.textContent=s.longest_online_formatted;const c=document.getElementById('uptime-chart-longest_online');if(c)c.innerHTML=`<div class="h-full flex items-center justify-center"><span class="text-3xl font-bold text-status-up">${s.longest_online_formatted.split(',')[0]}</span></div>`;}}catch(e){console.error("Failed to update uptime stats:",e);}}
+        function renderServerHealth(s) { if(!DOMElements.serverHealthContainer)return;const h=[{t:'Python Service',s:s.service_status},{t:'Apache',s:s.apache_status},{t:'PHP',s:s.php_fpm_status}];DOMElements.serverHealthContainer.innerHTML=h.map(i=>`<div class="card card-muted p-4 flex items-center justify-between"><p class="text-sm text-muted">${i.t}</p><span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color:${i.s?'var(--color-status-up)':'var(--color-status-down)'};color:var(--bg-primary)">${i.s?'Active':'Failed'}</span></div>`).join('');if(s.ssl_cert_details){const d=s.ssl_cert_details,e=new Date(d.end_date),l=Math.ceil((e-new Date)/864e5);let c=l<7?'text-status-down':l<14?'text-status-warn':'text-status-up';DOMElements.serverHealthContainer.innerHTML+=`<div class="card card-muted p-4 col-span-1 md:col-span-2 lg:col-span-1"><p class="text-sm text-muted font-semibold mb-2">SSL Certificate</p><p class="text-xs text-muted truncate" title="${d.fingerprint}"><span class="font-bold text-primary">Issuer:</span> ${d.issuer}</p><p class="text-xs mt-1 ${c}"><span class="font-bold">Expires in ${l} days</span> (${d.end_date})</p></div>`;}}
+        function renderInternetNodeCards(p) { const n=p.filter(i=>i.name!=='Gateway'),g=document.getElementById('internet-nodes-grid');if(!g)return;const a=themes[localStorage.getItem('theme')||'dark'].palette;n.forEach((d,i)=>{const c=`mini-chart-${d.name.replace(/[^a-zA-Z0-9]/g,'')}`;let r=g.querySelector(`.internet-node-card[data-node-name="${d.name}"]`);if(!r){r=document.createElement('div');r.className="internet-node-card bg-bg-primary card p-3 border-2 transition-all cursor-pointer";r.dataset.nodeName=d.name;r.innerHTML=`<div class="flex justify-between items-start"><p class="font-semibold truncate text-sm text-primary node-name" title="${d.name}"></p><p class="text-xs font-bold node-ping"></p></div><div class="h-16 w-full my-2 chart-container-blur"><canvas id="${c}"></canvas></div><div class="text-xs text-muted flex justify-between"><span class="node-jitter"></span><span class="node-loss"></span></div>`;r.addEventListener('click',()=>showNodeDetailsModal(d));g.appendChild(r)}const s=p.find(t=>t.name==='Gateway')?.status==='UP'&&d.status==='UP';r.style.borderColor=`${s?'var(--color-status-up)':'var(--color-status-down)'}80`;r.querySelector('.node-name').textContent=d.name;r.querySelector('.node-name').title=d.name;const e=r.querySelector('.node-ping');e.textContent=s&&d.ping!==null?`${Math.round(d.ping)}ms`:'---';e.className=`text-xs font-bold node-ping ${getPingStatusClass(d.ping)}`;r.querySelector('.node-jitter').textContent=`Jitter: ${d.jitter?d.jitter.toFixed(1)+'ms':'N/A'}`;const l=r.querySelector('.node-loss');l.innerHTML=`Loss (15m): <span class="${getUptimeStatusClass(100-(d.packet_loss_15m||0))}">${d.packet_loss_15m!=null?d.packet_loss_15m+'%':'N/A'}</span>`;createOrUpdateMiniChart(c,d,a[i%a.length]);});}
+        function renderDiagnostics() { const c=DOMElements.diagnosticsFlowContainer;if(!document.getElementById('diag-layout')){c.innerHTML=`<div id="diag-layout" class="relative w-full max-w-5xl mx-auto"><svg id="diagnostics-svg-container"></svg><div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-center mb-4"><div id="diag-client" class="text-center flex-shrink-0 card card-muted p-4 node-glow min-h-[160px]"></div><div id="diag-server" class="text-center flex-shrink-0 card card-muted p-4 node-glow cursor-pointer min-h-[160px]"></div></div><div id="diag-ping-cs-container" class="mb-4"></div><div class="mb-8" id="diag-gateway-wrapper"><div id="diag-gateway" class="card card-muted p-4 border-2 transition-all w-full max-w-2xl mx-auto cursor-pointer"></div></div><div><div id="diag-internet" class="internet-nodes-container card card-muted p-4 node-glow"><p class="font-semibold text-primary text-center mb-4">Internet Nodes</p><div id="internet-nodes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div></div></div>`;} document.getElementById('diag-server')?.addEventListener('click',showServerDetailsModal); }
+        async function drawDiagnosticPaths() { const s=document.getElementById('diagnostics-svg-container');if(!s)return;const e=['diag-layout','diag-client','diag-server','diag-gateway','diag-internet','diag-ping-cs-container'].map(i=>document.getElementById(i));if(e.some(i=>!i))return;const[c,l,t,o,a,n]=e;if(!n.innerHTML)n.innerHTML=`<div id="diag-ping-cs" class="card card-muted p-3 text-center text-sm w-full max-w-xs mx-auto"></div>`;const i=document.getElementById('diag-ping-cs');const r=allPingsData.find(p=>p.name==='Gateway');const d=allPingsData.filter(p=>p.name!=='Gateway');const u={sg:r?.status==='UP'?'up':'down',gi:r?.status==='UP'&&d.some(p=>p.status==='UP')?'up':'down'};const m=c.getBoundingClientRect();const f=e=>{const b=e.getBoundingClientRect();return{x:b.left-m.left,y:b.top-m.top,w:b.width,h:b.height,cx:b.left-m.left+b.width/2,cy:b.top-m.top+b.height/2}};const[x,p,g,h]= [l,t,o,a].map(f);const k=[{id:'path-sg',d:`M ${p.cx} ${p.y+p.h} L ${g.cx} ${g.y}`,s:u.sg,dur:'2s'},{id:'path-gi',d:`M ${g.cx} ${g.y+g.h} L ${h.cx} ${h.y}`,s:u.gi,dur:'2.5s'}];s.innerHTML=k.map(j=>`<path id="${j.id}" class="flow-path" d="${j.d}" /><circle class="flow-dot ${j.s}"><animateMotion dur="${j.dur}" repeatCount="indefinite"><mpath href="#${j.id}" /></animateMotion></circle>`).join('');const v=await measureServerLatency();i.innerHTML=`Client &#10231; Server: <span class="font-bold ${getPingStatusClass(v)}">${v?Math.round(v)+'ms':'N/A'}</span>`;}
+        function updateGatewayInfo(s) { const c=document.getElementById('diag-gateway');const d=allPingsData.find(p=>p.name==='Gateway');if(!c||!s.gateway_details||!d){if(c)c.innerHTML='<p class="text-muted p-4">Gateway data not available.</p>';return;}const a=s.gateway_details;if(!document.getElementById('gateway-ping-chart')){c.innerHTML=`<div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center"><div class="md:col-span-1 text-center"><p class="font-semibold text-primary">Network Gateway</p><p class="text-xs text-muted truncate" title="${a.vendor||'Unknown Vendor'}">${a.vendor||'Unknown Vendor'}</p><div class="h-16 w-full my-2"><canvas id="gateway-ping-chart"></canvas></div></div><div class="md:col-span-2 text-xs text-left space-y-1 grid grid-cols-2 gap-2"><p><span class="font-medium text-muted">IP:</span> ${a.ip}</p><p><span class="font-medium text-muted">MAC:</span> ${a.mac}</p><p><span class="font-medium text-muted">Ping:</span> <span id="gateway-ping-value" class="${getPingStatusClass(d?.ping)}">${d?.ping?Math.round(d.ping)+'ms':'N/A'}</span></p><p><span class="font-medium text-muted">Jitter:</span> <span id="gateway-jitter-value">${d?.jitter?d.jitter.toFixed(1)+'ms':'N/A'}</span></p><p><span class="font-medium text-muted">Loss (15m):</span> <span id="gateway-loss-value" class="${getUptimeStatusClass(100-(d.packet_loss_15m||0))}">${d.packet_loss_15m!=null?d.packet_loss_15m+'%':'N/A'}</span></p></div></div>`;const n=c.cloneNode(true);c.parentNode.replaceChild(n,c);n.addEventListener('click',()=>{if(d)showNodeDetailsModal(d);});}else{document.getElementById('gateway-ping-value').textContent=d?.ping?Math.round(d.ping)+'ms':'N/A';document.getElementById('gateway-jitter-value').textContent=d?.jitter?d.jitter.toFixed(1)+'ms':'N/A';const e=document.getElementById('gateway-loss-value');e.textContent=d.packet_loss_15m!=null?d.packet_loss_15m+'%':'N/A';e.className=getUptimeStatusClass(100-(d.packet_loss_15m||0));}c.style.borderColor=`${d.status==='UP'?'var(--color-status-up)':'var(--color-status-down)'}80`;if(document.getElementById('gateway-ping-chart'))createOrUpdateMiniChart('gateway-ping-chart',d,'var(--accent-primary)');}
+        function showNodeDetailsModal(d){DOMElements.modalTitle.textContent=`Details for ${d.name}`;const n=(d.dns_info&&d.dns_info.length>0)?d.dns_info.map(i=>`<li>${i}</li>`).join(''):'<li>No DNS data</li>';const o=(d.traceroute_info&&d.traceroute_info.length>0)?d.traceroute_info.map(h=>`<li>${h}</li>`).join(''):'<li>No traceroute data</li>';const l=d.packet_loss_15m!=null?`${d.packet_loss_15m}%`:'N/A';const t=parseFloat(d.min_ping_15m),a=parseFloat(d.max_ping_15m),p=parseFloat(d.ping);let s=`<p class="font-semibold text-center mt-2">${(d.min_ping_15m&&d.max_ping_15m)?`${parseFloat(d.min_ping_15m).toFixed(1)}ms / ${parseFloat(d.max_ping_15m).toFixed(1)}ms`:'N/A'}</p>`;if(!isNaN(t)&&!isNaN(a)&&!isNaN(p)){const e=(c,x,r,A)=>{const R=(A-90)*Math.PI/180;return{x:c+(r*Math.cos(R)),y:x+(r*Math.sin(R))}};const i=(c,x,r,A,R)=>{const S=e(c,x,r,R),E=e(c,x,r,A);return`M ${S.x} ${S.y} A ${r} ${r} 0 ${R-A<=180?"0":"1"} 0 ${E.x} ${E.y}`};const g=a-t;const m=30+(g>0?((p-t)/g)*210:105);const h=e(50,50,30,m);s=`<div class="relative w-full h-24"><svg viewBox="0 0 100 60" class="w-full h-full"><defs><linearGradient id="pingGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="var(--color-status-up)"/><stop offset="50%" stop-color="var(--color-status-warn)"/><stop offset="100%" stop-color="var(--color-status-down)"/></linearGradient></defs><path d="${i(50,50,40,30,240)}" fill="none" stroke="url(#pingGradient)" stroke-width="8" stroke-linecap="round"/><text x="10" y="55" font-size="10" fill="var(--text-secondary)">${t.toFixed(1)}</text><text x="90" y="55" font-size="10" fill="var(--text-secondary)" text-anchor="end">${a.toFixed(1)}</text><path d="M 50 50 L ${h.x} ${h.y}" stroke="var(--text-primary)" stroke-width="2"/><circle cx="50" cy="50" r="3" fill="var(--text-primary)"/></svg><div class="absolute bottom-0 w-full text-center font-bold text-lg" style="color: var(--text-primary)">${p.toFixed(1)}<span class="text-sm">ms</span></div></div>`;}DOMElements.modalContent.innerHTML=`<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div><p class="text-muted text-xs">Status</p><p class="font-semibold" style="color:${d.status==='UP'?'var(--color-status-up)':'var(--color-status-down)'}">${d.status}</p></div><div><p class="text-muted text-xs">Jitter</p><p class="font-semibold">${d.jitter?d.jitter.toFixed(2)+' ms':'N/A'}</p></div><div><p class="text-muted text-xs">Current Loss</p><p class="font-semibold">${d.packet_loss!=null?d.packet_loss+'%':'N/A'}</p></div><div><p class="text-muted text-xs">Loss (15m)</p><p class="font-semibold">${l}</p></div><div class="md:col-span-2"><p class="text-muted text-xs text-center mb-1">Ping Range (15m)</p>${s}</div></div><div class="mb-4"><p class="text-muted text-xs">Last Checked</p><p class="font-semibold" id="modal-last-checked-time"></p></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><p class="text-primary font-semibold mb-1">DNS Info</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${n}</ul></div><div><p class="text-primary font-semibold mb-1">Traceroute</p><ul class="list-disc list-inside bg-bg-primary p-3 rounded-md font-mono text-xs max-h-32 overflow-y-auto">${o}</ul></div></div>`;DOMElements.nodeDetailsModal.classList.remove('hidden');if(modalUpdateIntervalId)clearInterval(modalUpdateIntervalId);const u=()=>{const e=document.getElementById('modal-last-checked-time');const i=allPingsData.find(p=>p.name===d.name);if(e&&i)e.textContent=`${formatTimestamp(i.timestamp*1e3)} (${timeAgo(i.timestamp)})`};u();modalUpdateIntervalId=setInterval(u,1e3);}
+        async function initializeTrendsChart() { if (isTrendsDataLoaded) return; DOMElements.trendsLoadingIndicator.classList.remove('hidden'); const f = async (s, e) => { try { const h = await apiCall('get_historical_data', {start: s, end: e}); if (!h || Object.keys(h).length === 0) { if(trendsChart) trendsChart.clear(); const c = DOMElements.trendsChartCanvas.getContext('2d'); c.fillStyle = 'var(--text-secondary)'; c.textAlign = 'center'; c.fillText('No data available.', DOMElements.trendsChartCanvas.width / 2, DOMElements.trendsChartCanvas.height / 2); return; } const p = themes[localStorage.getItem('theme') || 'dark'].palette; const d = Object.keys(h).flatMap((n, i) => { if (!Array.isArray(h[n])) return []; const o = p[i % p.length]; return { label: n, data: h[n].map(t => ({ x: t.timestamp * 1000, y: t.ping })), borderColor: o, backgroundColor: `${o}33`, tension: 0.2, pointRadius: 0, borderWidth: 2 }; }); if (trendsChart) { trendsChart.data.datasets = d; trendsChart.options.scales.x.min = s * 1000; trendsChart.options.scales.x.max = e * 1000; trendsChart.update('none'); } else { trendsChart = new Chart(DOMElements.trendsChartCanvas, { type: 'line', data: { datasets: d }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'minute' }, min: s * 1000, max: e * 1000, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: v => v + ' ms' } } }, plugins: { legend: { labels: { color: 'var(--text-primary)' } }, zoom: { pan: { enabled: true, mode: 'x' }, zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x', onZoomComplete: ({chart:c}) => { const {min:m, max:x}=c.scales.x; f(Math.floor(m / 1000), Math.ceil(x / 1000)); } } } } } }); } isTrendsDataLoaded = true; } catch(err) { console.error("Error with trends chart:", err); } finally { DOMElements.trendsLoadingIndicator.classList.add('hidden'); } }; f(Math.floor(Date.now() / 1000) - 86400, Math.floor(Date.now() / 1000)); }
+        function updateTrendsChart(p) { if (!trendsChart || !isTrendsDataLoaded) return; p.forEach(d => { const s = trendsChart.data.datasets.find(t => t.label === d.name); if (s) s.data.push({ x: d.timestamp * 1000, y: d.ping }); }); trendsChart.update('none'); }
         function setupEventListeners() {
-            document.body.addEventListener('click', async () => {
-                await Tone.start();
-            }, { once: true });
-
-            DOMElements.tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    DOMElements.tabs.forEach(t => t.classList.remove('tab-active'));
-                    tab.classList.add('tab-active');
-                    Object.values(DOMElements.views).forEach(v => v.classList.add('hidden'));
-                    const view = tab.id.split('-')[1];
-                    if (DOMElements.views[view]) {
-                        DOMElements.views[view].classList.remove('hidden');
-                    }
-                    if (view === 'log') {
-                        apiCall('get_log').then(serverLog => {
-                            if (serverLog) {
-                                log = serverLog;
-                                renderLogTimeline();
-                                renderCalendar(calendarDate);
-                            }
-                        });
-                    }
-                    if (view === 'trends' && !isTrendsDataLoaded) initializeTrendsChart();
-                    if (view === 'neighborhood') fetchNetworkNeighborhood();
-                    if (view === 'diagnostics') {
-                         // Initial render of diagnostics components when tab is clicked
-                        renderDiagnostics();
-                        // Manually trigger an update to populate it immediately
-                        fetchAndUpdateData();
-                    }
-                });
-            });
-            DOMElements.clearLogBtn?.addEventListener('click', () => DOMElements.confirmModal.classList.remove('hidden'));
-            DOMElements.modalCancelBtn?.addEventListener('click', () => DOMElements.confirmModal.classList.add('hidden'));
-            DOMElements.modalConfirmBtn?.addEventListener('click', async () => { await apiCall('clear_log'); log = []; renderLogTimeline(); renderCalendar(calendarDate); updateUptimeStats(); if (trendsChart) { trendsChart.data.datasets.forEach(ds => ds.data = []); trendsChart.update(); } DOMElements.confirmModal.classList.add('hidden'); });
-            
-            DOMElements.soundToggle?.addEventListener('change', () => {
-                soundEnabled = DOMElements.soundToggle.checked;
-                localStorage.setItem('soundEnabled', soundEnabled);
-            });
-            
-            DOMElements.saveSettingsBtn?.addEventListener('click', saveSettings);
-            
-            const closeModal = (modal) => {
-                modal.classList.add('hidden');
-                if (modalUpdateIntervalId) clearInterval(modalUpdateIntervalId);
-                modalUpdateIntervalId = null;
-            };
-
-            DOMElements.modalCloseBtn?.addEventListener('click', () => closeModal(DOMElements.nodeDetailsModal));
-            DOMElements.serverModalCloseBtn?.addEventListener('click', () => closeModal(DOMElements.serverDetailsModal));
-            DOMElements.licenseCloseBtn?.addEventListener('click', () => closeModal(DOMElements.licenseModal));
-            DOMElements.readmeCloseBtn?.addEventListener('click', () => closeModal(DOMElements.readmeModal));
-            
-            DOMElements.copyErrorBtn?.addEventListener('click', () => {
-                const errorText = DOMElements.loadingErrorMessage.textContent;
-                const textArea = document.createElement("textarea");
-                textArea.value = errorText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    DOMElements.copyErrorBtn.textContent = 'Copied!';
-                    setTimeout(() => { DOMElements.copyErrorBtn.textContent = 'Copy Error'; }, 2000);
-                } catch (err) {
-                    console.error('Failed to copy text: ', err);
-                }
-                document.body.removeChild(textArea);
-            });
-
-            DOMElements.logoContainer?.addEventListener('click', () => playSound(bruhPlayer, true));
-            DOMElements.logViewToggle?.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    const view = e.target.dataset.view;
-                    DOMElements.logViewToggle.querySelectorAll('button').forEach(btn => btn.classList.remove('bg-accent', 'text-white'));
-                    e.target.classList.add('bg-accent', 'text-white');
-                    if (view === 'timeline') {
-                        DOMElements.logTimelineContainer?.classList.remove('hidden');
-                        DOMElements.logCalendarContainer?.classList.add('hidden');
-                    } else {
-                        DOMElements.logTimelineContainer?.classList.add('hidden');
-                        DOMElements.logCalendarContainer?.classList.remove('hidden');
-                        renderCalendar(calendarDate);
-                    }
-                }
-            });
-            DOMElements.calPrevMonthBtn?.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(calendarDate); });
-            DOMElements.calNextMonthBtn?.addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(calendarDate); });
-            
-            DOMElements.responsiveScanToggle?.addEventListener('change', (e) => {
-                isResponsiveScanMode = e.target.checked;
-                localStorage.setItem('responsiveScanMode', isResponsiveScanMode);
-                startNetworkScanPolling();
-            });
-
-            DOMElements.licenseLink?.addEventListener('click', (e) => { e.preventDefault(); showLicenseModal(); });
-            DOMElements.readmeLink?.addEventListener('click', (e) => { e.preventDefault(); showReadmeModal(); });
-
-            DOMElements.runDiagBtn?.addEventListener('click', async () => {
-                const target = DOMElements.diagTargetInput.value.trim();
-                const pingCount = parseInt(DOMElements.diagPingCount.value, 10);
-                const pingSize = parseInt(DOMElements.diagPingSize.value, 10);
-                
-                if (!target) {
-                    DOMElements.diagOutputContainer.textContent = 'Please enter a target.';
-                    return;
-                }
-                if (isNaN(pingCount) || isNaN(pingSize) || pingCount <= 0 || pingSize <= 0) {
-                     DOMElements.diagOutputContainer.textContent = 'Invalid ping count or size.';
-                     return;
-                }
-
-                DOMElements.diagOutputContainer.textContent = `Running diagnostics for ${target}...`;
-
-                try {
-                    const result = await apiCall('on_demand_ping', { action: 'on_demand_ping', target, count: pingCount, size: pingSize });
-                    let output = '';
-                    if (result.error) {
-                        output = `ERROR: ${result.error}`;
-                    } else {
-                        output = `--- Ping Output ---\n`
-                        + `${result.ping}\n\n`
-                        + `--- DNS Info ---\n`
-                        + `${(result.dns && result.dns.length > 0) ? result.dns.join('\n') : 'N/A'}\n\n`
-                        + `--- Traceroute ---\n`
-                        + `${(result.traceroute && result.traceroute.length > 0) ? result.traceroute.join('\n') : 'N/A'}`;
-                    }
-                    DOMElements.diagOutputContainer.textContent = output;
-                } catch (error) {
-                    console.error("On-demand diagnostic failed:", error);
-                    DOMElements.diagOutputContainer.textContent = `Failed to run diagnostics: ${error.message}`;
-                }
-            });
+            document.body.addEventListener('click', () => Tone.start(), { once: true });
+            DOMElements.tabs.forEach(t=>{t.addEventListener('click',()=>{DOMElements.tabs.forEach(b=>b.classList.remove('tab-active'));t.classList.add('tab-active');Object.values(DOMElements.views).forEach(v=>v.classList.add('hidden'));const e=t.id.split('-')[1];if(DOMElements.views[e])DOMElements.views[e].classList.remove('hidden');if(e==='log')apiCall('get_log').then(l=>{if(l){log=l;renderLogTimeline();renderCalendar(calendarDate);}});if(e==='trends'&&!isTrendsDataLoaded)initializeTrendsChart();if(e==='neighborhood')fetchNetworkNeighborhood();if(e==='diagnostics'){renderDiagnostics();fetchAndUpdateData();}});});
+            DOMElements.clearLogBtn?.addEventListener('click',()=>DOMElements.confirmModal.classList.remove('hidden'));
+            DOMElements.modalCancelBtn?.addEventListener('click',()=>DOMElements.confirmModal.classList.add('hidden'));
+            DOMElements.modalConfirmBtn?.addEventListener('click',async()=>{await apiCall('clear_log');log=[];renderLogTimeline();renderCalendar(calendarDate);updateUptimeStats();if(trendsChart){trendsChart.data.datasets.forEach(d=>d.data=[]);trendsChart.update();}DOMElements.confirmModal.classList.add('hidden');});
+            DOMElements.views.settings.addEventListener('change', e => { if (e.target.closest('input, textarea')) { if (e.target.name === 'theme-selector') applySettings(); saveSettings(); } });
+            const closeModal = m => { m.classList.add('hidden'); if(modalUpdateIntervalId) clearInterval(modalUpdateIntervalId); modalUpdateIntervalId=null; };
+            DOMElements.modalCloseBtn?.addEventListener('click',()=>closeModal(DOMElements.nodeDetailsModal)); DOMElements.serverModalCloseBtn?.addEventListener('click',()=>closeModal(DOMElements.serverDetailsModal)); DOMElements.licenseCloseBtn?.addEventListener('click',()=>closeModal(DOMElements.licenseModal)); DOMElements.readmeCloseBtn?.addEventListener('click',()=>closeModal(DOMElements.readmeModal));
+            DOMElements.copyErrorBtn?.addEventListener('click',()=>{navigator.clipboard.writeText(DOMElements.loadingErrorMessage.textContent).then(()=>{DOMElements.copyErrorBtn.textContent='Copied!';setTimeout(()=>DOMElements.copyErrorBtn.textContent='Copy Error',2e3);});});
+            DOMElements.logoContainer?.addEventListener('click',()=>playSound(bruhPlayer,true));
+            DOMElements.logViewToggle?.addEventListener('click',e=>{if(e.target.tagName==='BUTTON'){const v=e.target.dataset.view;DOMElements.logViewToggle.querySelectorAll('button').forEach(b=>b.classList.remove('bg-accent','text-white'));e.target.classList.add('bg-accent','text-white');DOMElements.logTimelineContainer?.classList.toggle('hidden',v!=='timeline');DOMElements.logCalendarContainer?.classList.toggle('hidden',v!=='calendar');if(v==='calendar')renderCalendar(calendarDate);}});
+            DOMElements.calPrevMonthBtn?.addEventListener('click',()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar(calendarDate);}); DOMElements.calNextMonthBtn?.addEventListener('click',()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar(calendarDate);});
+            DOMElements.responsiveScanToggle?.addEventListener('change',e=>{isResponsiveScanMode=e.target.checked;localStorage.setItem('responsiveScanMode',isResponsiveScanMode);startNetworkScanPolling();});
+            DOMElements.manualScanBtn?.addEventListener('click', async () => { DOMElements.nmapLoadingIndicator.classList.remove('hidden'); try { await apiCall('trigger_network_scan'); await new Promise(r => setTimeout(r, 2000)); await fetchNetworkNeighborhood(); } catch(e){ console.error("Manual scan trigger failed", e); } finally { DOMElements.nmapLoadingIndicator.classList.add('hidden'); } });
+            DOMElements.licenseLink?.addEventListener('click',e=>{e.preventDefault();showLicenseModal();}); DOMElements.readmeLink?.addEventListener('click',e=>{e.preventDefault();showReadmeModal();});
+            DOMElements.runDiagBtn?.addEventListener('click',async()=>{const t=DOMElements.diagTargetInput.value.trim(),c=parseInt(DOMElements.diagPingCount.value,10),s=parseInt(DOMElements.diagPingSize.value,10);if(!t||isNaN(c)||isNaN(s)||c<=0||s<=0){DOMElements.diagOutputContainer.textContent='Invalid input.';return;}DOMElements.diagOutputContainer.textContent=`Pinging ${t}...`;try{const r=await apiCall('on_demand_ping',{target:t,count:c,size:s});DOMElements.diagOutputContainer.textContent=r.error?`ERROR: ${r.error}`:`--- Ping ---\n${r.ping}\n\n--- DNS ---\n${(r.dns||[]).join('\n')||'N/A'}\n\n--- Traceroute ---\n${(r.traceroute||[]).join('\n')||'N/A'}`;;}catch(e){DOMElements.diagOutputContainer.textContent=`Failed: ${e.message}`;}});
         }
-
-        async function loadThemes() {
-            try {
-                const response = await fetch('./assets/themes.json');
-                themes = await response.json();
-            } catch (error) {
-                console.error("Could not load themes.json:", error);
-            }
-        }
-
-        function applySettings() {
-            let theme = localStorage.getItem('theme') || 'dark';
-            
-            if (!themes || !themes[theme]) {
-                console.error(`Theme '${theme}' not found or themes.json failed to load. Defaulting to 'dark'.`);
-                theme = 'dark';
-                localStorage.setItem('theme', theme);
-            }
-
-            soundEnabled = localStorage.getItem('soundEnabled') === 'true';
-            if(DOMElements.soundToggle) DOMElements.soundToggle.checked = soundEnabled;
-            
-            document.documentElement.className = `theme-${theme}`;
-
-            if (themes && themes[theme] && themes[theme].properties) {
-                const themeProperties = themes[theme].properties;
-                for (const [key, value] of Object.entries(themeProperties)) {
-                    document.documentElement.style.setProperty(key, value);
-                }
-                
-                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
-                document.documentElement.style.setProperty('--accent-primary-trans-1', `${accentColor}33`);
-                document.documentElement.style.setProperty('--accent-primary-trans-2', `${accentColor}55`);
-            } else {
-                console.error(`Could not apply properties for theme '${theme}'. The theme data might be missing or malformed.`);
-            }
-            
-            if (isTrendsDataLoaded && trendsChart && themes && themes[theme] && themes[theme].palette) {
-                const palette = themes[theme].palette;
-                trendsChart.data.datasets.forEach((dataset, index) => {
-                    const color = palette[index % palette.length];
-                    dataset.borderColor = color;
-                    dataset.backgroundColor = `${color}33`;
-                });
-                trendsChart.options.scales.x.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary');
-                trendsChart.options.scales.y.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border-primary');
-                trendsChart.options.scales.x.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
-                trendsChart.options.scales.y.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
-                trendsChart.options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
-                trendsChart.update();
-            }
-
-            isResponsiveScanMode = localStorage.getItem('responsiveScanMode') === 'true';
-            if (DOMElements.responsiveScanToggle) DOMElements.responsiveScanToggle.checked = isResponsiveScanMode;
-            startNetworkScanPolling();
-        }
-        
-        async function saveSettings() {
-            const settingsToSave = {
-                updateInterval: document.querySelector('input[name="update-interval"]:checked')?.value,
-                onlineDetectionMethod: document.querySelector('input[name="online-detection-method"]:checked')?.value,
-                smartCheckThreshold: DOMElements.smartCheckThreshold.value,
-                criticalServices: DOMElements.criticalServicesList.value
-            };
-            
-            try {
-                await apiCall('save_settings', { settings: settingsToSave });
-                // Also save non-DB settings to localStorage
-                localStorage.setItem('soundEnabled', DOMElements.soundToggle.checked);
-                localStorage.setItem('updateInterval', settingsToSave.updateInterval);
-                localStorage.setItem('theme', document.querySelector('input[name="theme-selector"]:checked')?.value);
-
-                // Give user feedback
-                const btn = DOMElements.saveSettingsBtn;
-                btn.textContent = 'Saved!';
-                btn.classList.add('bg-green-500');
-                setTimeout(() => {
-                    btn.textContent = 'Save Settings';
-                    btn.classList.remove('bg-green-500');
-                }, 2000);
-                
-                // Restart polling with new interval
-                startPolling(settingsToSave.updateInterval);
-
-            } catch(e) {
-                console.error("Failed to save settings:", e);
-                const btn = DOMElements.saveSettingsBtn;
-                btn.textContent = 'Error!';
-                btn.classList.add('bg-red-500');
-                setTimeout(() => {
-                    btn.textContent = 'Save Settings';
-                    btn.classList.remove('bg-red-500');
-                }, 2000);
-            }
-        }
-        
-        async function loadAndApplySettings() {
-            const createRadioGroup = (container, groupName, options, savedValue, callback) => {
-                if (!container) return;
-                container.innerHTML = '';
-                Object.entries(options).forEach(([value, label]) => {
-                    const id = `${groupName}-${value}`;
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'flex items-center';
-                    wrapper.innerHTML = `
-                        <input id="${id}" name="${groupName}" type="radio" value="${value}" class="h-4 w-4 border-gray-300 text-accent focus:ring-accent-secondary">
-                        <label for="${id}" class="ml-3 block text-sm font-medium text-primary">${label}</label>
-                    `;
-                    const radio = wrapper.querySelector('input');
-                    if (value === savedValue) radio.checked = true;
-                    if (callback) radio.addEventListener('change', callback);
-                    container.appendChild(wrapper);
-                });
-            };
-
-            const intervalOptions = { '1000': '1s', '2000': '2s', '5000': '5s', '10000': '10s' };
-            const detectionOptions = { 'smart_check': 'Smart Check', 'gateway': 'Gateway Ping', 'majority': 'Majority of Nodes', 'critical_services': 'All Critical Services' };
-            let themeOptions = {'dark': 'Default Dark'};
-            if (themes && Object.keys(themes).length > 0) {
-                themeOptions = Object.fromEntries(Object.entries(themes).map(([key, val]) => [key, val.name]));
-            }
-
-            // Fetch settings from DB
-            try {
-                const dbSettings = await apiCall('get_settings');
-                // Populate UI with DB or local storage values
-                createRadioGroup(DOMElements.updateIntervalGroup, 'update-interval', intervalOptions, dbSettings.updateInterval || '2000');
-                createRadioGroup(DOMElements.onlineDetectionMethodGroup, 'online-detection-method', detectionOptions, dbSettings.onlineDetectionMethod || 'smart_check', handleDetectionMethodChange);
-                createRadioGroup(DOMElements.themeSelectorGroup, 'theme-selector', themeOptions, localStorage.getItem('theme') || 'dark', applySettings);
-                
-                DOMElements.smartCheckThreshold.value = dbSettings.smartCheckThreshold || 3;
-                DOMElements.criticalServicesList.value = dbSettings.criticalServices || 'Gateway,OpenDNS Primary,Google DNS,Cloudflare DNS';
-            } catch (error) {
-                console.error("Failed to load settings from database. Using defaults.", error);
-                createRadioGroup(DOMElements.updateIntervalGroup, 'update-interval', intervalOptions, '2000');
-                createRadioGroup(DOMElements.onlineDetectionMethodGroup, 'online-detection-method', detectionOptions, 'smart_check', handleDetectionMethodChange);
-                createRadioGroup(DOMElements.themeSelectorGroup, 'theme-selector', themeOptions, 'dark', applySettings);
-            }
-
-            // Apply theme and other local settings
-            applySettings();
-            handleDetectionMethodChange(); // Show/hide relevant options on load
-        }
-        
-        function handleDetectionMethodChange() {
-            const selectedMethod = document.querySelector('input[name="online-detection-method"]:checked')?.value;
-            DOMElements.smartCheckOptions.classList.toggle('hidden', selectedMethod !== 'smart_check');
-            DOMElements.criticalServicesOptions.classList.toggle('hidden', !['smart_check', 'critical_services'].includes(selectedMethod));
-        }
-
-        function startPolling(interval) {
-            if (pollingIntervalId) clearInterval(pollingIntervalId);
-            fetchAndUpdateData();
-            pollingIntervalId = setInterval(fetchAndUpdateData, interval);
-            setInterval(updateActiveLogTimer, 1000);
-        }
-
-        function startNetworkScanPolling() {
-            if (networkScanIntervalId) clearInterval(networkScanIntervalId);
-            const interval = isResponsiveScanMode ? parseInt(localStorage.getItem('updateInterval'), 10) : 60000; // 60 seconds default
-            if (!DOMElements.views.neighborhood.classList.contains('hidden')) {
-                fetchNetworkNeighborhood();
-            }
-            networkScanIntervalId = setInterval(fetchNetworkNeighborhood, interval);
-        }
-
-
-        async function loadFuzzySayings() {
-            try {
-                const response = await fetch('./assets/fuzzy_sayings.json');
-                if(response.ok) {
-                    FUZZY_SAYINGS = await response.json();
-                } else {
-                    console.error("Could not load fuzzy sayings: HTTP " + response.status);
-                }
-            } catch (error) {
-                console.error("Could not load fuzzy sayings:", error);
-            }
-        }
-        
-        function updateLogoColor(score, status) {
-            const logo = DOMElements.logoContainer;
-            const title = DOMElements.appTitle;
-            if (!logo || !title) return;
-
-            let colorVar;
-            if (status === 'DOWN') {
-                colorVar = 'var(--color-status-down)';
-            } else if (status === 'UP') {
-                if (score > 300) { colorVar = 'var(--color-status-up)'; }
-                else if (score > 150) { colorVar = 'var(--color-status-warn)'; }
-                else { colorVar = 'var(--color-status-down)'; }
-            } else {
-                colorVar = 'var(--accent-primary)';
-            }
-            
-            logo.style.color = colorVar;
-            title.style.color = colorVar;
-
-            const faviconSVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:${colorVar};stroke-width:4;stroke-miterlimit:10;}.st1{fill:${colorVar};stroke:${colorVar};stroke-width:2;stroke-miterlimit:10;}.st2{fill:none;stroke:${colorVar};stroke-width:3;stroke-miterlimit:10;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st2' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>`;
-            const faviconDataURI = `data:image/svg+xml,${encodeURIComponent(faviconSVG)}`;
-            DOMElements.faviconLink.href = faviconDataURI;
-        }
-
-
-        function renderQualityMetrics(pings) {
-            const upPings = pings.filter(p => p.status === 'UP' && p.ping !== null);
-            if (upPings.length === 0) {
-                // Handle case with no data
-                DOMElements.qualityMetricsContainer.innerHTML = '<p class="text-center text-muted col-span-full">No active targets to measure quality.</p>';
-                return;
-            }
-
-            const avgPing = upPings.reduce((sum, p) => sum + p.ping, 0) / upPings.length;
-            const avgJitter = upPings.reduce((sum, p) => sum + (p.jitter || 0), 0) / upPings.length;
-            const avgLoss = upPings.reduce((sum, p) => sum + (p.packet_loss_15m || 0), 0) / upPings.length;
-
-            createOrUpdateScoreGauge('quality-ping', avgPing, 200, 'Avg. Ping', 'ms', true);
-            createOrUpdateScoreGauge('quality-jitter', avgJitter, 50, 'Avg. Jitter', 'ms', true);
-            createOrUpdateScoreGauge('quality-loss', avgLoss, 100, 'Packet Loss', '%', true);
-        }
-
-        function createOrUpdateScoreGauge(containerId, value, maxValue, label, unit, lowerIsBetter = true) {
-            const container = document.getElementById('quality-metrics-container');
-            if (!container) return;
-
-            let card = document.getElementById(containerId);
-            if (!card) {
-                card = document.createElement('div');
-                card.id = containerId;
-                card.className = 'card card-muted p-4 text-center';
-                container.appendChild(card);
-            }
-
-            const percentage = Math.min(100, (value / maxValue) * 100);
-            let colorVar;
-            const thresholds = lowerIsBetter ? [25, 60] : [75, 40];
-
-            if ((lowerIsBetter && percentage < thresholds[0]) || (!lowerIsBetter && percentage > thresholds[0])) {
-                colorVar = 'var(--color-status-up)';
-            } else if ((lowerIsBetter && percentage < thresholds[1]) || (!lowerIsBetter && percentage > thresholds[1])) {
-                colorVar = 'var(--color-status-warn)';
-            } else {
-                colorVar = 'var(--color-status-down)';
-            }
-
-            const size = 100;
-            const strokeWidth = 10;
-            const radius = (size / 2) - (strokeWidth / 2);
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percentage / 100) * circumference;
-
-            card.innerHTML = `
-                <h3 class="text-sm font-medium text-muted">${label}</h3>
-                <div class="relative w-24 h-24 mx-auto my-2">
-                    <svg class="w-full h-full" viewBox="0 0 ${size} ${size}">
-                        <circle class="background" stroke="var(--border-primary)" stroke-width="${strokeWidth}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}"/>
-                        <circle class="progress" stroke="${colorVar}" stroke-width="${strokeWidth}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}" style="stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;"/>
-                    </svg>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="text-xl font-bold" style="color: ${colorVar};">${value.toFixed(1)}${unit}</span>
-                    </div>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                const progressCircle = card.querySelector('.progress');
-                if (progressCircle) {
-                    progressCircle.style.strokeDashoffset = offset;
-                }
-            }, 100);
-        }
-        
-        async function createOrUpdateMiniChart(canvasId, nodeData, color) {
-            const ctx = document.getElementById(canvasId);
-            if (!ctx) return;
-            
-            if (miniChartInstances[canvasId]) {
-                const chart = miniChartInstances[canvasId];
-                chart.data.labels.push(nodeData.timestamp * 1000);
-                chart.data.datasets[0].data.push(nodeData.ping);
-                if (chart.data.labels.length > 30) {
-                    chart.data.labels.shift();
-                    chart.data.datasets[0].data.shift();
-                }
-                chart.update('none');
-            } else {
-                try {
-                    const recentData = await apiCall('get_recent_history', { target: nodeData.name });
-                    if (!recentData || recentData.length === 0) {
-                        const context = ctx.getContext('2d');
-                        context.fillStyle = 'var(--text-secondary)';
-                        context.textAlign = 'center';
-                        context.font = '10px Inter';
-                        context.fillText('No recent data.', ctx.width / 2, ctx.height / 2);
-                        return;
-                    }
-                    const data = {
-                        labels: recentData.map(d => d.timestamp * 1000),
-                        datasets: [{
-                            label: 'Ping',
-                            data: recentData.map(d => d.ping),
-                            borderColor: color || 'var(--accent-primary)',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            tension: 0.4
-                        }]
-                    };
-                    miniChartInstances[canvasId] = new Chart(ctx, {
-                        type: 'line', data: data,
-                        options: {
-                            responsive: true, maintainAspectRatio: false,
-                            scales: { x: { display: false }, y: { display: false, beginAtZero: true } },
-                            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                            animation: { duration: 0 }
-                        }
-                    });
-                } catch (error) {
-                    console.error("Failed to load recent history:", error);
-                    const context = ctx.getContext('2d');
-                    context.fillStyle = 'var(--text-secondary)';
-                    context.textAlign = 'center';
-                    context.font = '10px Inter';
-                    context.fillText('Error loading data.', ctx.width / 2, ctx.height / 2);
-                }
-            }
-        }
-        
-        function createOrUpdateUptimeChart(containerId, percentage, disconnects) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            const size = 100;
-            const strokeWidth = 10;
-            const radius = (size / 2) - (strokeWidth / 2);
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percentage / 100) * circumference;
-            const colorClass = getUptimeStatusClass(percentage);
-            const colorVar = colorClass.replace('text-','var(--color-');
-
-            if (!uptimeChartInstances[containerId]) {
-                container.innerHTML = `
-                    <svg viewBox="0 0 ${size} ${size}">
-                        <circle class="background" stroke="var(--border-primary)" stroke-width="${strokeWidth}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}"/>
-                        <circle class="progress" stroke="${colorVar}" stroke-width="${strokeWidth}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" fill="transparent" r="${radius}" cx="${size/2}" cy="${size/2}" style="stroke-linecap: round; transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;"/>
-                    </svg>
-                    <div class="disconnect-count">
-                        <span class="font-bold text-2xl ${colorClass}">${percentage.toFixed(1)}%</span>
-                    </div>
-                `;
-                uptimeChartInstances[containerId] = {
-                    circle: container.querySelector('.progress'),
-                    percentageText: container.querySelector('.disconnect-count .font-bold')
-                };
-                setTimeout(() => {
-                    if (uptimeChartInstances[containerId] && uptimeChartInstances[containerId].circle) {
-                        uptimeChartInstances[containerId].circle.style.strokeDashoffset = offset;
-                    }
-                }, 100);
-            } else {
-                const { circle, percentageText } = uptimeChartInstances[containerId];
-                if (circle) {
-                    circle.style.strokeDashoffset = offset;
-                    circle.setAttribute('stroke', colorVar);
-                }
-                if (percentageText) {
-                    percentageText.textContent = `${percentage.toFixed(1)}%`;
-                    percentageText.className = `font-bold text-2xl ${colorClass}`;
-                }
-            }
-        }
-        
-        async function renderCalendar(date) {
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            if (DOMElements.calMonthYear) DOMElements.calMonthYear.textContent = `${date.toLocaleString('default', { month: 'long' })} ${year}`;
-            if (!DOMElements.calGrid) return;
-
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            const eventsByDay = {};
-            const serverLog = log; // Use existing global log variable
-            if (serverLog) {
-                serverLog.forEach(event => {
-                    const start = new Date(event.startTime);
-                    const end = new Date(event.endTime);
-                    let current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-                    
-                    while (current <= end) {
-                        const dateKey = current.toISOString().split('T')[0];
-                        if (!eventsByDay[dateKey]) eventsByDay[dateKey] = { UP: 0, DOWN: 0 };
-                        
-                        const dayStart = current;
-                        const dayEnd = new Date(dayStart);
-                        dayEnd.setDate(dayEnd.getDate() + 1);
-
-                        const effectiveStart = start > dayStart ? start : dayStart;
-                        const effectiveEnd = end < dayEnd ? end : dayEnd;
-                        
-                        const duration = effectiveEnd - effectiveStart;
-
-                        if (event.status === 'UP') eventsByDay[dateKey].UP += duration;
-                        else eventsByDay[dateKey].DOWN += duration;
-
-                        current.setDate(current.getDate() + 1);
-                    }
-                });
-            }
-
-            let html = '<div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div><div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>';
-            for (let i = 0; i < firstDay; i++) {
-                html += '<div class="calendar-day other-month"></div>';
-            }
-
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                html += `<div class="calendar-day"><span class="font-semibold">${day}</span>`;
-                if (eventsByDay[dateKey]) {
-                    const totalDuration = eventsByDay[dateKey].UP + eventsByDay[dateKey].DOWN;
-                    const upPercent = (eventsByDay[dateKey].UP / totalDuration) * 100;
-                    const downPercent = (eventsByDay[dateKey].DOWN / totalDuration) * 100;
-                    if (downPercent > 1) html += `<div class="event-bar event-bar-down" style="width:${downPercent}%" title="Downtime: ${formatLongDuration(eventsByDay[dateKey].DOWN)}"></div>`;
-                    if (upPercent > 1) html += `<div class="event-bar event-bar-up" style="width:${upPercent}%" title="Uptime: ${formatLongDuration(eventsByDay[dateKey].UP)}"></div>`;
-                }
-                html += '</div>';
-            }
-            DOMElements.calGrid.innerHTML = html;
-        }
-
-
-        async function showServerDetailsModal() {
-            DOMElements.serverDetailsModal?.classList.remove('hidden');
-            const history = await apiCall('get_resource_history');
-            if (!history) return;
-
-            const createChart = (canvasId, label, dataKey, unit, colorVarName) => {
-                const ctx = document.getElementById(canvasId)?.getContext('2d');
-                if (!ctx) return;
-                const color = getComputedStyle(document.documentElement).getPropertyValue(colorVarName).trim();
-                return new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: history.map(d => d.timestamp * 1000),
-                        datasets: [{
-                            label: label,
-                            data: history.map(d => d[dataKey]),
-                            borderColor: color,
-                            backgroundColor: `${color}33`,
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            tension: 0.3,
-                            fill: true,
-                        }]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + unit } } },
-                        plugins: { legend: { display: false }, title: { display: true, text: label, color: 'var(--text-primary)' } }
-                    }
-                });
-            };
-
-            if (serverChartCPU) serverChartCPU.destroy();
-            if (serverChartMem) serverChartMem.destroy();
-            if (serverChartNet) serverChartNet.destroy();
-
-            serverChartCPU = createChart('cpu-chart', 'CPU Usage', 'cpu_usage', '%', '--accent-secondary');
-            serverChartMem = createChart('mem-chart', 'Memory Usage', 'mem_usage', '%', '--color-status-up');
-            
-            const netCtx = document.getElementById('net-chart')?.getContext('2d');
-            if (netCtx) {
-                serverChartNet = new Chart(netCtx, {
-                    type: 'line',
-                    data: {
-                        labels: history.map(d => d.timestamp * 1000),
-                        datasets: [
-                            { label: 'Download', data: history.map(d => d.net_down_kbps), borderColor: '#38bdf8', backgroundColor: '#38bdf833', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true },
-                            { label: 'Upload', data: history.map(d => d.net_up_kbps), borderColor: '#a78bfa', backgroundColor: '#a78bfa33', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true }
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: { x: { type: 'time', time: { unit: 'minute' }, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)' } }, y: { beginAtZero: true, grid: { color: 'var(--border-primary)' }, ticks: { color: 'var(--text-secondary)', callback: value => value + ' Kbps' } } },
-                        plugins: { legend: { labels: { color: 'var(--text-primary)' } }, title: { display: true, text: 'Network Usage', color: 'var(--text-primary)' } }
-                    }
-                });
-            }
-        }
-
-        async function updateClientInfo() {
-            const clientCard = document.getElementById('diag-client');
-            if (!clientCard) return;
-
-            const ua = navigator.userAgent;
-            let os = 'Unknown OS';
-            if (ua.includes('Win')) os = 'Windows';
-            if (ua.includes('Mac')) os = 'macOS';
-            if (ua.includes('Linux')) os = 'Linux';
-            if (ua.includes('Android')) os = 'Android';
-            if (ua.includes('like Mac')) os = 'iOS';
-
-            let browser = 'Unknown Browser';
-            if (ua.includes('Firefox')) browser = 'Firefox';
-            else if (ua.includes('SamsungBrowser')) browser = 'Samsung Internet';
-            else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
-            else if (ua.includes('Edge')) browser = 'Edge';
-            else if (ua.includes('Chrome')) browser = 'Chrome';
-            else if (ua.includes('Safari')) browser = 'Safari';
-
-            try {
-                const details = await apiCall('get_client_details');
-                const hostname = details?.hostname || 'N/A';
-                const mac = details?.mac || 'N/A';
-                clientCard.innerHTML = `
-                    <p class="font-semibold text-primary">Client Device</p>
-                    <p class="text-xs text-muted truncate" title="${hostname}">${hostname}</p>
-                    <div class="mt-2 text-xs text-left space-y-1">
-                        <p><span class="font-medium text-muted">IP:</span> ${clientIp}</p>
-                        <p><span class="font-medium text-muted">MAC:</span> ${mac}</p>
-                        <p><span class="font-medium text-muted">OS:</span> ${os}</p>
-                        <p><span class="font-medium text-muted">Browser:</span> ${browser}</p>
-                    </div>
-                `;
-            } catch (error) {
-                console.error("Failed to get client details:", error);
-                clientCard.innerHTML = `<p class="text-center text-status-down p-4">Error fetching client details.</p>`;
-            }
-        }
-        
-        function updateServerInfo(serverStatus) {
-            const serverCard = document.getElementById('diag-server');
-            if (!serverCard || !serverStatus.resource_usage) return;
-            const usage = serverStatus.resource_usage;
-            serverCard.innerHTML = `
-                <p class="font-semibold text-primary">A.N.U.S. Server</p>
-                <p class="text-xs text-muted">${serverStatus.server_ip}</p>
-                <div class="mt-2 text-xs text-left space-y-1">
-                    <p><span class="font-medium text-muted">CPU:</span> <span class="${getResourceStatusClass(usage.cpu_usage, [50, 80])}">${usage.cpu_usage}%</span></p>
-                    <p><span class="font-medium text-muted">MEM:</span> <span class="${getResourceStatusClass(usage.mem_usage, [60, 85])}">${usage.mem_usage}%</span></p>
-                    <p><span class="font-medium text-muted">DOWN:</span> ${usage.net_down_kbps} Kbps</p>
-                    <p><span class="font-medium text-muted">UP:</span> ${usage.net_up_kbps} Kbps</p>
-                </div>
-            `;
-        }
-
-        async function showLicenseModal() {
-            try {
-                const response = await fetch('../LICENSE');
-                const text = await response.text();
-                DOMElements.licenseContent.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`;
-                DOMElements.licenseModal.classList.remove('hidden');
-            } catch (error) {
-                DOMElements.licenseContent.textContent = 'Failed to load license content.';
-                console.error('Failed to load license:', error);
-            }
-        }
-        
-        async function showReadmeModal() {
-            try {
-                const response = await fetch('../README.md');
-                const text = await response.text();
-                DOMElements.readmeContent.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`;
-                DOMElements.readmeModal.classList.remove('hidden');
-            } catch (error) {
-                DOMElements.readmeContent.textContent = 'Failed to load README content.';
-                console.error('Failed to load README:', error);
-            }
-        }
-        
-        function handleError(error) {
-            console.error("Caught error:", error);
-            if (!DOMElements.appContainer?.classList.contains('visible')) {
-                DOMElements.loadingOverlay?.classList.add('loading-error');
-                if (DOMElements.loadingErrorMessage) DOMElements.loadingErrorMessage.textContent = error.message || 'An unknown error occurred. Check the browser console and Apache logs.';
-                DOMElements.loadingErrorContainer?.classList.remove('hidden');
-                if (pollingIntervalId) {
-                    clearInterval(pollingIntervalId);
-                }
-            }
-        }
-
-        function updateLoadingStatus(message, percentage) {
-            if (DOMElements.loadingStatusText) {
-                DOMElements.loadingStatusText.textContent = message;
-            }
-            if (DOMElements.loadingProgressBar) {
-                DOMElements.loadingProgressBar.style.width = `${percentage}%`;
-            }
-        }
-
-        function setVersionNumber() {
-            document.title = `A.N.U.S. v${APP_VERSION} - Automated Network Utility System`;
-            document.querySelectorAll('.app-version').forEach(el => {
-                el.textContent = `v${APP_VERSION}`;
-            });
-        }
-        
-        function updateClock() {
-            const now = new Date();
-            const date = now.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-            if (DOMElements.currentDatetime) {
-                 DOMElements.currentDatetime.innerHTML = `${date} <span class="text-accent-secondary">|</span> ${time}`;
-            }
-        }
-
+        async function loadThemes() { try { const r=await fetch('./assets/themes.json'); themes=await r.json(); } catch(e){console.error("Could not load themes:",e);} }
+        function applySettings() { let t=localStorage.getItem('theme')||'dark';if(!themes||!themes[t]){t='dark';localStorage.setItem('theme',t);}soundEnabled=localStorage.getItem('soundEnabled')==='true';if(DOMElements.soundToggle)DOMElements.soundToggle.checked=soundEnabled;document.documentElement.className=`theme-${t}`;if(themes[t]?.properties){Object.entries(themes[t].properties).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));const c=getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();document.documentElement.style.setProperty('--accent-primary-trans-1',`${c}33`);document.documentElement.style.setProperty('--accent-primary-trans-2',`${c}55`);}if(isTrendsDataLoaded&&trendsChart&&themes[t]?.palette){const p=themes[t].palette;trendsChart.data.datasets.forEach((d,i)=>{const c=p[i%p.length];d.borderColor=c;d.backgroundColor=`${c}33`;});['x','y'].forEach(a=>{trendsChart.options.scales[a].grid.color=getComputedStyle(document.documentElement).getPropertyValue('--border-primary');trendsChart.options.scales[a].ticks.color=getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');});trendsChart.options.plugins.legend.labels.color=getComputedStyle(document.documentElement).getPropertyValue('--text-primary');trendsChart.update();}isResponsiveScanMode=localStorage.getItem('responsiveScanMode')==='true';if(DOMElements.responsiveScanToggle)DOMElements.responsiveScanToggle.checked=isResponsiveScanMode;startNetworkScanPolling();}
+        async function saveSettings() { const s={updateInterval:document.querySelector('input[name="update-interval"]:checked')?.value,onlineDetectionMethod:document.querySelector('input[name="online-detection-method"]:checked')?.value,smartCheckThreshold:DOMElements.smartCheckThreshold.value,criticalServices:DOMElements.criticalServicesList.value};const i=document.getElementById('save-status-indicator');try{await apiCall('save_settings',{settings:s});localStorage.setItem('soundEnabled',DOMElements.soundToggle.checked);localStorage.setItem('updateInterval',s.updateInterval);localStorage.setItem('theme',document.querySelector('input[name="theme-selector"]:checked')?.value);if(i){i.textContent='Settings saved!';i.className='text-sm text-status-up opacity-100';setTimeout(()=>i.classList.add('opacity-0'),2e3);}startPolling(s.updateInterval);}catch(e){console.error("Failed to save settings:",e);if(i){i.textContent='Error saving!';i.className='text-sm text-status-down opacity-100';setTimeout(()=>i.classList.add('opacity-0'),2e3);}}}
+        async function loadAndApplySettings() { const createRadio=(c,n,o,s,l)=>{if(!c)return;c.innerHTML='';Object.entries(o).forEach(([v,a])=>{const i=`${n}-${v}`,w=document.createElement('div');w.className='flex items-center';w.innerHTML=`<input id="${i}" name="${n}" type="radio" value="${v}" class="h-4 w-4 border-gray-300 text-accent focus:ring-accent-secondary"><label for="${i}" class="ml-3 block text-sm font-medium text-primary">${a}</label>`;const r=w.querySelector('input');if(v===s)r.checked=true;if(l)r.addEventListener('change',l);c.appendChild(w);});};const intervals={'1000':'1s','2000':'2s','5000':'5s','10000':'10s'};const detection={'smart_check':'Smart Check','gateway':'Gateway Ping','majority':'Majority Nodes','critical_services':'Critical Services'};let themesOpt={'dark':'Default Dark'};if(themes&&Object.keys(themes).length>0)themesOpt=Object.fromEntries(Object.entries(themes).map(([k,v])=>[k,v.name]));try{const s=await apiCall('get_settings');createRadio(DOMElements.updateIntervalGroup,'update-interval',intervals,s.updateInterval||'2000');createRadio(DOMElements.onlineDetectionMethodGroup,'online-detection-method',detection,s.onlineDetectionMethod||'smart_check',handleDetectionMethodChange);createRadio(DOMElements.themeSelectorGroup,'theme-selector',themesOpt,localStorage.getItem('theme')||'dark',applySettings);DOMElements.smartCheckThreshold.value=s.smartCheckThreshold||3;DOMElements.criticalServicesList.value=s.criticalServices||'Gateway,NextDNS Primary,Google.com,Cloudflare.com';}catch(e){console.error("Failed to load settings:",e);createRadio(DOMElements.updateIntervalGroup,'update-interval',intervals,'2000');createRadio(DOMElements.onlineDetectionMethodGroup,'online-detection-method',detection,'smart_check',handleDetectionMethodChange);createRadio(DOMElements.themeSelectorGroup,'theme-selector',themesOpt,'dark',applySettings);}applySettings();handleDetectionMethodChange();}
+        function handleDetectionMethodChange() { const s=document.querySelector('input[name="online-detection-method"]:checked')?.value; DOMElements.smartCheckOptions.classList.toggle('hidden',s!=='smart_check'); DOMElements.criticalServicesOptions.classList.toggle('hidden',!['smart_check','critical_services'].includes(s)); }
+        function startPolling(i){if(pollingIntervalId)clearInterval(pollingIntervalId);fetchAndUpdateData();pollingIntervalId=setInterval(fetchAndUpdateData,i);setInterval(updateActiveLogTimer,1e3);}
+        function startNetworkScanPolling(){if(networkScanIntervalId)clearInterval(networkScanIntervalId);const i=isResponsiveScanMode?parseInt(localStorage.getItem('updateInterval'),10):6e4;if(!DOMElements.views.neighborhood.classList.contains('hidden')){fetchNetworkNeighborhood();}networkScanIntervalId=setInterval(fetchNetworkNeighborhood,i);}
+        function updateLogoColor(s, t) { const l=DOMElements.logoContainer,a=DOMElements.appTitle;if(!l||!a)return;let c=t==='DOWN'?'var(--color-status-down)':t==='UP'?s>300?'var(--color-status-up)':s>150?'var(--color-status-warn)':'var(--color-status-down)':'var(--accent-primary)';l.style.color=c;a.style.color=c;DOMElements.faviconLink.href=`data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>.st0{fill:none;stroke:${c};stroke-width:4;}.st1{fill:${c};stroke:${c};stroke-width:2;}</style><circle class='st0' cx='50' cy='50' r='45'/><circle class='st1' cx='50' cy='50' r='10'/><path class='st0' d='M50 22.5V15M50 85v-7.5M77.5 50H85M15 50h7.5M32.2 32.2l-5.3-5.3M73.1 73.1l-5.3-5.3M67.8 32.2l5.3-5.3 M26.9 73.1l5.3-5.3'/></svg>`)}`}
+        function renderQualityMetrics(p) { const u=p.filter(i=>i.status==='UP'&&i.ping!==null);if(u.length===0){DOMElements.qualityMetricsContainer.innerHTML='<p class="text-center text-muted col-span-full">No active targets to measure.</p>';return;}const a=u.reduce((s,i)=>s+i.ping,0)/u.length;const j=u.reduce((s,i)=>s+(i.jitter||0),0)/u.length;const l=u.reduce((s,i)=>s+(i.packet_loss_15m||0),0)/u.length;createOrUpdateScoreGauge('quality-ping',a,200,'Avg. Ping','ms',true);createOrUpdateScoreGauge('quality-jitter',j,50,'Avg. Jitter','ms',true);createOrUpdateScoreGauge('quality-loss',l,10,'Avg. Loss','%',true);}
+        function createOrUpdateScoreGauge(i,v,m,l,u,b=true){const c=document.getElementById('quality-metrics-container');if(!c)return;let a=document.getElementById(i);if(!a){a=document.createElement('div');a.id=i;a.className='card card-muted p-4 text-center';c.appendChild(a);}const p=Math.min(100,(v/m)*100);const t=b?[25,60]:[75,40];let o=(b&&p<t[0])||(!b&&p>t[0])?'var(--color-status-up)':(b&&p<t[1])||(!b&&p>t[1])?'var(--color-status-warn)':'var(--color-status-down)';const z=100,w=10,r=(z/2)-(w/2),f=2*Math.PI*r,d=f-((p/100)*f);a.innerHTML=`<h3 class="text-sm font-medium text-muted">${l}</h3><div class="relative w-24 h-24 mx-auto my-2"><svg class="w-full h-full" viewBox="0 0 ${z} ${z}"><circle stroke="var(--border-primary)" stroke-width="${w}" fill="transparent" r="${r}" cx="${z/2}" cy="${z/2}"/><circle class="progress" stroke="${o}" stroke-width="${w}" stroke-dasharray="${f}" stroke-dashoffset="${f}" fill="transparent" r="${r}" cx="${z/2}" cy="${z/2}" style="stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: all 0.5s ease-out;"/></svg><div class="absolute inset-0 flex items-center justify-center"><span class="text-xl font-bold" style="color: ${o};">${v.toFixed(1)}${u}</span></div></div>`;setTimeout(()=>{const e=a.querySelector('.progress');if(e)e.style.strokeDashoffset=d;},100);}
+        async function createOrUpdateMiniChart(c,d,o){const x=document.getElementById(c);if(!x)return;if(miniChartInstances[c]){const h=miniChartInstances[c];h.data.labels.push(d.timestamp*1e3);h.data.datasets[0].data.push(d.ping);if(h.data.labels.length>30){h.data.labels.shift();h.data.datasets[0].data.shift();}h.update('none');}else{try{const r=await apiCall('get_recent_history',{target:d.name});if(!r||r.length===0){const t=x.getContext('2d');t.fillStyle='var(--text-secondary)';t.textAlign='center';t.font='10px Inter';t.fillText('No recent data.',x.width/2,x.height/2);return;}miniChartInstances[c]=new Chart(x,{type:'line',data:{labels:r.map(t=>t.timestamp*1e3),datasets:[{label:'Ping',data:r.map(t=>t.ping),borderColor:o||'var(--accent-primary)',backgroundColor:'transparent',borderWidth:2,pointRadius:0,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false,beginAtZero:true}},plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:0}}});}catch(e){const t=x.getContext('2d');t.fillStyle='var(--text-secondary)';t.textAlign='center';t.font='10px Inter';t.fillText('Error loading data.',x.width/2,x.height/2);}}}
+        function createOrUpdateUptimeChart(i,p){const c=document.getElementById(i);if(!c)return;const s=100,w=10,r=(s/2)-(w/2),f=2*Math.PI*r,o=f-((p/100)*f);const l=getUptimeStatusClass(p),a=l.replace('text-','var(--color-');if(!uptimeChartInstances[i]){c.innerHTML=`<svg viewBox="0 0 ${s} ${s}"><circle stroke="var(--border-primary)" stroke-width="${w}" fill="transparent" r="${r}" cx="${s/2}" cy="${s/2}"/><circle class="progress" stroke="${a}" stroke-width="${w}" stroke-dasharray="${f}" stroke-dashoffset="${f}" fill="transparent" r="${r}" cx="${s/2}" cy="${s/2}" style="stroke-linecap: round; transition: all 0.5s ease-out;"/></svg><div class="disconnect-count"><span class="font-bold text-2xl ${l}">${p.toFixed(1)}%</span></div>`;uptimeChartInstances[i]={circle:c.querySelector('.progress'),percentageText:c.querySelector('.disconnect-count .font-bold')};setTimeout(()=>{if(uptimeChartInstances[i]?.circle)uptimeChartInstances[i].circle.style.strokeDashoffset=o;},100);}else{const{circle:e,percentageText:t}=uptimeChartInstances[i];if(e){e.style.strokeDashoffset=o;e.setAttribute('stroke',a);}if(t){t.textContent=`${p.toFixed(1)}%`;t.className=`font-bold text-2xl ${l}`;}}}
+        async function renderCalendar(d) { const y=d.getFullYear(),m=d.getMonth();if(DOMElements.calMonthYear)DOMElements.calMonthYear.textContent=`${d.toLocaleString('default',{month:'long'})} ${y}`;if(!DOMElements.calGrid)return;const f=new Date(y,m,1).getDay(),i=new Date(y,m+1,0).getDate(),e={};if(log)log.forEach(t=>{let c=new Date(new Date(t.startTime).getFullYear(),new Date(t.startTime).getMonth(),new Date(t.startTime).getDate());while(c<=new Date(t.endTime)){const a=c.toISOString().split('T')[0];if(!e[a])e[a]={UP:0,DOWN:0};const n=c,s=new Date(n);s.setDate(s.getDate()+1);const u=new Date(t.startTime)>n?new Date(t.startTime):n,o=new Date(t.endTime)<s?new Date(t.endTime):s;e[a][t.status]+=(o-u);c.setDate(c.getDate()+1);}});let h=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(v=>`<div class="day-name">${v}</div>`).join('')+Array(f).fill('<div class="calendar-day other-month"></div>').join('');for(let day=1;day<=i;day++){const a=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;h+=`<div class="calendar-day"><span class="font-semibold">${day}</span>`;if(e[a]){const t=e[a].UP+e[a].DOWN;if(e[a].DOWN>1)h+=`<div class="event-bar event-bar-down" style="width:${(e[a].DOWN/t)*100}%" title="Downtime: ${formatLongDuration(e[a].DOWN)}"></div>`;if(e[a].UP>1)h+=`<div class="event-bar event-bar-up" style="width:${(e[a].UP/t)*100}%" title="Uptime: ${formatLongDuration(e[a].UP)}"></div>`;}h+='</div>';}DOMElements.calGrid.innerHTML=h;}
+        async function showServerDetailsModal() { DOMElements.serverDetailsModal?.classList.remove('hidden');const h=await apiCall('get_resource_history');if(!h)return;const c=(i,l,d,u,v)=>{const x=document.getElementById(i)?.getContext('2d');if(!x)return;const o=getComputedStyle(document.documentElement).getPropertyValue(v).trim();return new Chart(x,{type:'line',data:{labels:h.map(t=>t.timestamp*1e3),datasets:[{label:l,data:h.map(t=>t[d]),borderColor:o,backgroundColor:`${o}33`,borderWidth:2,pointRadius:0,tension:0.3,fill:true,}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{type:'time',time:{unit:'minute'},grid:{color:'var(--border-primary)'},ticks:{color:'var(--text-secondary)'}},y:{beginAtZero:true,grid:{color:'var(--border-primary)'},ticks:{color:'var(--text-secondary)',callback:z=>z+u}}},plugins:{legend:{display:false},title:{display:true,text:l,color:'var(--text-primary)'}}}});};if(serverChartCPU)serverChartCPU.destroy();if(serverChartMem)serverChartMem.destroy();if(serverChartNet)serverChartNet.destroy();serverChartCPU=c('cpu-chart','CPU Usage','cpu_usage','%','--accent-secondary');serverChartMem=c('mem-chart','Memory Usage','mem_usage','%','--color-status-up');const n=document.getElementById('net-chart')?.getContext('2d');if(n)serverChartNet=new Chart(n,{type:'line',data:{labels:h.map(t=>t.timestamp*1e3),datasets:[{label:'Download',data:h.map(t=>t.net_down_kbps),borderColor:'#38bdf8',backgroundColor:'#38bdf833',borderWidth:2,pointRadius:0,tension:0.3,fill:true},{label:'Upload',data:h.map(t=>t.net_up_kbps),borderColor:'#a78bfa',backgroundColor:'#a78bfa33',borderWidth:2,pointRadius:0,tension:0.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{type:'time',time:{unit:'minute'},grid:{color:'var(--border-primary)'},ticks:{color:'var(--text-secondary)'}},y:{beginAtZero:true,grid:{color:'var(--border-primary)'},ticks:{color:'var(--text-secondary)',callback:v=>v+' Kbps'}}},plugins:{legend:{labels:{color:'var(--text-primary)'}},title:{display:true,text:'Network Usage',color:'var(--text-primary)'}}}});}
+        async function updateClientInfo() { const c=document.getElementById('diag-client');if(!c)return;const a=navigator.userAgent,o=a.includes('Win')?'Windows':a.includes('Mac')?'macOS':a.includes('Linux')?'Linux':a.includes('Android')?'Android':a.includes('like Mac')?'iOS':'Unknown';const b=a.includes('Firefox')?'Firefox':a.includes('SamsungBrowser')?'Samsung':(a.includes('Opera')||a.includes('OPR'))?'Opera':a.includes('Edge')?'Edge':a.includes('Chrome')?'Chrome':a.includes('Safari')?'Safari':'Unknown';try{const d=await apiCall('get_client_details');c.innerHTML=`<p class="font-semibold text-primary">Client Device</p><p class="text-xs text-muted truncate" title="${d?.hostname||'N/A'}">${d?.hostname||'N/A'}</p><div class="mt-2 text-xs text-left space-y-1"><p><span class="font-medium text-muted">IP:</span> ${clientIp}</p><p><span class="font-medium text-muted">MAC:</span> ${d?.mac||'N/A'}</p><p><span class="font-medium text-muted">OS:</span> ${o}</p><p><span class="font-medium text-muted">Browser:</span> ${b}</p></div>`;}catch(e){c.innerHTML=`<p class="text-center text-status-down p-4">Error fetching client details.</p>`;}}
+        function updateServerInfo(s){const c=document.getElementById('diag-server');if(!c||!s.resource_usage)return;const u=s.resource_usage;c.innerHTML=`<p class="font-semibold text-primary">A.N.U.S. Server</p><p class="text-xs text-muted">${s.server_ip}</p><div class="mt-2 text-xs text-left space-y-1"><p><span class="font-medium text-muted">CPU:</span> <span class="${getResourceStatusClass(u.cpu_usage,[50,80])}">${u.cpu_usage}%</span></p><p><span class="font-medium text-muted">MEM:</span> <span class="${getResourceStatusClass(u.mem_usage,[60,85])}">${u.mem_usage}%</span></p><p><span class="font-medium text-muted">DOWN:</span> ${u.net_down_kbps} Kbps</p><p><span class="font-medium text-muted">UP:</span> ${u.net_up_kbps} Kbps</p></div>`;}
+        async function showLicenseModal(){try{const r=await fetch('../LICENSE'),t=await r.text();DOMElements.licenseContent.innerHTML=`<pre class="whitespace-pre-wrap">${t}</pre>`;DOMElements.licenseModal.classList.remove('hidden');}catch(e){DOMElements.licenseContent.textContent='Failed to load license.';}}
+        async function showReadmeModal(){try{const r=await fetch('../README.md'),t=await r.text();DOMElements.readmeContent.innerHTML=`<pre class="whitespace-pre-wrap">${t}</pre>`;DOMElements.readmeModal.classList.remove('hidden');}catch(e){DOMElements.readmeContent.textContent='Failed to load README.';}}
+        function handleError(e){console.error("Caught error:",e);if(!DOMElements.appContainer?.classList.contains('visible')){DOMElements.loadingOverlay?.classList.add('loading-error');if(DOMElements.loadingErrorMessage)DOMElements.loadingErrorMessage.textContent=e.message||'Unknown error. Check console.';DOMElements.loadingErrorContainer?.classList.remove('hidden');if(pollingIntervalId)clearInterval(pollingIntervalId);}}
+        function updateLoadingStatus(m,p){if(DOMElements.loadingStatusText)DOMElements.loadingStatusText.textContent=m;if(DOMElements.loadingProgressBar)DOMElements.loadingProgressBar.style.width=`${p}%`;}
+        function setVersionNumber(){document.title=`A.N.U.S. v${APP_VERSION}`;document.querySelectorAll('.app-version').forEach(e=>e.textContent=`v${APP_VERSION}`);}
+        function updateClock(){const n=new Date(),d=n.toLocaleDateString('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}),t=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});if(DOMElements.currentDatetime)DOMElements.currentDatetime.innerHTML=`${d} <span class="text-accent-secondary">|</span> ${t}`;}
         async function initializeApp() {
-            setVersionNumber();
-            updateClock();
-            setInterval(updateClock, 1000);
-
+            setVersionNumber(); updateClock(); setInterval(updateClock, 1000);
             try {
-                updateLoadingStatus("Initializing...", 0);
-                
-                await new Promise(resolve => setTimeout(resolve, 200));
-                updateLoadingStatus("Loading themes...", 10);
-                await loadThemes();
-
-                updateLoadingStatus("Configuring UI components...", 20);
-                createUptimeCards();
-                setupEventListeners();
-                await loadAndApplySettings();
-                
-                updateLoadingStatus("Loading sound effects...", 30);
-                bruhPlayer = await new Promise(resolve => new Tone.Player("./assets/bruh.mp3", resolve).toDestination());
-                upPlayer = await new Promise(resolve => new Tone.Player("./assets/up.mp3", resolve).toDestination());
-
-                updateLoadingStatus("Loading fuzzy sayings...", 40);
-                await loadFuzzySayings();
-
-                updateLoadingStatus("Fetching initial log data...", 50);
-                try {
-                    const serverLog = await apiCall('get_log');
-                    if (serverLog && serverLog.length > 0) {
-                        log = serverLog;
-                        lastStateChangeTime = new Date(log[0].startTime);
-                    }
-                } catch(e) {
-                    console.error("Failed to fetch initial log data. Proceeding...", e);
-                }
-
-                updateLoadingStatus("Fetching initial metrics...", 70);
-                try {
-                    await fetchAndUpdateData();
-                    await updateUptimeStats();
-                } catch(e) {
-                    console.error("Failed to fetch initial metrics. Proceeding with limited functionality...", e);
-                    handleError(e); // Catch and display the error
-                }
-                
-                updateLoadingStatus("Ready to display...", 100);
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
-                if (DOMElements.loadingOverlay) DOMElements.loadingOverlay.classList.add('opacity-0');
-                
-                setTimeout(() => {
-                    if (DOMElements.loadingOverlay) DOMElements.loadingOverlay.style.display = 'none';
-                    if (DOMElements.appContainer) DOMElements.appContainer.classList.remove('opacity-0');
-                }, 500);
-
-                // Check if the app is functional before starting the main polling loop
-                if (lastSuccessfulFetch > 0) {
-                    const settings = await apiCall('get_settings');
-                    const updateInterval = settings.updateInterval || '2000';
-                    startPolling(updateInterval);
-                } else {
-                    console.warn("Skipping main polling loop due to failed initial data fetch.");
-                }
-                
-                if (DOMElements.diagnosticsFlowContainer) {
-                    new ResizeObserver(() => {
-                        if (!DOMElements.views.diagnostics?.classList.contains('hidden') && allPingsData.length > 0) {
-                            drawDiagnosticPaths(null, null, allPingsData, { server_ip: clientIp, server_gateway_ip: serverGatewayIp });
-                        }
-                    }).observe(DOMElements.diagnosticsFlowContainer);
-                }
-                if (DOMElements.networkTreeContainer) {
-                    new ResizeObserver(() => {
-                        if (!DOMElements.views.neighborhood?.classList.contains('hidden') && networkScanData) {
-                             redrawLines();
-                        }
-                    }).observe(DOMElements.networkTreeContainer);
-                }
-                
-            } catch (e) {
-                handleError(e);
-            }
+                updateLoadingStatus("Initializing...",0); await new Promise(r=>setTimeout(r,200));
+                updateLoadingStatus("Loading themes...",10); await loadThemes();
+                updateLoadingStatus("Configuring UI...",20); createUptimeCards(); setupEventListeners(); await loadAndApplySettings();
+                updateLoadingStatus("Loading audio...",30); bruhPlayer=await new Promise(r=>new Tone.Player("./assets/bruh.mp3",r).toDestination()); upPlayer=await new Promise(r=>new Tone.Player("./assets/up.mp3",r).toDestination());
+                updateLoadingStatus("Fetching initial data...",50); try{const l=await apiCall('get_log');if(l&&l.length>0){log=l;lastStateChangeTime=new Date(l[0].startTime);}}catch(e){console.warn("Failed to get logs.");}
+                updateLoadingStatus("Fetching metrics...",70); await fetchAndUpdateData(); await updateUptimeStats();
+                updateLoadingStatus("Ready...",100); await new Promise(r=>setTimeout(r,300));
+                if(DOMElements.loadingOverlay)DOMElements.loadingOverlay.classList.add('opacity-0');
+                setTimeout(()=>{if(DOMElements.loadingOverlay)DOMElements.loadingOverlay.style.display='none';if(DOMElements.appContainer)DOMElements.appContainer.classList.remove('opacity-0');},500);
+                if(lastSuccessfulFetch>0){const s=await apiCall('get_settings');startPolling(s.updateInterval||'2000');}else{console.warn("Skipping polling due to failed initial fetch.");}
+                new ResizeObserver(()=>{if(!DOMElements.views.diagnostics?.classList.contains('hidden')&&allPingsData.length>0)drawDiagnosticPaths();}).observe(DOMElements.diagnosticsFlowContainer);
+                new ResizeObserver(()=>{if(!DOMElements.views.neighborhood?.classList.contains('hidden')&&networkScanData)redrawLines();}).observe(DOMElements.networkTreeContainer);
+            } catch (e) { handleError(e); }
         }
-
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
+
