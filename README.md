@@ -1,10 +1,3 @@
-Of course. My apologies that the formatting didn't carry over correctly. I will provide the complete, combined `README.md` in a single markdown code block as you've requested.
-
-I've taken the header from the old version, updated the version to **v1.4.0**, changed the codename to **PurpleNurple** with a matching purple badge, and merged it with the casual-toned content you liked.
-
-Here is the complete file content for you to copy and paste directly into your `README.md` on GitHub.
-
-````markdown
 # A.N.U.S. - Automated Network Utility System
 [![Version](https://img.shields.io/badge/Version-v1.4.0-blue.svg)](https://github.com/sworrl/ANUS/releases/tag/v1.4.0)
 [![CODENAME](https://img.shields.io/badge/CODENAME-PurpleNurple-9370DB.svg)](https://github.com/sworrl/ANUS/releases/tag/v1.4.0)
