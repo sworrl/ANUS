@@ -154,7 +154,7 @@ The installation commands below will download a script from the internet and run
 #### One-Liner Install
 This command will clone the repository into a folder named `ANUS`, change into that directory, and then run the fully automated installation.
 ```bash
-sudo rm -r ANUS && git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git) && cd ANUS && sudo ./setup_anus_app.py
+sudo rm -rf ANUS && git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo chmod +x setup_anus_app.py && sudo ./setup_anus_app.py
 ````
 
 #### Interactive Menu Install
@@ -162,7 +162,7 @@ sudo rm -r ANUS && git clone [https://github.com/sworrl/ANUS.git](https://github
 For more options, including uninstalling or managing the service, use the following command to run the setup script with the interactive menu.
 
 ```bash
-sudo rm -r ANUS && git clone [https://github.com/sworrl/ANUS.git](https://github.com/sworrl/ANUS.git) && cd ANUS && sudo ./setup_anus_app.py -menu
+sudo rm -rf ANUS && git clone https://github.com/sworrl/ANUS.git && cd ANUS && sudo chmod +x setup_anus_app.py && sudo ./setup_anus_app.py -menu
 ```
 
 #### Manual Install (Safest Method)
