@@ -46,21 +46,21 @@ def get_local_file_meta(file_path):
             content_str = content_bytes.decode('utf-8', errors='ignore')
             version = get_version_from_content(content_str)
         mtime = datetime.fromtimestamp(os.path.getmtime(file_path)).strftime('%Y-%m-%d %H:%M')
-        return version, sha256_hash[:8], mtime
+        return version, sha256_hash, mtime
     except Exception:
         return "Error", "Error", "Error"
 
 def get_github_file_meta(repo, path):
-    """Returns the version, sha1 hash, and commit date from GitHub API."""
+    """Returns the version, sha256 hash, and commit date from GitHub."""
     try:
-        # Get file content and SHA hash
-        content_url = f"https://api.github.com/repos/{repo}/contents/{path}"
-        req = urllib.request.Request(content_url, headers={'Accept': 'application/vnd.github.v3+json', 'Cache-Control': 'no-cache'})
+        # Get file content and calculate SHA256 hash
+        content_url = f"https://raw.githubusercontent.com/{repo}/main/{path}"
+        req = urllib.request.Request(content_url, headers={'Cache-Control': 'no-cache'})
         with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.load(response)
-            github_sha = data['sha'][:8] # GitHub uses SHA-1 for this, we'll truncate for display
-            content = urllib.request.urlopen(data['download_url']).read().decode('utf-8', errors='ignore')
-            version = get_version_from_content(content)
+            content_bytes = response.read()
+            github_hash = hashlib.sha256(content_bytes).hexdigest()
+            content_str = content_bytes.decode('utf-8', errors='ignore')
+            version = get_version_from_content(content_str)
 
         # Get last commit date for the file
         commit_url = f"https://api.github.com/repos/{repo}/commits?path={path}&page=1&per_page=1"
@@ -70,9 +70,9 @@ def get_github_file_meta(repo, path):
             commit_date_str = commit_data[0]['commit']['committer']['date']
             commit_date = datetime.strptime(commit_date_str, "%Y-%m-%dT%H:%M:%SZ").strftime('%Y-%m-%d %H:%M')
         
-        return version, github_sha, commit_date
-    except Exception as e:
-        return "Error", str(e)[:8], "Error"
+        return version, github_hash, commit_date
+    except Exception:
+        return "Error", "Error", "Error"
 
 
 def get_version_comparison_data():
@@ -199,68 +199,82 @@ class CursesUI:
         self.progress_win.refresh()
         
     def display_version_comparison(self, win, data):
-        win.clear(); win.box(); win.addstr(0, 2, " Version & Integrity Check ", curses.color_pair(8)|curses.A_BOLD)
-        headers = ["File", "Local Ver", "GH Ver", "Date (Local/GH)", "Hash Match"]
-        widths = [25, 10, 10, 25, 12]
-        win.addstr(2, 2, f"{headers[0]:<{widths[0]}} {headers[1]:<{widths[1]}} {headers[2]:<{widths[2]}} {headers[3]:<{widths[3]}} {headers[4]:<{widths[4]}}", curses.A_BOLD|curses.A_UNDERLINE)
-        win.addstr(3, 2, "-" * (sum(widths) + len(headers) -1))
-        
-        y=4
-        is_gh_newer = False
-        is_local_newer = False
-
-        for r in data:
-            f, lv, gv = r['file'], r['local_ver'], r['github_ver']
-            ld, gd = r['local_date'], r['github_date']
-            lh, gh = r['local_hash'], r['github_hash']
-            
-            try: local_v_tuple = tuple(map(int, lv.strip('v').split('.'))) if lv != "N/A" else (0,0,0)
-            except: local_v_tuple = (0,0,0)
-            try: gh_v_tuple = tuple(map(int, gv.strip('v').split('.'))) if gv not in ["N/A", "Error"] else (0,0,0)
-            except: gh_v_tuple = (0,0,0)
-
-            # Determine colors and status
-            if gh_v_tuple > local_v_tuple:
-                is_gh_newer = True
-                ver_color = curses.color_pair(2) # Red for older local
-            elif local_v_tuple > gh_v_tuple and gh_v_tuple != (0,0,0):
-                is_local_newer = True
-                ver_color = curses.color_pair(3) # Yellow for newer local (dev)
-            else:
-                ver_color = curses.color_pair(7)
-
-            hash_match = (lh == gh) or (lv == 'N/A')
-            hash_str = "Match" if hash_match else "Mismatch"
-            hash_color = curses.color_pair(5) if hash_match else curses.color_pair(2)
-
-            if gv == "Error":
-                ver_color = curses.color_pair(2)
-
-            # Print row
-            win.addstr(y, 2, f"{f:<{widths[0]}} ")
-            win.addstr(f"{lv:<{widths[1]}} ", ver_color)
-            win.addstr(f"{gv:<{widths[2]}} ", ver_color)
-            
-            win.addstr(f"{ld} / ", curses.color_pair(9) | curses.A_DIM)
-            win.addstr(f"{gd:<12}", curses.color_pair(9) | curses.A_DIM)
-
-            win.addstr(f"{hash_str:<{widths[4]}}", hash_color)
-            y += 1
-        
-        # Summary Status
-        win.addstr(y+2, 2, "Status:", curses.A_BOLD)
-        if is_gh_newer:
-            win.addstr(" A new version is available from GitHub.", curses.color_pair(5) | curses.A_BOLD)
-            win.addstr(y+3, 2, "Select 'Update from GitHub' to install the latest version.")
-        elif is_local_newer:
-            win.addstr(" You have a newer local version than GitHub.", curses.color_pair(3) | curses.A_BOLD)
-            win.addstr(y+3, 2, "Living on the edge, I see! Be careful with that.")
-        elif any(r['github_ver'] == "Error" for r in data):
-            win.addstr(" Could not fetch all versions from GitHub.", curses.color_pair(2) | curses.A_BOLD)
-        else:
-            win.addstr(" Your local installer is up-to-date with GitHub.", curses.color_pair(5) | curses.A_BOLD)
-
+        win.clear(); win.box()
+        win.addstr(0, 2, " Version & Integrity Check (Scrollable ↑↓) ", curses.color_pair(8) | curses.A_BOLD)
         win.refresh()
+        
+        max_y, max_x = win.getmaxyx()
+        pad_height = len(data) * 6 + 4
+        pad = curses.newpad(pad_height, max_x - 2)
+        pad.keypad(True)
+
+        is_gh_newer, is_local_newer = False, False
+        y = 1
+        
+        for r in data:
+            if y > 1: pad.addstr(y, 1, "─" * (max_x - 4), curses.color_pair(9) | curses.A_DIM); y += 1
+            
+            display_filename = r['file']
+            available_width = max_x - 5
+            if len(display_filename) > available_width:
+                display_filename = display_filename[:available_width - 1] + "…"
+
+            pad.addstr(y, 2, display_filename, curses.A_BOLD | curses.color_pair(4)); y += 1
+            pad.addstr(y, 4, f"{'':<12}{'Version':<12}{'Date':<20}{'Hash (SHA256)':<18}", curses.A_UNDERLINE | curses.color_pair(7)); y += 1
+
+            try: local_v = tuple(map(int, r['local_ver'].strip('v').split('.'))) if r['local_ver'] != "N/A" else (0,0,0)
+            except: local_v = (0,0,0)
+            try: gh_v = tuple(map(int, r['github_ver'].strip('v').split('.'))) if r['github_ver'] not in ["N/A", "Error"] else (0,0,0)
+            except: gh_v = (0,0,0)
+
+            if gh_v > local_v: is_gh_newer = True
+            if local_v > gh_v and gh_v != (0,0,0): is_local_newer = True
+
+            locations = ["Installed", "Local", "GitHub"]
+            versions = [r['installed_ver'], r['local_ver'], r['github_ver']]
+            dates = [r['installed_date'], r['local_date'], r['github_date']]
+            hashes = [r['installed_hash'], r['local_hash'], r['github_hash']]
+            
+            for i, loc in enumerate(locations):
+                v_color = curses.color_pair(7)
+                if versions[i] != "---":
+                    try: current_v_tuple = tuple(map(int, versions[i].strip('v').split('.'))) if versions[i] not in ["N/A", "Error"] else (0,0,0)
+                    except: current_v_tuple = (0,0,0)
+                    if gh_v > current_v_tuple: v_color = curses.color_pair(2)
+                    elif current_v_tuple > gh_v and gh_v != (0,0,0): v_color = curses.color_pair(3)
+                
+                hash_color = curses.color_pair(7)
+                if hashes[i] not in ["N/A", "---", "Error"] and r['github_hash'] not in ["N/A", "Error"]:
+                    hash_color = curses.color_pair(5) if hashes[i] == r['github_hash'] else curses.color_pair(2)
+
+                pad.addstr(y, 4, f"{loc:<12}"); pad.addstr(f"{versions[i]:<12}", v_color)
+                pad.addstr(f"{dates[i]:<20}", curses.color_pair(9) | curses.A_DIM); pad.addstr(f"{hashes[i][:16]:<18}", hash_color); y += 1
+        
+        # Summary Status in a footer window
+        footer_win = win.derwin(4, max_x - 2, max_y - 4, 1)
+        footer_win.addstr(1, 1, "Status:", curses.A_BOLD | curses.color_pair(7))
+        if is_gh_newer:
+            footer_win.addstr(1, 9, "A new version is available from GitHub.", curses.color_pair(5) | curses.A_BOLD)
+            footer_win.addstr(2, 1, "Select 'Update from GitHub' to install the latest version.", curses.color_pair(7))
+        elif is_local_newer:
+            footer_win.addstr(1, 9, "You have a newer local version than GitHub.", curses.color_pair(3) | curses.A_BOLD)
+            footer_win.addstr(2, 1, "Living on the edge, I see! Be careful with that.", curses.color_pair(7))
+        elif any(r['github_ver'] == "Error" for r in data):
+            footer_win.addstr(1, 9, "Could not fetch all versions from GitHub.", curses.color_pair(2) | curses.A_BOLD)
+        else:
+            footer_win.addstr(1, 9, "Your local installer is up-to-date with GitHub.", curses.color_pair(5) | curses.A_BOLD)
+        footer_win.refresh()
+
+        # Scrolling loop
+        scroll_pos = 0
+        pad_max_scroll = max(0, pad_height - (max_y - 5))
+        while True:
+            pad.refresh(scroll_pos, 0, 1, 1, max_y - 5, max_x - 2)
+            key = win.getch()
+            if key == curses.KEY_UP and scroll_pos > 0: scroll_pos -= 1
+            elif key == curses.KEY_DOWN and scroll_pos < pad_max_scroll: scroll_pos += 1
+            elif key in [ord('q'), curses.KEY_ENTER, 10, 13]: break
+
 
     def run_command_curses(self, win, command, ignore_errors=False, show_output=True):
         from setup_anus_app import VERBOSE_MODE
@@ -325,7 +339,10 @@ class CursesUI:
                     elif action == "View Service Logs":
                         c_r(f"sudo journalctl -u {SERVICE_NAME}.service -n 50 --no-pager")
 
-                    self.output_win.addstr("\n\nPress any key to return.", curses.color_pair(3) | curses.A_BOLD); self.output_win.getch()
+                    # This part is now handled inside display_version_comparison
+                    if action != "Check for Updates":
+                         self.output_win.addstr("\n\nPress any key to return.", curses.color_pair(3) | curses.A_BOLD); self.output_win.getch()
+                    
                     self.draw_layout(); self.update_status_panel(); self.draw_menu()
                 self.draw_menu()
         except KeyboardInterrupt: pass
